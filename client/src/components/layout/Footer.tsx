@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
                 <Github className="w-5 h-5" />
               </a>
               <a
-                href="/api/docs"
+                href="/api/swagger"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors"
@@ -46,6 +46,8 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3">Platform Navigation</h4>
             <ul className="space-y-2 text-xs">
               <li><a href="/books" className="hover:text-white transition-colors">Book Catalog</a></li>
+              <li><a href="/borrowed" className="hover:text-white transition-colors text-blue-400">Borrowed Books Hub</a></li>
+              <li><a href="/coverage" className="hover:text-white transition-colors text-amber-400">QA & Coverage Dashboard</a></li>
               <li><a href="/playground" className="hover:text-white transition-colors text-purple-400">QA Automation Sandbox</a></li>
               <li><a href="/orders" className="hover:text-white transition-colors">Order Management</a></li>
               <li><a href="/inventory" className="hover:text-white transition-colors">Warehouse Inventory</a></li>
@@ -59,7 +61,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-xs">
               <li className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> 10 Distinct User Personas</li>
               <li className="flex items-center gap-1.5"><Terminal className="w-3.5 h-3.5 text-brand-400" /> Latency & Error Simulators</li>
-              <li className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Dual Sliders & Calendars</li>
+              <li className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Multi-Currency & Timezones</li>
               <li className="flex items-center gap-1.5"><Terminal className="w-3.5 h-3.5 text-rose-400" /> Shadow DOM & iFrame Sandbox</li>
               <li className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-indigo-400" /> Instant DB Reset Endpoint</li>
             </ul>
@@ -72,7 +74,7 @@ export const Footer: React.FC = () => {
               Explore and test all RESTful CRUD endpoints interactively in the Swagger UI.
             </p>
             <a
-              href="/api/docs"
+              href="/api/swagger"
               target="_blank"
               rel="noopener noreferrer"
               data-testid="footer-swagger-badge"
@@ -86,9 +88,6 @@ export const Footer: React.FC = () => {
 
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} ITFreeSource Academy. Created for SDET & Test Automation Engineering Excellence.</p>
-          <div className="flex items-center gap-1">
-            <span>Built with TypeScript, React & Express for LinkedIn Showcase</span>
-          </div>
         </div>
       </div>
     </footer>

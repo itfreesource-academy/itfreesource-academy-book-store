@@ -49,6 +49,10 @@ class InMemoryStore {
     });
   }
 
+  public resetToSeedData(): void {
+    this.reset();
+  }
+
   // Users
   public getUsers(): User[] {
     return this.users.map(({ password, ...rest }) => rest as User);
@@ -79,6 +83,10 @@ class InMemoryStore {
     if (updates.currency !== undefined) user.currency = updates.currency;
     if (updates.timezone !== undefined) user.timezone = updates.timezone;
     return user;
+  }
+
+  public getAllBooks(): Book[] {
+    return [...this.books];
   }
 
   // Books

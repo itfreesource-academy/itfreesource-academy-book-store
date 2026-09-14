@@ -18,7 +18,8 @@ import {
   Users,
   ScrollText,
   Clock,
-  DollarSign
+  DollarSign,
+  ShieldCheck
 } from 'lucide-react';
 import { useCurrency, SUPPORTED_CURRENCIES, SUPPORTED_TIMEZONES } from '../../context/CurrencyContext.js';
 import { Currency, Timezone } from '../../types/index.js';
@@ -143,6 +144,17 @@ export const Navbar: React.FC = () => {
             >
               <FlaskConical className="w-4 h-4 text-purple-600" />
               <span>QA Sandbox</span>
+            </Link>
+
+            {/* Test Coverage Dashboard link */}
+            <Link
+              to="/coverage"
+              data-testid="nav-link-coverage"
+              className="px-3 py-2 rounded-lg text-sm font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors flex items-center gap-1.5 ml-1 border border-amber-200"
+              title="Test Coverage & Automation Suite Quality Dashboard"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-600" />
+              <span>Coverage</span>
             </Link>
 
             {/* Swagger UI Interactive Link */}
@@ -312,6 +324,13 @@ export const Navbar: React.FC = () => {
             className="block px-3 py-2 rounded-lg text-base font-medium text-purple-700 bg-purple-50"
           >
             QA Testing Playground
+          </Link>
+          <Link
+            to="/coverage"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-amber-700 bg-amber-50"
+          >
+            Test Coverage & QA Reports
           </Link>
           <a
             href="/api/swagger"

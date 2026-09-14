@@ -21,6 +21,7 @@ import { UsersPage } from './pages/UsersPage.js';
 import { AuditLogsPage } from './pages/AuditLogsPage.js';
 import { LoginPage } from './pages/LoginPage.js';
 import { PlaygroundPage } from './pages/PlaygroundPage.js';
+import { CoverageDashboardPage } from './pages/CoverageDashboardPage.js';
 
 export const App: React.FC = () => {
   return (
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
                     <Route path="/users" element={<UsersPage />} />
                     <Route path="/audit-logs" element={<AuditLogsPage />} />
                     <Route path="/playground" element={<PlaygroundPage />} />
+                    <Route path="/coverage" element={<CoverageDashboardPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

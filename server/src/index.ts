@@ -8,6 +8,8 @@ import { swaggerSpec } from './config/swagger.js';
 import { latencySimulator } from './middleware/latency.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
+const serverDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+
 import authRoutes from './routes/authRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
@@ -18,6 +20,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
 import systemRoutes from './routes/systemRoutes.js';
 import borrowRoutes from './routes/borrowRoutes.js';
+import coverageRoutes from './routes/coverageRoutes.js';
 
 dotenv.config();
 
@@ -35,8 +38,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static uploaded files
-const uploadDir = path.resolve(process.cwd(), 'uploads');
+const candidateUploadDirs = [
+  path.resolve(process.cwd(), 'uploads'),
+  path.resolve(process.cwd(), 'server/uploads'),
+  path.resolve(serverDir, '../uploads'),
+  path.resolve(serverDir, '../../uploads')
+];
+const uploadDir = candidateUploadDirs.find(dir => fs.existsSync(dir)) || path.resolve(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  try { fs.mkdirSync(uploadDir, { recursive: true }); } catch { /* ignore */ }
+}
 app.use('/uploads', express.static(uploadDir));
+
+// Serve interactive Istanbul HTML Coverage Reports at /reports/coverage
+const candidateCoverageDirs = [
+  path.resolve(process.cwd(), 'server/coverage'),
+  path.resolve(process.cwd(), 'coverage'),
+  path.resolve(serverDir, '../coverage'),
+  path.resolve(serverDir, '../../server/coverage')
+];
+const coverageDir = candidateCoverageDirs.find(dir => fs.existsSync(dir)) || path.resolve(process.cwd(), 'coverage');
+app.use('/reports/coverage', express.static(coverageDir));
 
 // Interactive Swagger UI endpoints with JWT Bearer Auth and Try-It-Out enabled
 const swaggerUiMiddleware = swaggerUi.setup(swaggerSpec, {
@@ -79,16 +101,25 @@ app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/system', systemRoutes);
+app.use('/api/v1/coverage', coverageRoutes);
 
 // In production or if client build exists, serve static React frontend
-const clientDist = path.resolve(process.cwd(), '../client/dist');
-const altClientDist = path.resolve(process.cwd(), 'public');
-const clientPath = fs.existsSync(clientDist) ? clientDist : (fs.existsSync(altClientDist) ? altClientDist : null);
+const candidateClientDirs = [
+  path.resolve(process.cwd(), 'client/dist'),
+  path.resolve(process.cwd(), '../client/dist'),
+  path.resolve(serverDir, '../../client/dist'),
+  path.resolve(serverDir, '../../../client/dist'),
+  path.resolve(process.cwd(), 'public'),
+  path.resolve(process.cwd(), 'server/public'),
+  path.resolve(serverDir, '../public')
+];
+const clientPath = candidateClientDirs.find(dir => fs.existsSync(dir) && fs.existsSync(path.join(dir, 'index.html'))) || null;
 
 if (clientPath) {
+  console.log(`📦 Serving React frontend from: ${clientPath}`);
   app.use(express.static(clientPath));
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/reports')) {
       return next();
     }
     res.sendFile(path.join(clientPath, 'index.html'));
@@ -111,14 +142,16 @@ if (clientPath) {
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 ITFreeSource Academy Book Store API is live!`);
-  console.log(`📡 URL:        http://localhost:${PORT}`);
-  console.log(`📚 Swagger UI: http://localhost:${PORT}/api/swagger`);
-  console.log(`📄 Swagger HTML: http://localhost:${PORT}/api/swagger.html`);
-  console.log(`🔄 DB Reset:   POST http://localhost:${PORT}/api/v1/system/reset`);
-  console.log(`=======================================================`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 ITFreeSource Academy Book Store API is live!`);
+    console.log(`📡 URL:        http://localhost:${PORT}`);
+    console.log(`📚 Swagger UI: http://localhost:${PORT}/api/swagger`);
+    console.log(`📄 Swagger HTML: http://localhost:${PORT}/api/swagger.html`);
+    console.log(`🔄 DB Reset:   POST http://localhost:${PORT}/api/v1/system/reset`);
+    console.log(`=======================================================`);
+  });
+}
 
 export default app;
