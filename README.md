@@ -28,7 +28,10 @@ graph TD
     Server -->|Read / Write / Mutate| DB
 ```
 
-- **Interactive Swagger 3.0 Documentation**: Live at `http://localhost:5000/api/docs` with downloadable `openapi.json`.
+- **Interactive Swagger 3.0 Documentation**: Live at `http://localhost:5000/api/swagger` (and `http://localhost:5000/api/swagger.html`) with in-browser JWT Authorization modal and raw spec at `/api/swagger.json`.
+- **Postman Ready**: 1-click import from `http://localhost:5000/api/swagger.json` or load `postman/itfreesource-bookstore.postman_collection.json` with pre-configured auto JWT token capture.
+- **Book Borrowing & Multi-Timezone/Currency Engine**: 10-day rental for $2.00, $0.10/day overdue penalty, 2x price lost replacement penalty, and dynamic conversion across 5 currencies (USD, AED, INR, JPY, AUD) and 5 regional timezones.
+- **Admin User Management**: Modify user name, role, email, status, timezone, and currency directly from UI or `PUT /api/v1/auth/users/:id`.
 - **10 Distinct User Personas & RBAC**: Granular permissions controlling navigation, action buttons, pricing edits, order status transitions, review moderation, and audit trails.
 - **Top Sticky QA Switcher**: Instant 1-click login as any of the 10 roles without manual typing.
 - **Dedicated QA Testing Sandbox (`/playground`)**: Dynamic vs. Static `data-testid` toggle, artificial network latency slider (0ms - 5000ms), HTTP error fault triggers (400, 401, 403, 404, 429, 500, 503), Shadow DOM encapsulation, iFrame sandbox, native browser dialogs, and HTML5 Drag-and-Drop.
@@ -109,22 +112,39 @@ npm run install:all
 ```
 
 ### 2. Development Mode
-Run both frontend and backend concurrently:
+Run both frontend and backend concurrently with Hot Module Reloading (HMR):
 ```bash
 npm run dev
 ```
-- Frontend SPA: `http://localhost:5173`
-- Backend REST API: `http://localhost:5000`
-- Swagger UI Documentation: `http://localhost:5000/api/docs`
+- **Frontend SPA (Vite)**: [`http://localhost:5173`](http://localhost:5173)
+- **Backend REST API**: `http://localhost:5000/api/v1`
+- **Interactive Swagger UI**: [`http://localhost:5000/api/swagger`](http://localhost:5000/api/swagger) (also at `/api/swagger.html`)
+- **OpenAPI 3.0 JSON Spec**: [`http://localhost:5000/api/swagger.json`](http://localhost:5000/api/swagger.json)
 
-### 3. Production Build & Run
+### 3. Production / Standalone Mode (Single Port)
 ```bash
 npm run build
 npm start
 ```
-*Note: The Express server serves both the React SPA and REST API together on port `5000`.*
+*The Express server serves both the React SPA and REST API together on single port `5000`.*
+- **Frontend SPA**: [`http://localhost:5000`](http://localhost:5000)
+- **Interactive Swagger UI**: [`http://localhost:5000/api/swagger`](http://localhost:5000/api/swagger)
+- **REST API**: `http://localhost:5000/api/v1`
 
-### 4. Run with Docker
+### 4. 📬 Postman Integration & API Testing
+You have two fast ways to test and automate all endpoints in Postman:
+
+#### Option A: 1-Click OpenAPI URL Import
+1. In Postman, click **Import** (top left).
+2. Paste the URL: `http://localhost:5000/api/swagger.json`
+3. Click **Import** — Postman instantly creates a collection with all 30+ endpoints, descriptions, and payloads.
+
+#### Option B: Built-in Preconfigured Collection File
+Import [`postman/itfreesource-bookstore.postman_collection.json`](postman/itfreesource-bookstore.postman_collection.json):
+- **Automatic JWT Token Capture**: When you execute `POST /api/v1/auth/login` in Postman, a test script automatically stores the returned JWT token in the `{{jwtToken}}` collection variable.
+- **Inherited Bearer Auth**: All protected endpoints (orders, borrow, user management, inventory, reviews, audit logs) automatically inherit and send this Bearer token!
+
+### 5. Run with Docker
 ```bash
 docker-compose up --build
 ```
