@@ -136,6 +136,48 @@ router.patch('/users/:id/status', authenticateToken, requirePermission('users:ma
   res.json({ success: true, user: userSafe });
 });
 
+// PUT /api/v1/auth/users/:id (Admin User Management: edit full name, email, role, timezone, currency, status)
+router.put('/users/:id', authenticateToken, requirePermission('users:manage'), (req: AuthenticatedRequest, res: Response): void => {
+  const id = req.params.id as string;
+  const { fullName, email, role, status, currency, timezone } = req.body;
+
+  const existing = store.getUserById(id);
+  if (!existing) {
+    res.status(404).json({ success: false, error: 'User not found.' });
+    return;
+  }
+
+  const updated = store.updateUserDetails(id, {
+    fullName,
+    email,
+    role,
+    status,
+    currency,
+    timezone
+  });
+
+  if (!updated) {
+    res.status(400).json({ success: false, error: 'Failed to update user.' });
+    return;
+  }
+
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: req.user!.id,
+    username: req.user!.username,
+    role: req.user!.role,
+    action: 'USER_UPDATE',
+    entity: 'User',
+    entityId: id,
+    details: `Admin updated user @${updated.username}: Name="${updated.fullName}", Role="${updated.role}", Status="${updated.status}", Timezone="${updated.timezone}", Currency="${updated.currency}".`,
+    ipAddress: (req.ip as string) || '127.0.0.1'
+  });
+
+  const { password: _, ...userSafe } = updated;
+  res.json({ success: true, user: userSafe });
+});
+
 // GET /api/v1/auth/roles
 router.get('/roles', (_req: Request, res: Response): void => {
   res.json({

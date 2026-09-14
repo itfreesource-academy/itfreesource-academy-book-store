@@ -16,12 +16,17 @@ import {
   Layers,
   CheckSquare,
   Users,
-  ScrollText
+  ScrollText,
+  Clock,
+  DollarSign
 } from 'lucide-react';
+import { useCurrency, SUPPORTED_CURRENCIES, SUPPORTED_TIMEZONES } from '../../context/CurrencyContext.js';
+import { Currency, Timezone } from '../../types/index.js';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout, hasPermission } = useAuth();
   const { totalItems, openCart } = useCart();
+  const { currency, setCurrency, timezone, setTimezone } = useCurrency();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -63,6 +68,16 @@ export const Navbar: React.FC = () => {
               className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-brand-600 hover:bg-slate-50 transition-colors"
             >
               Catalog
+            </Link>
+
+            {/* Borrowed Books Hub */}
+            <Link
+              to="/borrowed"
+              data-testid="nav-link-borrowed"
+              className="px-3 py-2 rounded-lg text-sm font-medium text-blue-700 hover:text-blue-800 hover:bg-blue-50 transition-colors flex items-center gap-1.5"
+            >
+              <Clock className="w-4 h-4 text-blue-600" />
+              <span>Borrowed</span>
             </Link>
 
             {isAuthenticated && (
@@ -130,13 +145,14 @@ export const Navbar: React.FC = () => {
               <span>QA Sandbox</span>
             </Link>
 
-            {/* Swagger UI External Link */}
+            {/* Swagger UI Interactive Link */}
             <a
-              href="/api/docs"
+              href="/api/swagger"
               target="_blank"
               rel="noopener noreferrer"
               data-testid="nav-link-swagger"
               className="px-3 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors flex items-center gap-1.5 ml-1 border border-emerald-200"
+              title="Interactive Swagger UI with JWT Bearer Authentication"
             >
               <FileCode2 className="w-4 h-4 text-emerald-600" />
               <span>Swagger API</span>
@@ -144,7 +160,23 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Right Action Icons & Auth Profile */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Currency Selector */}
+            <div className="hidden sm:flex items-center bg-slate-100 rounded-lg p-1 text-xs">
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="bg-transparent text-slate-700 font-semibold focus:outline-none cursor-pointer px-1"
+                title="Select Active Currency"
+                data-testid="navbar-currency-select"
+              >
+                {Object.values(SUPPORTED_CURRENCIES).map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+            </div>
             {/* Shopping Cart Button */}
             <button
               onClick={openCart}
@@ -222,6 +254,13 @@ export const Navbar: React.FC = () => {
           >
             Catalog
           </Link>
+          <Link
+            to="/borrowed"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-blue-700 bg-blue-50"
+          >
+            Borrowed Books & Rental Hub
+          </Link>
           {isAuthenticated && (
             <Link
               to="/orders"
@@ -275,12 +314,12 @@ export const Navbar: React.FC = () => {
             QA Testing Playground
           </Link>
           <a
-            href="/api/docs"
+            href="/api/swagger"
             target="_blank"
             rel="noopener noreferrer"
             className="block px-3 py-2 rounded-lg text-base font-medium text-emerald-700 bg-emerald-50"
           >
-            Swagger API Docs
+            Swagger API Docs (/api/swagger)
           </a>
         </div>
       )}

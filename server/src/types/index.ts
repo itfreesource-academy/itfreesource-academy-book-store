@@ -10,6 +10,15 @@ export type UserRole =
   | 'vip_customer'
   | 'standard_customer';
 
+export type Currency = 'USD' | 'AED' | 'INR' | 'JPY' | 'AUD';
+
+export type Timezone =
+  | 'America/New_York'
+  | 'Asia/Dubai'
+  | 'Asia/Kolkata'
+  | 'Asia/Tokyo'
+  | 'Australia/Sydney';
+
 export type Permission =
   | 'catalog:read'
   | 'catalog:create'
@@ -29,7 +38,11 @@ export type Permission =
   | 'users:manage'
   | 'audit:read'
   | 'system:reset'
-  | 'discount:vip';
+  | 'discount:vip'
+  | 'borrow:read'
+  | 'borrow:create'
+  | 'borrow:return'
+  | 'borrow:read_all';
 
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   admin: [
@@ -37,64 +50,76 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'inventory:read', 'inventory:update',
     'orders:read_all', 'orders:read_own', 'orders:update_status', 'orders:cancel', 'orders:refund',
     'reviews:read', 'reviews:moderate', 'reviews:create',
-    'users:manage', 'audit:read', 'system:reset', 'discount:vip'
+    'users:manage', 'audit:read', 'system:reset', 'discount:vip',
+    'borrow:read', 'borrow:create', 'borrow:return', 'borrow:read_all'
   ],
   store_manager: [
     'catalog:read', 'catalog:create', 'catalog:update', 'catalog:edit_price',
     'inventory:read', 'inventory:update',
     'orders:read_all', 'orders:update_status', 'orders:cancel',
-    'reviews:read', 'reviews:moderate', 'reviews:create'
+    'reviews:read', 'reviews:moderate', 'reviews:create',
+    'borrow:read', 'borrow:return', 'borrow:read_all'
   ],
   inventory_clerk: [
     'catalog:read',
-    'inventory:read', 'inventory:update'
+    'inventory:read', 'inventory:update',
+    'borrow:read'
   ],
   content_editor: [
     'catalog:read', 'catalog:create', 'catalog:update',
-    'reviews:read'
+    'reviews:read',
+    'borrow:read'
   ],
   order_fulfillment: [
     'catalog:read',
-    'orders:read_all', 'orders:update_status'
+    'orders:read_all', 'orders:update_status',
+    'borrow:read'
   ],
   support_agent: [
     'catalog:read',
     'orders:read_all', 'orders:cancel', 'orders:refund',
-    'reviews:read'
+    'reviews:read',
+    'borrow:read', 'borrow:return', 'borrow:read_all'
   ],
   book_reviewer: [
     'catalog:read',
-    'reviews:read', 'reviews:moderate', 'reviews:create'
+    'reviews:read', 'reviews:moderate', 'reviews:create',
+    'borrow:read'
   ],
   auditor: [
     'catalog:read',
     'orders:read_all',
     'inventory:read',
     'reviews:read',
-    'audit:read'
+    'audit:read',
+    'borrow:read', 'borrow:read_all'
   ],
   vip_customer: [
     'catalog:read',
     'orders:read_own', 'orders:cancel',
     'reviews:read', 'reviews:create',
-    'discount:vip'
+    'discount:vip',
+    'borrow:read', 'borrow:create', 'borrow:return'
   ],
   standard_customer: [
     'catalog:read',
     'orders:read_own', 'orders:cancel',
-    'reviews:read', 'reviews:create'
+    'reviews:read', 'reviews:create',
+    'borrow:read', 'borrow:create', 'borrow:return'
   ]
 };
 
 export interface User {
   id: string;
   username: string;
-  password: string; // Plaintext or hashed for easy sandbox demo
+  password: string;
   email: string;
   fullName: string;
   role: UserRole;
   avatar: string;
   status: 'active' | 'suspended';
+  currency: Currency;
+  timezone: Timezone;
   createdAt: string;
 }
 
@@ -112,7 +137,7 @@ export interface Book {
   reviewCount: number;
   stock: number;
   pages: number;
-  publicationDate: string; // YYYY-MM-DD
+  publicationDate: string;
   coverImage: string;
   description: string;
   tags: string[];
@@ -185,6 +210,30 @@ export interface Review {
   comment: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
+}
+
+export type BorrowStatus = 'active' | 'returned' | 'overdue' | 'lost';
+
+export interface BorrowRecord {
+  id: string;
+  userId: string;
+  username: string;
+  bookId: string;
+  bookTitle: string;
+  bookCover: string;
+  bookPrice: number; // base price in USD
+  borrowDate: string; // ISO
+  dueDate: string; // ISO (10 days from borrowDate)
+  returnDate: string | null;
+  status: BorrowStatus;
+  standardFee: number; // $2.00 base fee in USD
+  lateFee: number; // $0.10/day overdue
+  lostFee: number; // 2x bookPrice if lost
+  totalFee: number;
+  currency: Currency;
+  timezone: Timezone;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuditLog {

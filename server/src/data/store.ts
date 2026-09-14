@@ -1,4 +1,4 @@
-import { User, Book, Category, Author, Order, Review, AuditLog, OrderStatus } from '../types/index.js';
+import { User, Book, Category, Author, Order, Review, AuditLog, OrderStatus, BorrowRecord, BorrowStatus, Currency, Timezone } from '../types/index.js';
 import {
   INITIAL_USERS,
   INITIAL_CATEGORIES,
@@ -6,7 +6,8 @@ import {
   INITIAL_BOOKS,
   INITIAL_ORDERS,
   INITIAL_REVIEWS,
-  INITIAL_AUDIT_LOGS
+  INITIAL_AUDIT_LOGS,
+  INITIAL_BORROWS
 } from './seedData.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +19,7 @@ class InMemoryStore {
   private orders: Order[] = [];
   private reviews: Review[] = [];
   private auditLogs: AuditLog[] = [];
+  private borrows: BorrowRecord[] = [];
 
   constructor() {
     this.reset();
@@ -31,6 +33,7 @@ class InMemoryStore {
     this.orders = JSON.parse(JSON.stringify(INITIAL_ORDERS));
     this.reviews = JSON.parse(JSON.stringify(INITIAL_REVIEWS));
     this.auditLogs = JSON.parse(JSON.stringify(INITIAL_AUDIT_LOGS));
+    this.borrows = JSON.parse(JSON.stringify(INITIAL_BORROWS));
 
     this.addAuditLog({
       id: `aud_${uuidv4().substring(0, 8)}`,
@@ -41,7 +44,7 @@ class InMemoryStore {
       action: 'DATA_RESET',
       entity: 'Database',
       entityId: 'all',
-      details: 'In-memory test database was reset back to original seed data.',
+      details: 'In-memory test database was reset back to original seed data with borrowing records.',
       ipAddress: '127.0.0.1'
     });
   }
@@ -63,6 +66,18 @@ class InMemoryStore {
     const user = this.users.find(u => u.id === id);
     if (!user) return null;
     user.status = status;
+    return user;
+  }
+
+  public updateUserDetails(id: string, updates: Partial<User>): User | null {
+    const user = this.users.find(u => u.id === id);
+    if (!user) return null;
+    if (updates.fullName !== undefined) user.fullName = updates.fullName;
+    if (updates.email !== undefined) user.email = updates.email;
+    if (updates.role !== undefined) user.role = updates.role;
+    if (updates.status !== undefined) user.status = updates.status;
+    if (updates.currency !== undefined) user.currency = updates.currency;
+    if (updates.timezone !== undefined) user.timezone = updates.timezone;
     return user;
   }
 
@@ -327,6 +342,153 @@ class InMemoryStore {
     if (!book) return null;
     book.stock = Math.max(0, newStock);
     return book;
+  }
+
+  // Borrowing Subsystem
+  public getBorrowRecords(userId?: string, canReadAll?: boolean): BorrowRecord[] {
+    let records = [...this.borrows];
+    if (!canReadAll && userId) {
+      records = records.filter(b => b.userId === userId);
+    }
+    // Update active overdue statuses based on current time
+    const now = Date.now();
+    for (const r of records) {
+      if (r.status === 'active' && new Date(r.dueDate).getTime() < now) {
+        r.status = 'overdue';
+        const overdueDays = Math.ceil((now - new Date(r.dueDate).getTime()) / (86400000));
+        r.lateFee = parseFloat((overdueDays * 0.10).toFixed(2));
+        r.totalFee = parseFloat((r.standardFee + r.lateFee).toFixed(2));
+      }
+    }
+    return records.sort((a, b) => new Date(b.borrowDate).getTime() - new Date(a.borrowDate).getTime());
+  }
+
+  public getBorrowRecordById(id: string): BorrowRecord | undefined {
+    return this.borrows.find(b => b.id === id);
+  }
+
+  public calculateBorrowFee(borrow: BorrowRecord, returnDateIso?: string, isLost?: boolean, isVip?: boolean): {
+    standardFee: number;
+    lateFee: number;
+    lostFee: number;
+    totalFee: number;
+    daysKept: number;
+    overdueDays: number;
+    status: BorrowStatus;
+  } {
+    const borrowTime = new Date(borrow.borrowDate).getTime();
+    const dueTime = new Date(borrow.dueDate).getTime();
+    const returnTime = returnDateIso ? new Date(returnDateIso).getTime() : Date.now();
+
+    const diffMs = returnTime - borrowTime;
+    const daysKept = Math.max(1, Math.ceil(diffMs / 86400000));
+    const overdueMs = returnTime - dueTime;
+    const overdueDays = overdueMs > 0 ? Math.ceil(overdueMs / 86400000) : 0;
+
+    const standardFee = 2.00;
+    const baseDailyLateRate = 0.10;
+
+    let lateFee = 0;
+    let lostFee = 0;
+    let status: BorrowStatus = 'returned';
+
+    if (isLost) {
+      status = 'lost';
+      lostFee = parseFloat((2.0 * borrow.bookPrice).toFixed(2));
+    } else {
+      if (overdueDays > 0) {
+        lateFee = parseFloat((overdueDays * baseDailyLateRate).toFixed(2));
+      }
+    }
+
+    const totalFee = parseFloat((standardFee + lateFee + lostFee).toFixed(2));
+
+    return {
+      standardFee,
+      lateFee,
+      lostFee,
+      totalFee,
+      daysKept,
+      overdueDays,
+      status
+    };
+  }
+
+  public borrowBook(
+    userId: string,
+    username: string,
+    bookId: string,
+    timezone: Timezone = 'America/New_York',
+    currency: Currency = 'USD',
+    isVip = false
+  ): BorrowRecord | { error: string } {
+    const book = this.getBookById(bookId);
+    if (!book) return { error: 'Book not found' };
+    if (book.stock <= 0) return { error: 'Book is currently out of stock for borrowing' };
+
+    // Deduct 1 unit from stock
+    book.stock -= 1;
+
+    const now = new Date();
+    const due = new Date(now.getTime() + 10 * 86400000); // 10 days standard period
+    const standardFee = 2.00;
+
+    const record: BorrowRecord = {
+      id: `brw_${uuidv4().substring(0, 8)}`,
+      userId,
+      username,
+      bookId: book.id,
+      bookTitle: book.title,
+      bookCover: book.coverImage,
+      bookPrice: book.price,
+      borrowDate: now.toISOString(),
+      dueDate: due.toISOString(),
+      returnDate: null,
+      status: 'active',
+      standardFee,
+      lateFee: 0,
+      lostFee: 0,
+      totalFee: standardFee,
+      currency,
+      timezone,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString()
+    };
+
+    this.borrows.unshift(record);
+    return record;
+  }
+
+  public returnBook(
+    borrowId: string,
+    returnDateIso?: string,
+    isLost = false,
+    isVip = false
+  ): BorrowRecord | { error: string } {
+    const record = this.borrows.find(b => b.id === borrowId);
+    if (!record) return { error: 'Borrow record not found' };
+    if (['returned', 'lost'].includes(record.status)) {
+      return { error: `Book loan is already finalized as '${record.status}'.` };
+    }
+
+    const returnTimeIso = returnDateIso || new Date().toISOString();
+    const feeCalculation = this.calculateBorrowFee(record, returnTimeIso, isLost, isVip);
+
+    record.returnDate = returnTimeIso;
+    record.status = feeCalculation.status;
+    record.standardFee = feeCalculation.standardFee;
+    record.lateFee = feeCalculation.lateFee;
+    record.lostFee = feeCalculation.lostFee;
+    record.totalFee = feeCalculation.totalFee;
+    record.updatedAt = new Date().toISOString();
+
+    // If returned and not lost, return stock unit to catalog
+    if (!isLost) {
+      const book = this.getBookById(record.bookId);
+      if (book) book.stock += 1;
+    }
+
+    return record;
   }
 
   // Audit Logs

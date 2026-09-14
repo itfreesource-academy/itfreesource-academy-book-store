@@ -1,3 +1,6 @@
+export type Currency = 'USD' | 'AED' | 'INR' | 'JPY' | 'AUD';
+export type Timezone = 'America/New_York' | 'Asia/Dubai' | 'Asia/Kolkata' | 'Asia/Tokyo' | 'Australia/Sydney';
+
 export type UserRole =
   | 'admin'
   | 'store_manager'
@@ -23,6 +26,9 @@ export type Permission =
   | 'orders:update_status'
   | 'orders:cancel'
   | 'orders:refund'
+  | 'borrow:read'
+  | 'borrow:create'
+  | 'borrow:return'
   | 'reviews:read'
   | 'reviews:moderate'
   | 'reviews:create'
@@ -39,7 +45,32 @@ export interface User {
   role: UserRole;
   avatar: string;
   status: 'active' | 'suspended';
+  timezone?: Timezone;
+  currency?: Currency;
   createdAt: string;
+}
+
+export type BorrowStatus = 'active' | 'returned' | 'lost';
+
+export interface BorrowRecord {
+  id: string;
+  userId: string;
+  username: string;
+  bookId: string;
+  bookTitle: string;
+  coverImage?: string;
+  borrowDate: string;
+  dueDate: string;
+  returnedDate?: string;
+  status: BorrowStatus;
+  standardFee: number;
+  penaltyFee: number;
+  lostFee: number;
+  totalFee: number;
+  currency: Currency;
+  timezone: Timezone;
+  isOverdue?: boolean;
+  daysLate?: number;
 }
 
 export interface Book {

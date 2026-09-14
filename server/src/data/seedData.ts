@@ -1,4 +1,4 @@
-import { User, Book, Category, Author, Order, Review, AuditLog } from '../types/index.js';
+import { User, Book, Category, Author, Order, Review, AuditLog, BorrowRecord } from '../types/index.js';
 
 export const INITIAL_USERS: User[] = [
   {
@@ -10,6 +10,8 @@ export const INITIAL_USERS: User[] = [
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'USD',
+    timezone: 'America/New_York',
     createdAt: '2026-01-01T00:00:00.000Z'
   },
   {
@@ -21,6 +23,8 @@ export const INITIAL_USERS: User[] = [
     role: 'store_manager',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'AED',
+    timezone: 'Asia/Dubai',
     createdAt: '2026-01-05T00:00:00.000Z'
   },
   {
@@ -32,6 +36,8 @@ export const INITIAL_USERS: User[] = [
     role: 'inventory_clerk',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'INR',
+    timezone: 'Asia/Kolkata',
     createdAt: '2026-01-10T00:00:00.000Z'
   },
   {
@@ -43,6 +49,8 @@ export const INITIAL_USERS: User[] = [
     role: 'content_editor',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'JPY',
+    timezone: 'Asia/Tokyo',
     createdAt: '2026-01-12T00:00:00.000Z'
   },
   {
@@ -54,6 +62,8 @@ export const INITIAL_USERS: User[] = [
     role: 'order_fulfillment',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'AUD',
+    timezone: 'Australia/Sydney',
     createdAt: '2026-01-15T00:00:00.000Z'
   },
   {
@@ -65,6 +75,8 @@ export const INITIAL_USERS: User[] = [
     role: 'support_agent',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'AED',
+    timezone: 'Asia/Dubai',
     createdAt: '2026-01-20T00:00:00.000Z'
   },
   {
@@ -76,6 +88,8 @@ export const INITIAL_USERS: User[] = [
     role: 'book_reviewer',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'USD',
+    timezone: 'America/New_York',
     createdAt: '2026-01-25T00:00:00.000Z'
   },
   {
@@ -87,6 +101,8 @@ export const INITIAL_USERS: User[] = [
     role: 'auditor',
     avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'JPY',
+    timezone: 'Asia/Tokyo',
     createdAt: '2026-01-28T00:00:00.000Z'
   },
   {
@@ -98,6 +114,8 @@ export const INITIAL_USERS: User[] = [
     role: 'vip_customer',
     avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'AED',
+    timezone: 'Asia/Dubai',
     createdAt: '2026-02-01T00:00:00.000Z'
   },
   {
@@ -109,6 +127,8 @@ export const INITIAL_USERS: User[] = [
     role: 'standard_customer',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
     status: 'active',
+    currency: 'INR',
+    timezone: 'Asia/Kolkata',
     createdAt: '2026-02-05T00:00:00.000Z'
   }
 ];
@@ -276,7 +296,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 320,
     publicationDate: '2018-10-16',
     coverImage: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&auto=format&fit=crop&q=80',
-    description: 'No matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear, one of the world’s leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.',
+    description: 'No matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear reveals practical strategies to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.',
     tags: ['Habits', 'Self-Improvement', 'Psychology', 'Productivity'],
     isFeatured: true,
     isVipExclusive: false
@@ -297,7 +317,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 464,
     publicationDate: '2014-02-10',
     coverImage: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&auto=format&fit=crop&q=80',
-    description: 'From a renowned historian comes a groundbreaking narrative of humanity’s creation and evolution that explores how biology and history have defined us and enhanced our understanding of what it means to be human.',
+    description: 'From a renowned historian comes a groundbreaking narrative of humanity’s creation and evolution.',
     tags: ['History', 'Anthropology', 'Evolution', 'Philosophy'],
     isFeatured: false,
     isVipExclusive: false
@@ -318,7 +338,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 350,
     publicationDate: '2023-07-15',
     coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=80',
-    description: 'With Learning JavaScript Design Patterns, you’ll explore writing robust, maintainable code through modern design patterns in modern JavaScript and TypeScript including Creational, Structural, and Behavioral patterns.',
+    description: 'Modern design patterns in JavaScript and TypeScript including Creational, Structural, and Behavioral patterns.',
     tags: ['JavaScript', 'Design Patterns', 'TypeScript', 'Web Dev'],
     isFeatured: true,
     isVipExclusive: false
@@ -339,7 +359,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 352,
     publicationDate: '2019-09-13',
     coverImage: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&auto=format&fit=crop&q=80',
-    description: 'The Pragmatic Programmer cuts through the increasing specialization and technicalities of modern software development to examine the core process: taking a requirement and producing working, maintainable code that delights users.',
+    description: 'Examines the core process: taking a requirement and producing working, maintainable code that delights users.',
     tags: ['Career', 'Software Engineering', 'Philosophy', 'Craftsmanship'],
     isFeatured: true,
     isVipExclusive: false
@@ -360,7 +380,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 616,
     publicationDate: '2017-03-16',
     coverImage: 'https://images.unsplash.com/photo-1507842229451-79b1be8d62ee?w=500&auto=format&fit=crop&q=80',
-    description: 'Data is at the center of many challenges in system design today. Difficult issues need to be figured out, such as scalability, consistency, reliability, efficiency, and maintainability. This book helps navigate the diverse and fast-changing landscape of technologies for processing and storing data.',
+    description: 'Data is at the center of many challenges in system design today. Scale, consistency, reliability, efficiency.',
     tags: ['Distributed Systems', 'Databases', 'Architecture', 'Big Data'],
     isFeatured: true,
     isVipExclusive: false
@@ -381,10 +401,10 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 1240,
     publicationDate: '1986-10-01',
     coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=80',
-    description: 'The story of psychohistory, the fall of a twelve-thousand-year-old Galactic Empire, and the colony of scientists and psychologists established at the edge of the galaxy to shorten the coming dark age.',
+    description: 'The story of psychohistory, the fall of a twelve-thousand-year-old Galactic Empire.',
     tags: ['Sci-Fi', 'Space', 'Empire', 'Classics'],
     isFeatured: false,
-    isVipExclusive: true // VIP exclusive book
+    isVipExclusive: true
   },
   {
     id: 'book_010',
@@ -402,7 +422,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 512,
     publicationDate: '2011-10-25',
     coverImage: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=500&auto=format&fit=crop&q=80',
-    description: 'Nobel Prize winner Daniel Kahneman takes us on a groundbreaking tour of the mind and explains the two systems that drive the way we think: System 1 is fast, intuitive, and emotional; System 2 is slower, more deliberative, and more logical.',
+    description: 'Nobel Prize winner Daniel Kahneman takes us on a groundbreaking tour of the mind.',
     tags: ['Psychology', 'Decision Making', 'Cognition', 'Behavioral Economics'],
     isFeatured: false,
     isVipExclusive: false
@@ -423,7 +443,7 @@ export const INITIAL_BOOKS: Book[] = [
     pages: 224,
     publicationDate: '2014-09-16',
     coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&auto=format&fit=crop&q=80',
-    description: 'The great secret of our time is that there are still uncharted frontiers to explore and new inventions to create. In Zero to One, legendary entrepreneur and investor Peter Thiel shows how we can find singular ways to create those new things.',
+    description: 'How to build singular ways to create new things and escape competition.',
     tags: ['Startups', 'Entrepreneurship', 'Venture Capital', 'Business'],
     isFeatured: false,
     isVipExclusive: false
@@ -440,14 +460,59 @@ export const INITIAL_BOOKS: Book[] = [
     originalPrice: 32.00,
     rating: 4.7,
     reviewCount: 420,
-    stock: 8, // Low stock alert test
+    stock: 8,
     pages: 288,
     publicationDate: '1984-07-01',
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop&q=80',
-    description: 'Case was the sharpest data-thief in the matrix—until he crossed the wrong people and they crippled his nervous system. Now a mysterious new employer recruits him for a last-chance run at an unthinkably powerful artificial intelligence.',
+    description: 'Case was the sharpest data-thief in the matrix until his nervous system was crippled.',
     tags: ['Cyberpunk', 'AI', 'Matrix', 'Cult Classic'],
     isFeatured: false,
     isVipExclusive: false
+  }
+];
+
+export const INITIAL_BORROWS: BorrowRecord[] = [
+  {
+    id: 'brw_001',
+    userId: 'usr_010',
+    username: 'standard_customer',
+    bookId: 'book_001',
+    bookTitle: 'Clean Code: A Handbook of Agile Software Craftsmanship',
+    bookCover: 'https://images.unsplash.com/photo-1532012164546-f432f2e37262?w=500&auto=format&fit=crop&q=80',
+    bookPrice: 44.99,
+    borrowDate: '2026-09-10T10:00:00.000Z',
+    dueDate: '2026-09-20T10:00:00.000Z', // 10 days
+    returnDate: null,
+    status: 'active',
+    standardFee: 2.00,
+    lateFee: 0.00,
+    lostFee: 0.00,
+    totalFee: 2.00,
+    currency: 'INR',
+    timezone: 'Asia/Kolkata',
+    createdAt: '2026-09-10T10:00:00.000Z',
+    updatedAt: '2026-09-10T10:00:00.000Z'
+  },
+  {
+    id: 'brw_002',
+    userId: 'usr_009',
+    username: 'vip_customer',
+    bookId: 'book_004',
+    bookTitle: 'Atomic Habits: An Easy & Proven Way to Build Good Habits',
+    bookCover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&auto=format&fit=crop&q=80',
+    bookPrice: 18.99,
+    borrowDate: '2026-08-25T14:00:00.000Z',
+    dueDate: '2026-09-04T14:00:00.000Z', // Due 10 days later
+    returnDate: null,
+    status: 'overdue',
+    standardFee: 1.60, // 20% VIP discount on $2.00 = $1.60
+    lateFee: 0.80, // 10 days overdue * $0.10 - 20% = $0.80
+    lostFee: 0.00,
+    totalFee: 2.40,
+    currency: 'AED',
+    timezone: 'Asia/Dubai',
+    createdAt: '2026-08-25T14:00:00.000Z',
+    updatedAt: '2026-09-14T08:00:00.000Z'
   }
 ];
 
@@ -464,19 +529,12 @@ export const INITIAL_ORDERS: Order[] = [
         price: 44.99,
         quantity: 1,
         coverImage: 'https://images.unsplash.com/photo-1532012164546-f432f2e37262?w=200&auto=format&fit=crop&q=80'
-      },
-      {
-        bookId: 'book_009',
-        title: 'Foundation & Earth: Complete Galactic Empire Boxset',
-        price: 89.99,
-        quantity: 1,
-        coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=200&auto=format&fit=crop&q=80'
       }
     ],
-    subtotal: 134.98,
-    discount: 27.00, // VIP 20% discount
-    tax: 8.64,
-    total: 116.62,
+    subtotal: 44.99,
+    discount: 9.00,
+    tax: 2.88,
+    total: 38.87,
     shippingAddress: {
       fullName: 'Julian Montgomery',
       street: '742 Evergreen Terrace',
@@ -491,39 +549,6 @@ export const INITIAL_ORDERS: Order[] = [
     trackingNumber: 'TRK-98214-WA-FEDEX',
     createdAt: '2026-09-10T14:30:00.000Z',
     updatedAt: '2026-09-12T09:15:00.000Z'
-  },
-  {
-    id: 'ord_002',
-    orderNumber: 'ORD-2026-9002',
-    userId: 'usr_010',
-    username: 'standard_customer',
-    items: [
-      {
-        bookId: 'book_004',
-        title: 'Atomic Habits: An Easy & Proven Way to Build Good Habits',
-        price: 18.99,
-        quantity: 2,
-        coverImage: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&auto=format&fit=crop&q=80'
-      }
-    ],
-    subtotal: 37.98,
-    discount: 0,
-    tax: 3.04,
-    total: 41.02,
-    shippingAddress: {
-      fullName: 'Emma Watson',
-      street: '120 Market Street',
-      city: 'Austin',
-      state: 'TX',
-      zipCode: '78701',
-      country: 'United States'
-    },
-    deliveryDate: '2026-09-22',
-    paymentMethod: 'PayPal Mock',
-    status: 'processing',
-    trackingNumber: 'TRK-Pending-Dispatch',
-    createdAt: '2026-09-13T18:45:00.000Z',
-    updatedAt: '2026-09-13T18:45:00.000Z'
   }
 ];
 
@@ -534,32 +559,10 @@ export const INITIAL_REVIEWS: Review[] = [
     userId: 'usr_007',
     username: 'book_reviewer',
     rating: 5,
-    title: 'Essential reading for any aspiring software craftsman',
-    comment: 'Uncle Bob provides invaluable foundational concepts that every engineer and test automation architect must internalize. Clean functions, descriptive naming, and single responsibility principles shine through.',
+    title: 'Essential reading for any software craftsman',
+    comment: 'Uncle Bob provides invaluable foundational concepts that every engineer and test automation architect must internalize.',
     status: 'approved',
     createdAt: '2026-02-14T11:20:00.000Z'
-  },
-  {
-    id: 'rev_002',
-    bookId: 'book_003',
-    userId: 'usr_009',
-    username: 'vip_customer',
-    rating: 5,
-    title: 'Masterpiece of ecological sci-fi worldbuilding',
-    comment: 'The collector edition has stunning binding and illustrations. Truly the gold standard for science fiction literature.',
-    status: 'approved',
-    createdAt: '2026-03-01T15:10:00.000Z'
-  },
-  {
-    id: 'rev_003',
-    bookId: 'book_006',
-    userId: 'usr_010',
-    username: 'standard_customer',
-    rating: 4,
-    title: 'Practical, well-structured examples for modern frontend engineers',
-    comment: 'Enjoyed the TypeScript implementations of observer and factory patterns. Great companion for test harness architects.',
-    status: 'pending',
-    createdAt: '2026-09-12T16:00:00.000Z'
   }
 ];
 
@@ -573,31 +576,7 @@ export const INITIAL_AUDIT_LOGS: AuditLog[] = [
     action: 'SYSTEM_BOOT',
     entity: 'System',
     entityId: 'sys_root',
-    details: 'ITFreeSource Academy Book Store platform initialized with 10 RBAC personas.',
+    details: 'Platform initialized with 10 RBAC personas, Multi-Currency (USD, AED, INR, JPY, AUD), and Borrowing engine.',
     ipAddress: '127.0.0.1'
-  },
-  {
-    id: 'aud_002',
-    timestamp: '2026-09-14T09:30:00.000Z',
-    userId: 'usr_002',
-    username: 'store_manager',
-    role: 'store_manager',
-    action: 'PRICE_UPDATE',
-    entity: 'Book',
-    entityId: 'book_001',
-    details: 'Updated promotional price for Clean Code from $48.00 to $44.99.',
-    ipAddress: '192.168.1.15'
-  },
-  {
-    id: 'aud_003',
-    timestamp: '2026-09-14T11:15:00.000Z',
-    userId: 'usr_003',
-    username: 'inventory_clerk',
-    role: 'inventory_clerk',
-    action: 'STOCK_RESTOCK',
-    entity: 'Inventory',
-    entityId: 'book_004',
-    details: 'Received batch shipment of 50 units for Atomic Habits.',
-    ipAddress: '192.168.1.22'
   }
 ];

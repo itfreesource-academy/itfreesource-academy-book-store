@@ -8,6 +8,8 @@ import { Modal } from '../components/common/Modal.js';
 import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
+import { useCurrency } from '../context/CurrencyContext.js';
+import { BorrowModal } from '../components/borrow/BorrowModal.js';
 import {
   ShoppingCart,
   Plus,
@@ -19,7 +21,8 @@ import {
   FileText,
   MessageSquare,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  Bookmark
 } from 'lucide-react';
 
 export const BookDetailPage: React.FC = () => {
@@ -29,6 +32,7 @@ export const BookDetailPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'reviews'>('overview');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
 
   // Review Modal State
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -40,6 +44,7 @@ export const BookDetailPage: React.FC = () => {
   const { addToCart, isVip } = useCart();
   const { isAuthenticated, user, hasPermission } = useAuth();
   const { addToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     const fetchBookData = async () => {
@@ -198,12 +203,12 @@ export const BookDetailPage: React.FC = () => {
             {/* Price Section */}
             <div className="flex items-baseline gap-3 mb-6">
               <span data-testid="detail-price" className="text-3xl font-black text-slate-900">
-                ${book.price.toFixed(2)}
+                {formatPrice(book.price)}
               </span>
               {book.originalPrice && book.originalPrice > book.price && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-slate-400 line-through">
-                    ${book.originalPrice.toFixed(2)}
+                    {formatPrice(book.originalPrice)}
                   </span>
                   <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
                     Save {(100 - (book.price / book.originalPrice) * 100).toFixed(0)}%
@@ -220,7 +225,7 @@ export const BookDetailPage: React.FC = () => {
               >
                 <Crown className="w-5 h-5 text-rose-600 flex-shrink-0" />
                 <span>
-                  VIP Customer Benefit: Extra 20% discount applied at checkout! (Final: ${(book.price * 0.8).toFixed(2)})
+                  VIP Customer Benefit: Extra 20% discount applied at checkout! (Final: {formatPrice(book.price * 0.8)})
                 </span>
               </div>
             )}
@@ -250,8 +255,8 @@ export const BookDetailPage: React.FC = () => {
               )}
             </div>
 
-            {/* Quantity Selector & Add to Cart */}
-            <div className="flex flex-wrap items-center gap-4 mt-auto pt-6 border-t border-slate-100">
+            {/* Quantity Selector, Add to Cart & Borrow Button */}
+            <div className="flex flex-wrap items-center gap-3 mt-auto pt-6 border-t border-slate-100">
               <div className="flex items-center border border-slate-300 rounded-xl bg-white p-1">
                 <button
                   type="button"
@@ -282,10 +287,21 @@ export const BookDetailPage: React.FC = () => {
                 onClick={() => addToCart(book, quantity)}
                 disabled={book.stock <= 0}
                 data-testid="detail-add-to-cart-btn"
-                className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                className="flex-1 min-w-[140px] flex items-center justify-center gap-2 py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all disabled:opacity-50 disabled:pointer-events-none"
               >
                 <ShoppingCart className="w-4 h-4" />
-                <span>Add {quantity} to Cart</span>
+                <span>Add to Cart</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsBorrowModalOpen(true)}
+                data-testid="detail-borrow-btn"
+                className="flex items-center justify-center gap-2 py-3 px-5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm"
+                title={`Borrow this book for ${formatPrice(2.00)} for 10 days`}
+              >
+                <Bookmark className="w-4 h-4" />
+                <span>Borrow ({formatPrice(2.00)})</span>
               </button>
             </div>
           </div>
@@ -519,6 +535,15 @@ export const BookDetailPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Borrow Book Confirmation Modal */}
+      {book && (
+        <BorrowModal
+          book={book}
+          isOpen={isBorrowModalOpen}
+          onClose={() => setIsBorrowModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

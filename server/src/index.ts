@@ -17,6 +17,7 @@ import inventoryRoutes from './routes/inventoryRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
 import systemRoutes from './routes/systemRoutes.js';
+import borrowRoutes from './routes/borrowRoutes.js';
 
 dotenv.config();
 
@@ -37,15 +38,28 @@ app.use(express.urlencoded({ extended: true }));
 const uploadDir = path.resolve(process.cwd(), 'uploads');
 app.use('/uploads', express.static(uploadDir));
 
-// Swagger Documentation endpoints
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+// Interactive Swagger UI endpoints with JWT Bearer Auth and Try-It-Out enabled
+const swaggerUiMiddleware = swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'ITFreeSource Academy | Book Store API Docs',
+  customSiteTitle: 'ITFreeSource Academy | Interactive Book Store API Documentation',
   swaggerOptions: {
-    persistAuthorization: true
+    persistAuthorization: true,
+    tryItOutEnabled: true,
+    displayRequestDuration: true,
+    filter: true
   }
-}));
+});
 
+// Primary interactive Swagger UI routes (/api/swagger & /api/swagger.html)
+app.use('/api/swagger', swaggerUi.serve, swaggerUiMiddleware);
+app.get('/api/swagger.html', swaggerUi.serve, swaggerUiMiddleware);
+app.get('/api/swagger.json', (_req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+// Backward compatibility alias for /api/docs
+app.use('/api/docs', swaggerUi.serve, swaggerUiMiddleware);
 app.get('/api/docs.json', (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
@@ -60,6 +74,7 @@ app.use('/api/v1/books', bookRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/authors', authorRoutes);
 app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/borrow', borrowRoutes);
 app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
@@ -84,7 +99,9 @@ if (clientPath) {
     res.json({
       name: 'ITFreeSource Academy Book Store API',
       version: '1.0.0',
-      documentation: '/api/docs',
+      documentation: '/api/swagger',
+      swaggerHtml: '/api/swagger.html',
+      swaggerJson: '/api/swagger.json',
       status: 'online',
       systemReset: 'POST /api/v1/system/reset'
     });
@@ -98,7 +115,8 @@ app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 ITFreeSource Academy Book Store API is live!`);
   console.log(`📡 URL:        http://localhost:${PORT}`);
-  console.log(`📚 Swagger UI: http://localhost:${PORT}/api/docs`);
+  console.log(`📚 Swagger UI: http://localhost:${PORT}/api/swagger`);
+  console.log(`📄 Swagger HTML: http://localhost:${PORT}/api/swagger.html`);
   console.log(`🔄 DB Reset:   POST http://localhost:${PORT}/api/v1/system/reset`);
   console.log(`=======================================================`);
 });
