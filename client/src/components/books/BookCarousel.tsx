@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Book } from '../../types/index.js';
 import { ChevronLeft, ChevronRight, Play, Pause, ShoppingCart, Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext.js';
+import { useCurrency } from '../../context/CurrencyContext.js';
 import { Link } from 'react-router-dom';
 
 interface BookCarouselProps {
@@ -13,6 +14,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
   const [isAutoplay, setIsAutoplay] = useState(true);
   const timerRef = useRef<any>(null);
   const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
 
   const featured = books.filter(b => b.isFeatured || b.isVipExclusive).slice(0, 5);
 
@@ -86,11 +88,11 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
             </div>
             <div className="flex items-baseline gap-2">
               <span data-testid="carousel-book-price" className="text-2xl font-black text-white">
-                ${currentBook.price.toFixed(2)}
+                {formatPrice(currentBook.price)}
               </span>
               {currentBook.originalPrice && (
                 <span className="text-xs text-slate-400 line-through">
-                  ${currentBook.originalPrice.toFixed(2)}
+                  {formatPrice(currentBook.originalPrice)}
                 </span>
               )}
             </div>

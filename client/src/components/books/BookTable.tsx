@@ -3,6 +3,7 @@ import { Book } from '../../types/index.js';
 import { Link } from 'react-router-dom';
 import { Star, Edit, Trash2, Eye, ArrowUpDown, MoreVertical, Download } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
+import { useCurrency } from '../../context/CurrencyContext.js';
 
 interface BookTableProps {
   books: Book[];
@@ -23,6 +24,7 @@ export const BookTable: React.FC<BookTableProps> = ({
 }) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const { hasPermission } = useAuth();
+  const { formatPrice } = useCurrency();
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
@@ -199,8 +201,8 @@ export const BookTable: React.FC<BookTableProps> = ({
                       {book.categoryName}
                     </span>
                   </td>
-                  <td className="py-3 px-3 font-bold text-slate-900">
-                    ${book.price.toFixed(2)}
+                  <td className="py-3 px-3 font-bold text-slate-900" data-testid={`table-price-${book.id}`}>
+                    {formatPrice(book.price)}
                   </td>
                   <td className="py-3 px-3">
                     <div className="flex items-center gap-1 text-amber-500 font-bold">

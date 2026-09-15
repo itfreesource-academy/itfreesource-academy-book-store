@@ -3,6 +3,7 @@ import { useCart } from '../../context/CartContext.js';
 import { Drawer } from '../common/Drawer.js';
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCurrency } from '../../context/CurrencyContext.js';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -18,6 +19,7 @@ export const CartDrawer: React.FC = () => {
     removeFromCart,
     updateQuantity
   } = useCart();
+  const { formatPrice } = useCurrency();
 
   return (
     <Drawer
@@ -79,7 +81,7 @@ export const CartDrawer: React.FC = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-brand-600">
-                      ${item.book.price.toFixed(2)}
+                      {formatPrice(item.book.price)}
                     </span>
                     <div className="flex items-center border border-slate-300 rounded-lg bg-white">
                       <button
@@ -123,21 +125,21 @@ export const CartDrawer: React.FC = () => {
           <div className="pt-4 mt-auto border-t border-slate-200 space-y-2 text-xs" data-testid="cart-summary">
             <div className="flex justify-between text-slate-600">
               <span>Subtotal</span>
-              <span data-testid="cart-subtotal">${subtotal.toFixed(2)}</span>
+              <span data-testid="cart-subtotal">{formatPrice(subtotal)}</span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-rose-600 font-semibold">
                 <span>VIP Discount (20%)</span>
-                <span data-testid="cart-discount">-${discount.toFixed(2)}</span>
+                <span data-testid="cart-discount">-{formatPrice(discount)}</span>
               </div>
             )}
             <div className="flex justify-between text-slate-600">
               <span>Estimated Tax (8%)</span>
-              <span data-testid="cart-tax">${tax.toFixed(2)}</span>
+              <span data-testid="cart-tax">{formatPrice(tax)}</span>
             </div>
             <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-100">
               <span>Order Total</span>
-              <span data-testid="cart-total">${total.toFixed(2)}</span>
+              <span data-testid="cart-total">{formatPrice(total)}</span>
             </div>
 
             <Link

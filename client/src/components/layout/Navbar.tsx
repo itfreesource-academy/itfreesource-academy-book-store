@@ -21,13 +21,10 @@ import {
   ChevronDown,
   RotateCcw,
   Sparkles,
-  Shield,
-  SlidersHorizontal,
   PlusCircle
 } from 'lucide-react';
 import { useCurrency, SUPPORTED_CURRENCIES } from '../../context/CurrencyContext.js';
 import { Currency } from '../../types/index.js';
-import { PersonaSwitchModal } from './PersonaSwitchModal.js';
 import { SellerListingModal } from '../books/SellerListingModal.js';
 import { apiClient } from '../../api/client.js';
 import { useToast } from '../../context/ToastContext.js';
@@ -43,7 +40,6 @@ export const Navbar: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isManageMenuOpen, setIsManageMenuOpen] = useState(false);
   const [isQaMenuOpen, setIsQaMenuOpen] = useState(false);
-  const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
@@ -269,8 +265,9 @@ export const Navbar: React.FC = () => {
                       href="/api/swagger"
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => setIsQaMenuOpen(false)}
+                      onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); setIsQaMenuOpen(false); }}
                       className="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                      data-testid="navbar-swagger-link"
                     >
                       <FileCode2 className="w-4 h-4 text-emerald-500" />
                       <div>
@@ -401,18 +398,6 @@ export const Navbar: React.FC = () => {
                         </Link>
 
                         <button
-                          onClick={() => {
-                            setIsUserMenuOpen(false);
-                            setIsPersonaModalOpen(true);
-                          }}
-                          className="w-full flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-medium text-left"
-                          data-testid="navbar-switch-persona-btn"
-                        >
-                          <SlidersHorizontal className="w-4 h-4 text-indigo-500" />
-                          <span>Switch Persona (QA Sandbox)</span>
-                        </button>
-
-                        <button
                           onClick={handleReset}
                           disabled={isResetting}
                           className="w-full flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-600 font-medium text-left"
@@ -447,14 +432,6 @@ export const Navbar: React.FC = () => {
                     <span>Sign In</span>
                   </Link>
 
-                  <button
-                    onClick={() => setIsPersonaModalOpen(true)}
-                    title="Quick Demo Personas Sandbox"
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
-                    data-testid="navbar-guest-sandbox-btn"
-                  >
-                    <Shield className="w-4 h-4 text-indigo-600" />
-                  </button>
                 </div>
               )}
 
@@ -558,12 +535,11 @@ export const Navbar: React.FC = () => {
               </Link>
               <a
                 href="/api/swagger"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); setIsMobileMenuOpen(false); }}
                 className="block px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 mt-1"
+                data-testid="mobile-swagger-link"
               >
-                Swagger API Documentation
+                Swagger API Documentation ↗
               </a>
               <Link
                 to="/about"
@@ -587,17 +563,6 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-3">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsPersonaModalOpen(true);
-                }}
-                className="text-xs font-bold text-indigo-600 flex items-center gap-1 py-1"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>Switch QA Persona</span>
-              </button>
-
               {isAuthenticated && (
                 <button
                   onClick={handleLogout}
@@ -611,12 +576,6 @@ export const Navbar: React.FC = () => {
           </div>
         )}
       </header>
-
-      {/* Global Persona Switcher Modal */}
-      <PersonaSwitchModal
-        isOpen={isPersonaModalOpen}
-        onClose={() => setIsPersonaModalOpen(false)}
-      />
 
       {/* Marketplace Seller Book Listing Modal */}
       <SellerListingModal

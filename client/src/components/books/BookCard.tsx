@@ -5,14 +5,16 @@ import { StarRating } from '../common/StarRating.js';
 import { useCart } from '../../context/CartContext.js';
 import { useCurrency } from '../../context/CurrencyContext.js';
 import { BorrowModal } from '../borrow/BorrowModal.js';
-import { ShoppingCart, Crown, AlertCircle, Bookmark, Store, Building2, Info } from 'lucide-react';
+import { ShoppingCart, Crown, AlertCircle, Bookmark, Store, Building2, Info, Plus, Minus } from 'lucide-react';
 
 interface BookCardProps {
   book: Book;
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ book }) => {
-  const { addToCart } = useCart();
+  const { addToCart, items, updateQuantity } = useCart();
+  const cartItem = items.find(i => i.book.id === book.id);
+  const cartQty = cartItem ? cartItem.quantity : 0;
   const { formatPrice } = useCurrency();
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
 
@@ -191,18 +193,51 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
                 <span className="hidden sm:inline">Borrow</span>
               </button>
 
-              {/* Add to Cart (Buy to Own) */}
-              <button
-                onClick={() => addToCart(book)}
-                disabled={book.stock <= 0}
-                data-testid={`add-to-cart-btn-${book.id}`}
-                className="px-2.5 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1 text-xs font-bold"
-                title={`Buy to own for ${formatPrice(book.price)}`}
-                aria-label={`Buy ${book.title} to own`}
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Buy</span>
-              </button>
+              {/* Add to Cart / Quantity Stepper (Buy to Own) */}
+              {cartQty > 0 ? (
+                <div
+                  className="flex items-center border border-brand-300 rounded-xl bg-white overflow-hidden"
+                  data-testid={`cart-qty-stepper-${book.id}`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => updateQuantity(book.id, cartQty - 1)}
+                    data-testid={`cart-qty-minus-${book.id}`}
+                    className="px-2 py-1.5 hover:bg-rose-50 text-rose-600 transition-colors"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span
+                    data-testid={`cart-qty-val-${book.id}`}
+                    className="px-2.5 text-xs font-black text-brand-700 min-w-[1.5rem] text-center"
+                  >
+                    {cartQty}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => updateQuantity(book.id, cartQty + 1)}
+                    disabled={cartQty >= book.stock}
+                    data-testid={`cart-qty-plus-${book.id}`}
+                    className="px-2 py-1.5 hover:bg-emerald-50 text-emerald-600 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => addToCart(book)}
+                  disabled={book.stock <= 0}
+                  data-testid={`add-to-cart-btn-${book.id}`}
+                  className="px-2.5 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1 text-xs font-bold"
+                  title={`Buy to own for ${formatPrice(book.price)}`}
+                  aria-label={`Buy ${book.title} to own`}
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Buy</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

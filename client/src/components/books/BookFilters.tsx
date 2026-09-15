@@ -3,6 +3,7 @@ import { Category } from '../../types/index.js';
 import { SearchableSelect } from '../common/SearchableSelect.js';
 import { DualRangeSlider, SingleSlider } from '../common/Slider.js';
 import { Filter, Search, RotateCcw, Crown } from 'lucide-react';
+import { useCurrency, SUPPORTED_CURRENCIES } from '../../context/CurrencyContext.js';
 
 interface BookFiltersProps {
   categories: Category[];
@@ -39,6 +40,8 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
   onVipOnlyChange,
   onReset
 }) => {
+  const { currency } = useCurrency();
+  const currencySymbol = SUPPORTED_CURRENCIES[currency]?.symbol ?? '$';
   const categoryOptions = [
     { value: 'all', label: 'All Categories' },
     ...categories.map(c => ({ value: c.id, label: c.name, badge: `${c.bookCount}` }))
@@ -112,13 +115,13 @@ export const BookFilters: React.FC<BookFiltersProps> = ({
 
       {/* Dual Price Range Slider */}
       <DualRangeSlider
-        label="Price Range ($)"
+        label={`Price Range (${currencySymbol})`}
         min={0}
         max={120}
         minValue={minPrice}
         maxValue={maxPrice}
         step={5}
-        unit="$"
+        unit={currencySymbol}
         onChange={onPriceChange}
         testId="filter-price-slider"
       />

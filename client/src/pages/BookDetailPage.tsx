@@ -44,7 +44,7 @@ export const BookDetailPage: React.FC = () => {
   const [newComment, setNewComment] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  const { addToCart, isVip } = useCart();
+  const { addToCart, isVip, items, updateQuantity } = useCart();
   const { isAuthenticated, user, hasPermission } = useAuth();
   const { addToast } = useToast();
   const { formatPrice } = useCurrency();
@@ -307,6 +307,7 @@ export const BookDetailPage: React.FC = () => {
 
             {/* Quantity Selector, Add to Cart & Borrow Button */}
             <div className="flex flex-wrap items-center gap-3 mt-auto pt-6 border-t border-slate-100">
+              {/* Quantity picker to select how many to add */}
               <div className="flex items-center border border-slate-300 rounded-xl bg-white p-1">
                 <button
                   type="button"
@@ -332,16 +333,54 @@ export const BookDetailPage: React.FC = () => {
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => addToCart(book, quantity)}
-                disabled={book.stock <= 0}
-                data-testid="detail-add-to-cart-btn"
-                className="flex-1 min-w-[140px] flex items-center justify-center gap-2 py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all disabled:opacity-50 disabled:pointer-events-none"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span>Add to Cart</span>
-              </button>
+              {/* Cart stepper or Add to Cart button */}
+              {(() => {
+                const cartItem = items.find(i => i.book.id === book.id);
+                const cartQty = cartItem ? cartItem.quantity : 0;
+                return cartQty > 0 ? (
+                  <div
+                    className="flex items-center border-2 border-brand-500 rounded-xl bg-white overflow-hidden shadow-sm"
+                    data-testid={`cart-qty-stepper-${book.id}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(book.id, cartQty - 1)}
+                      data-testid={`cart-qty-minus-${book.id}`}
+                      className="px-4 py-3 hover:bg-rose-50 text-rose-600 transition-colors font-bold"
+                      aria-label="Remove one from cart"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span
+                      data-testid={`cart-qty-val-${book.id}`}
+                      className="px-4 text-sm font-black text-brand-700 min-w-[2.5rem] text-center"
+                    >
+                      {cartQty} in cart
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(book.id, cartQty + 1)}
+                      disabled={cartQty >= book.stock}
+                      data-testid={`cart-qty-plus-${book.id}`}
+                      className="px-4 py-3 hover:bg-emerald-50 text-emerald-600 transition-colors font-bold disabled:opacity-40 disabled:pointer-events-none"
+                      aria-label="Add one more to cart"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => addToCart(book, quantity)}
+                    disabled={book.stock <= 0}
+                    data-testid="detail-add-to-cart-btn"
+                    className="flex-1 min-w-[140px] flex items-center justify-center gap-2 py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    <span>Add to Cart</span>
+                  </button>
+                );
+              })()}
 
               <button
                 type="button"

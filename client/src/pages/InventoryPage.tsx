@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
 import { exportToCsv } from '../utils/csvHelper.js';
 import { BulkImportModal } from '../components/common/BulkImportModal.js';
+import { useCurrency } from '../context/CurrencyContext.js';
 import {
   Layers,
   AlertTriangle,
@@ -33,6 +34,7 @@ export const InventoryPage: React.FC = () => {
 
   const { hasPermission } = useAuth();
   const { addToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const fetchInventory = useCallback(async () => {
     setLoading(true);
@@ -214,7 +216,7 @@ export const InventoryPage: React.FC = () => {
                         {item.categoryName}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-900">${item.price.toFixed(2)}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900" data-testid={`inv-price-${item.id}`}>{formatPrice(item.price)}</td>
                     <td className="py-3 px-4">
                       <span
                         data-testid={`stock-status-pill-${item.id}`}

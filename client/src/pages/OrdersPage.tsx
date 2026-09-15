@@ -6,6 +6,7 @@ import { DateRangePicker } from '../components/common/DateRangePicker.js';
 import { Modal } from '../components/common/Modal.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
+import { useCurrency } from '../context/CurrencyContext.js';
 import {
   Package,
   Clock,
@@ -36,6 +37,7 @@ export const OrdersPage: React.FC = () => {
 
   const { user, hasPermission } = useAuth();
   const { addToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -204,8 +206,8 @@ export const OrdersPage: React.FC = () => {
                     <td className="py-3 px-4">
                       <span className="font-semibold text-slate-800">{order.items.length} items</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-900">
-                      ${order.total.toFixed(2)}
+                    <td className="py-3 px-4 font-bold text-slate-900" data-testid={`order-total-${order.id}`}>
+                      {formatPrice(order.total)}
                     </td>
                     <td className="py-3 px-4">
                       {getStatusBadge(order.status)}
@@ -322,7 +324,7 @@ export const OrdersPage: React.FC = () => {
                         <span className="text-slate-400">Qty: {it.quantity}</span>
                       </div>
                     </div>
-                    <span className="font-bold text-slate-900">${(it.price * it.quantity).toFixed(2)}</span>
+                    <span className="font-bold text-slate-900">{formatPrice(it.price * it.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -330,7 +332,7 @@ export const OrdersPage: React.FC = () => {
 
             <div className="pt-3 border-t border-slate-100 flex justify-between font-black text-sm">
               <span>Total Paid:</span>
-              <span className="text-brand-600">${selectedOrder.total.toFixed(2)}</span>
+              <span className="text-brand-600">{formatPrice(selectedOrder.total)}</span>
             </div>
           </div>
         </Modal>

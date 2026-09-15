@@ -149,6 +149,7 @@ const swaggerHtml = `<!DOCTYPE html>
 </html>`;
 
 app.get('/api/swagger', (c) => c.html(swaggerHtml));
+app.get('/api/swagger/', (c) => c.html(swaggerHtml));
 app.get('/api/swagger.html', (c) => c.redirect('/api/swagger', 301));
 app.get('/api/docs', (c) => c.redirect('/api/swagger', 301));
 app.get('/api/docs/', (c) => c.redirect('/api/swagger', 301));

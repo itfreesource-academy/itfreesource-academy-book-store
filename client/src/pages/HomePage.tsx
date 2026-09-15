@@ -216,13 +216,12 @@ export const HomePage: React.FC = () => {
             </Link>
             <a
               href="/api/swagger"
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); }}
               data-testid="home-cta-swagger"
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/10 transition-all flex items-center gap-2"
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/10 transition-all flex items-center gap-2 cursor-pointer"
             >
               <FileCode2 className="w-4 h-4" />
-              <span>View Swagger UI</span>
+              <span>View Swagger UI ↗</span>
             </a>
           </div>
         </div>

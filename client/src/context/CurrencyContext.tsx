@@ -61,6 +61,8 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
   });
 
   // Automatically adapt to logged-in user persona's timezone & currency
+  // Depends on user?.id so it only fires on actual identity change (login/logout/switch),
+  // not on every re-render where the `user` object reference may differ.
   useEffect(() => {
     if (user) {
       if (user.currency && SUPPORTED_CURRENCIES[user.currency]) {
@@ -72,7 +74,7 @@ export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }
         localStorage.setItem('app_timezone', user.timezone);
       }
     }
-  }, [user]);
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setCurrency = (newCurrency: Currency) => {
     setCurrencyState(newCurrency);

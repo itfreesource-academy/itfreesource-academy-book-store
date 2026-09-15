@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
+import { useCurrency } from '../context/CurrencyContext.js';
 import { apiClient } from '../api/client.js';
 import { Breadcrumbs } from '../components/common/Breadcrumbs.js';
 import { DatePicker } from '../components/common/DatePicker.js';
@@ -22,6 +23,7 @@ export const CartCheckoutPage: React.FC = () => {
   const { items, subtotal, discount, tax, total, isVip, removeFromCart, updateQuantity, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const { addToast } = useToast();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
@@ -223,7 +225,7 @@ export const CartCheckoutPage: React.FC = () => {
                         <div>
                           <h4 className="font-bold text-slate-900">{item.book.title}</h4>
                           <span className="text-slate-500">{item.book.authorName}</span>
-                          <div className="font-bold text-brand-600 mt-1">${item.book.price.toFixed(2)} each</div>
+                          <div className="font-bold text-brand-600 mt-1">{formatPrice(item.book.price)} each</div>
                         </div>
                       </div>
 
@@ -426,7 +428,7 @@ export const CartCheckoutPage: React.FC = () => {
                     className="flex items-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>{isSubmitting ? 'Placing Order...' : `Authorize & Pay $${total.toFixed(2)}`}</span>
+                    <span>{isSubmitting ? 'Placing Order...' : `Authorize & Pay ${formatPrice(total)}`}</span>
                   </button>
                 </div>
               </div>
@@ -450,17 +452,17 @@ export const CartCheckoutPage: React.FC = () => {
               <div className="space-y-2 text-slate-600">
                 <div className="flex justify-between">
                   <span>Subtotal ({items.length} items)</span>
-                  <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-slate-900">{formatPrice(subtotal)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-rose-600 font-semibold">
                     <span>VIP Member Discount</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Sales Tax (8%)</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>{formatPrice(tax)}</span>
                 </div>
                 <div className="flex justify-between text-emerald-600">
                   <span>Standard Shipping</span>
@@ -471,7 +473,7 @@ export const CartCheckoutPage: React.FC = () => {
               <div className="pt-3 border-t border-slate-100 flex justify-between items-baseline font-black text-slate-900">
                 <span className="text-sm">Total Due</span>
                 <span className="text-lg text-brand-600" data-testid="checkout-final-total">
-                  ${total.toFixed(2)}
+                  {formatPrice(total)}
                 </span>
               </div>
             </div>
