@@ -4,7 +4,7 @@
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-green?logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4.21-lightgrey?logo=express)](https://expressjs.com/)
-[![Swagger](https://img.shields.io/badge/OpenAPI_3.0-Swagger_UI-85EA2D?logo=swagger)](http://localhost:5000/api/docs)
+[![Swagger](https://img.shields.io/badge/OpenAPI_3.0-Swagger_UI-85EA2D?logo=swagger)](http://localhost:5000/api/swagger)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
@@ -21,7 +21,7 @@ Repository: [github.com/itfreesource-academy/itfreesource-academy-book-store](ht
 ```mermaid
 graph TD
     Client["React 19 SPA (Vite + Tailwind CSS)<br/>• 1-Click Role Switcher<br/>• QA Testing Sandbox<br/>• Catalog, Cart, Orders, Inventory"]
-    Server["Express.js Server (TypeScript)<br/>• OpenAPI 3.0 (Swagger UI at /api/docs)<br/>• JWT Auth & RBAC Middleware<br/>• Latency & Fault Injector"]
+    Server["Express.js Server (TypeScript)<br/>• OpenAPI 3.0 (Swagger UI at /api/swagger)<br/>• JWT Auth & RBAC Middleware<br/>• Latency & Fault Injector"]
     DB[("In-Memory Store<br/>• 25+ Seed Books & Authors<br/>• 10 Preconfigured Users<br/>• POST /api/v1/system/reset")]
 
     Client -->|REST & JWT| Server

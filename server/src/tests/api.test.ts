@@ -31,6 +31,25 @@ describe('HTTP API Endpoints Integration Tests (Supertest)', () => {
       expect(res.body.info.title).toContain('ITFreeSource Academy');
     });
 
+    it('GET /api/swagger/ serves interactive Swagger UI HTML', async () => {
+      const res = await request(app).get('/api/swagger/');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/text\/html/);
+      expect(res.text).toContain('swagger-ui');
+    });
+
+    it('GET /api/swagger.html serves interactive Swagger UI HTML', async () => {
+      const res = await request(app).get('/api/swagger.html');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toMatch(/text\/html/);
+    });
+
+    it('GET /api/docs redirects with 301 to unified /api/swagger', async () => {
+      const res = await request(app).get('/api/docs');
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe('/api/swagger');
+    });
+
     it('GET /api/v1/system/health returns healthy system status', async () => {
       const res = await request(app).get('/api/v1/system/health');
       expect(res.status).toBe(200);

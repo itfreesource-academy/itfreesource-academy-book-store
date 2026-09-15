@@ -193,7 +193,7 @@ export const HomePage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Full OpenAPI 3.0 Swagger at /api/docs</span>
+              <span>Full OpenAPI 3.0 Swagger at /api/swagger</span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -215,7 +215,7 @@ export const HomePage: React.FC = () => {
               <span>Explore QA Sandbox</span>
             </Link>
             <a
-              href="/api/docs"
+              href="/api/swagger"
               target="_blank"
               rel="noopener noreferrer"
               data-testid="home-cta-swagger"

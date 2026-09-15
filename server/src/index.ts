@@ -65,6 +65,7 @@ const swaggerUiMiddleware = swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'ITFreeSource Academy | Interactive Book Store API Documentation',
   swaggerOptions: {
+    url: '/api/swagger.json',
     persistAuthorization: true,
     tryItOutEnabled: true,
     displayRequestDuration: true,
@@ -72,20 +73,19 @@ const swaggerUiMiddleware = swaggerUi.setup(swaggerSpec, {
   }
 });
 
-// Primary interactive Swagger UI routes (/api/swagger & /api/swagger.html)
-app.use('/api/swagger', swaggerUi.serve, swaggerUiMiddleware);
-app.get('/api/swagger.html', swaggerUi.serve, swaggerUiMiddleware);
+// Single unified Swagger endpoint (/api/swagger) with two options:
+// 1. /api/swagger.json -> Raw OpenAPI 3.0 specification JSON
+// 2. /api/swagger or /api/swagger.html -> Interactive Swagger UI HTML
 app.get('/api/swagger.json', (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
+app.use('/api/swagger', swaggerUi.serve, swaggerUiMiddleware);
+app.get('/api/swagger.html', swaggerUi.serve, swaggerUiMiddleware);
 
-// Backward compatibility alias for /api/docs
-app.use('/api/docs', swaggerUi.serve, swaggerUiMiddleware);
-app.get('/api/docs.json', (_req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
-});
+// 301 Permanent Redirects for legacy /api/docs to unified /api/swagger
+app.get(['/api/docs', '/api/docs/'], (_req, res) => res.redirect(301, '/api/swagger'));
+app.get('/api/docs.json', (_req, res) => res.redirect(301, '/api/swagger.json'));
 
 // Network latency simulator middleware for all /api routes
 app.use('/api', latencySimulator);
@@ -147,9 +147,9 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`=======================================================`);
     console.log(`🚀 ITFreeSource Academy Book Store API is live!`);
     console.log(`📡 URL:        http://localhost:${PORT}`);
-    console.log(`📚 Swagger UI: http://localhost:${PORT}/api/swagger`);
-    console.log(`📄 Swagger HTML: http://localhost:${PORT}/api/swagger.html`);
-    console.log(`🔄 DB Reset:   POST http://localhost:${PORT}/api/v1/system/reset`);
+    console.log(`📚 Swagger UI:   http://localhost:${PORT}/api/swagger (or /api/swagger.html)`);
+    console.log(`📄 Swagger JSON: http://localhost:${PORT}/api/swagger.json`);
+    console.log(`🔄 DB Reset:     POST http://localhost:${PORT}/api/v1/system/reset`);
     console.log(`=======================================================`);
   });
 }
