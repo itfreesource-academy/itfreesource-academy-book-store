@@ -38,10 +38,10 @@ describe('HTTP API Endpoints Integration Tests (Supertest)', () => {
       expect(res.text).toContain('swagger-ui');
     });
 
-    it('GET /api/swagger.html serves interactive Swagger UI HTML', async () => {
+    it('GET /api/swagger.html redirects with 301 to canonical /api/swagger', async () => {
       const res = await request(app).get('/api/swagger.html');
-      expect(res.status).toBe(200);
-      expect(res.headers['content-type']).toMatch(/text\/html/);
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe('/api/swagger');
     });
 
     it('GET /api/docs redirects with 301 to unified /api/swagger', async () => {

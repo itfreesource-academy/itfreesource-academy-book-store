@@ -28,7 +28,7 @@ graph TD
     Server -->|Read / Write / Mutate| DB
 ```
 
-- **Interactive Swagger 3.0 Documentation**: Live at `http://localhost:5000/api/swagger` (and `http://localhost:5000/api/swagger.html`) with in-browser JWT Authorization modal and raw spec at `/api/swagger.json`.
+- **Interactive Swagger 3.0 Documentation**: Live at `http://localhost:5000/api/swagger` with in-browser JWT Authorization modal and raw spec at `/api/swagger.json`.
 - **Postman Ready**: 1-click import from `http://localhost:5000/api/swagger.json` or load `postman/itfreesource-bookstore.postman_collection.json` with pre-configured auto JWT token capture.
 - **Book Borrowing & Multi-Timezone/Currency Engine**: 10-day rental for $2.00, $0.10/day overdue penalty, 2x price lost replacement penalty, and dynamic conversion across 5 currencies (USD, AED, INR, JPY, AUD) and 5 regional timezones.
 - **Admin User Management**: Modify user name, role, email, status, timezone, and currency directly from UI or `PUT /api/v1/auth/users/:id`.
@@ -118,7 +118,7 @@ npm run dev
 ```
 - **Frontend SPA (Vite)**: [`http://localhost:5173`](http://localhost:5173)
 - **Backend REST API**: `http://localhost:5000/api/v1`
-- **Interactive Swagger UI**: [`http://localhost:5000/api/swagger`](http://localhost:5000/api/swagger) (also at `/api/swagger.html`)
+- **Interactive Swagger UI**: [`http://localhost:5000/api/swagger`](http://localhost:5000/api/swagger)
 - **OpenAPI 3.0 JSON Spec**: [`http://localhost:5000/api/swagger.json`](http://localhost:5000/api/swagger.json)
 
 ### 3. Production / Standalone Mode (Single Port)
