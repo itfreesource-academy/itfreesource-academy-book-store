@@ -8,19 +8,25 @@
     "type": "git",
     "url": "https://github.com/itfreesource-academy/itfreesource-academy-book-store.git"
   },
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "scripts": {
-    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "prebuild": "npm --prefix server install --prefer-offline --no-audit && npm --prefix client install --prefer-offline --no-audit",
+    "install:all": "npm install",
     "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run server:dev\" \"npm run client:dev\"",
     "server:dev": "npm --prefix server run dev",
     "client:dev": "npm --prefix client run dev",
-    "build": "npm --prefix server run build && npm --prefix client run build",
-    "server:build": "npm --prefix server run build",
-    "client:build": "npm --prefix client run build",
+    "build": "npm --prefix server run build && npm --prefix client run build && node -e \"const fs=require('fs'); if(fs.existsSync('client/dist')){fs.cpSync('client/dist', 'dist', {recursive: true});}\"",
+    "build:client": "npm --prefix client run build && node -e \"const fs=require('fs'); if(fs.existsSync('client/dist')){fs.cpSync('client/dist', 'dist', {recursive: true});}\"",
+    "build:server": "npm --prefix server run build",
     "test": "npm --prefix server run test",
     "test:coverage": "npm --prefix server run test:coverage",
     "start": "node server/dist/index.js"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.2"
   }
 }
