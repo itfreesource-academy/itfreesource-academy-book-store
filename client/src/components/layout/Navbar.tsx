@@ -261,11 +261,9 @@ export const Navbar: React.FC = () => {
                         <div className="text-[10px] text-slate-400">Live Istanbul & Newman stats</div>
                       </div>
                     </Link>
-                    <a
-                      href="/api/swagger"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); setIsQaMenuOpen(false); }}
+                    <Link
+                      to="/swagger"
+                      onClick={() => setIsQaMenuOpen(false)}
                       className="flex items-center gap-2 px-3.5 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
                       data-testid="navbar-swagger-link"
                     >
@@ -274,7 +272,7 @@ export const Navbar: React.FC = () => {
                         <div className="font-bold">Swagger API Docs</div>
                         <div className="text-[10px] text-slate-400">Interactive OpenAPI 3.0</div>
                       </div>
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -533,14 +531,14 @@ export const Navbar: React.FC = () => {
               >
                 Test Coverage & Automation Reports
               </Link>
-              <a
-                href="/api/swagger"
-                onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); setIsMobileMenuOpen(false); }}
+              <Link
+                to="/swagger"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 mt-1"
                 data-testid="mobile-swagger-link"
               >
-                Swagger API Documentation ↗
-              </a>
+                Swagger API Documentation
+              </Link>
               <Link
                 to="/about"
                 onClick={() => setIsMobileMenuOpen(false)}

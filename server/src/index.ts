@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
 import { latencySimulator } from './middleware/latency.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -60,27 +59,53 @@ const candidateCoverageDirs = [
 const coverageDir = candidateCoverageDirs.find(dir => fs.existsSync(dir)) || path.resolve(process.cwd(), 'coverage');
 app.use('/reports/coverage', express.static(coverageDir));
 
-// Interactive Swagger UI endpoints with JWT Bearer Auth and Try-It-Out enabled
-const swaggerUiMiddleware = swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'ITFreeSource Academy | Interactive Book Store API Documentation',
-  swaggerOptions: {
-    url: '/api/swagger.json',
-    persistAuthorization: true,
-    tryItOutEnabled: true,
-    displayRequestDuration: true,
-    filter: true
-  }
-});
+// Self-contained Swagger UI HTML with CDN assets (guarantees zero missing asset 404 errors)
+const swaggerHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ITFreeSource Academy | Interactive Book Store API Documentation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css" />
+  <style>
+    .swagger-ui .topbar { display: none }
+    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #fafafa; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js" crossorigin="anonymous"></script>
+  <script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        url: '/api/swagger.json',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout",
+        persistAuthorization: true,
+        tryItOutEnabled: true,
+        displayRequestDuration: true,
+        filter: true
+      });
+    };
+  </script>
+</body>
+</html>`;
 
-// Single unified Swagger endpoint (/api/swagger):
-// 1. /api/swagger.json -> Raw OpenAPI 3.0 specification JSON
-// 2. /api/swagger      -> Interactive Swagger UI (HTML default)
 app.get('/api/swagger.json', (_req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
-app.use('/api/swagger', swaggerUi.serve, swaggerUiMiddleware);
+
+app.get(['/api/swagger', '/api/swagger/'], (_req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(swaggerHtml);
+});
 
 // 301 Permanent Redirects for legacy aliases (/api/swagger.html, /api/docs) to /api/swagger
 app.get(['/api/swagger.html', '/api/docs', '/api/docs/'], (_req, res) => res.redirect(301, '/api/swagger'));

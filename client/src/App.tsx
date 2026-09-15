@@ -22,6 +22,7 @@ import { LoginPage } from './pages/LoginPage.js';
 import { PlaygroundPage } from './pages/PlaygroundPage.js';
 import { CoverageDashboardPage } from './pages/CoverageDashboardPage.js';
 import { AboutPage } from './pages/AboutPage.js';
+import { SwaggerPage } from './pages/SwaggerPage.js';
 
 export const App: React.FC = () => {
   return (
@@ -54,6 +55,9 @@ export const App: React.FC = () => {
                     <Route path="/playground" element={<PlaygroundPage />} />
                     <Route path="/coverage" element={<CoverageDashboardPage />} />
                     <Route path="/about" element={<AboutPage />} />
+                    <Route path="/swagger" element={<SwaggerPage />} />
+                    <Route path="/docs" element={<SwaggerPage />} />
+                    <Route path="/api/swagger" element={<SwaggerPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

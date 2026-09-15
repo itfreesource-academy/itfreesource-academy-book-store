@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BookOpen, Github, ExternalLink, ShieldCheck, Terminal, Heart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -28,15 +29,14 @@ export const Footer: React.FC = () => {
               >
                 <Github className="w-5 h-5" />
               </a>
-              <a
-                href="/api/swagger"
-                onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); }}
+              <Link
+                to="/swagger"
                 className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                 aria-label="Swagger Documentation"
                 data-testid="footer-swagger-link"
               >
                 <ExternalLink className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -74,15 +74,14 @@ export const Footer: React.FC = () => {
             <p className="text-xs text-slate-400 mb-3 leading-relaxed">
               Explore and test all RESTful CRUD endpoints interactively in the Swagger UI.
             </p>
-            <a
-              href="/api/swagger"
-              onClick={(e) => { e.preventDefault(); window.open('/api/swagger', '_blank', 'noopener,noreferrer'); }}
+            <Link
+              to="/swagger"
               data-testid="footer-swagger-badge"
               className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600 hover:text-white border border-emerald-500/30 text-xs font-semibold transition-all cursor-pointer"
             >
-              <span>Launch Swagger UI ↗</span>
+              <span>Launch Swagger UI</span>
               <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            </Link>
           </div>
         </div>
 
