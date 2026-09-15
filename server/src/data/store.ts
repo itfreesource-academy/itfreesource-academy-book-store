@@ -22,10 +22,10 @@ class InMemoryStore {
   private borrows: BorrowRecord[] = [];
 
   constructor() {
-    this.reset();
+    this.reset(true);
   }
 
-  public reset(): void {
+  public reset(isInitial = false): void {
     this.users = JSON.parse(JSON.stringify(INITIAL_USERS));
     this.categories = JSON.parse(JSON.stringify(INITIAL_CATEGORIES));
     this.authors = JSON.parse(JSON.stringify(INITIAL_AUTHORS));
@@ -36,7 +36,7 @@ class InMemoryStore {
     this.borrows = JSON.parse(JSON.stringify(INITIAL_BORROWS));
 
     this.addAuditLog({
-      id: `aud_${uuidv4().substring(0, 8)}`,
+      id: isInitial ? 'aud_seed_init' : `aud_${uuidv4().substring(0, 8)}`,
       timestamp: new Date().toISOString(),
       userId: 'sys_000',
       username: 'SYSTEM',

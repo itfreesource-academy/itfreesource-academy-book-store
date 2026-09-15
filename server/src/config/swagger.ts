@@ -1,7 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
-const options: swaggerJsdoc.Options = {
-  definition: {
+export const swaggerDefinition = {
     openapi: '3.0.3',
     info: {
       title: 'ITFreeSource Academy - Book Store Platform API',
@@ -410,7 +409,10 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
         }
       }
     }
-  },
+  };
+
+const options: swaggerJsdoc.Options = {
+  definition: swaggerDefinition as any,
   apis: []
 };
 
