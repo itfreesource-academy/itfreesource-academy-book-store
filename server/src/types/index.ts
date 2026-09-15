@@ -293,3 +293,73 @@ export interface MicroserviceHealth {
   faultType?: '500_error' | '503_unavailable' | 'high_latency';
 }
 
+// Kafka Types for QA/SDET Streaming Lab
+export interface KafkaMessage {
+  id: string;
+  topic: string;
+  partition: number;
+  offset: number;
+  timestamp: string;
+  key: string | null;
+  value: any;
+  headers?: Record<string, string>;
+}
+
+export interface KafkaTopicInfo {
+  name: string;
+  partitions: number;
+  messageCount: number;
+  earliestOffset: number;
+  latestOffset: number;
+  description: string;
+}
+
+export interface KafkaConsumerGroup {
+  groupId: string;
+  topic: string;
+  committedOffset: number;
+  latestOffset: number;
+  lag: number;
+  status: 'active' | 'lagging' | 'stalled';
+  lastPolledAt: string;
+}
+
+// Enterprise Webhooks Types for QA/SDET Test Automation
+export interface WebhookSubscription {
+  id: string;
+  url: string;
+  events: string[];
+  secret: string;
+  active: boolean;
+  description?: string;
+  createdAt: string;
+}
+
+export interface WebhookDelivery {
+  id: string;
+  subscriptionId: string;
+  url: string;
+  event: string;
+  payload: any;
+  signature: string;
+  statusCode: number;
+  status: 'delivered' | 'failed' | 'retrying';
+  attempts: number;
+  latencyMs: number;
+  responseBody?: string;
+  error?: string;
+  timestamp: string;
+}
+
+export interface MockWebhookEvent {
+  id: string;
+  receivedAt: string;
+  event: string;
+  deliveryId: string;
+  signature: string;
+  isValidSignature: boolean;
+  headers: Record<string, string>;
+  payload: any;
+}
+
+

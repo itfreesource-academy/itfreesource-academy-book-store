@@ -2,6 +2,8 @@ import { Router, Response } from 'express';
 import { store } from '../data/store.js';
 import { authenticateToken, requirePermission, AuthenticatedRequest } from '../middleware/auth.js';
 import { ROLE_PERMISSIONS, OrderStatus } from '../types/index.js';
+import { kafkaBroker } from '../services/kafkaBroker.js';
+import { webhookService } from '../services/webhookService.js';
 
 const router = Router();
 
@@ -101,6 +103,38 @@ router.post('/', authenticateToken, (req: AuthenticatedRequest, res: Response): 
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
 
+  // Asynchronous Kafka Event Streaming
+  kafkaBroker.produce(
+    'bookstore.orders.created',
+    {
+      orderId: newOrder.id,
+      orderNumber: newOrder.orderNumber,
+      userId: newOrder.userId,
+      username: newOrder.username,
+      items: newOrder.items,
+      subtotal: newOrder.subtotal,
+      tax: newOrder.tax,
+      discount: newOrder.discount,
+      total: newOrder.total,
+      shippingAddress: newOrder.shippingAddress,
+      paymentMethod: newOrder.paymentMethod,
+      status: newOrder.status
+    },
+    newOrder.userId,
+    { 'event-type': 'ORDER_CREATED', 'x-source': 'orders-service' }
+  );
+
+  // Asynchronous Webhook Dispatch
+  webhookService.dispatch('order:created', {
+    orderId: newOrder.id,
+    orderNumber: newOrder.orderNumber,
+    customer: newOrder.username,
+    total: newOrder.total,
+    currency: 'USD',
+    status: newOrder.status,
+    itemsCount: newOrder.items.length
+  }).catch(() => {});
+
   res.status(201).json({ success: true, order: newOrder });
 });
 
@@ -133,6 +167,27 @@ router.patch('/:id/status', authenticateToken, requirePermission('orders:update_
     details: `Updated order ${updated.orderNumber} status to "${status}". Tracking: ${trackingNumber || 'N/A'}`,
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
+
+  kafkaBroker.produce(
+    'bookstore.orders.created',
+    {
+      orderId: updated.id,
+      orderNumber: updated.orderNumber,
+      status: updated.status,
+      trackingNumber: updated.trackingNumber,
+      action: 'ORDER_STATUS_CHANGED'
+    },
+    updated.userId,
+    { 'event-type': 'ORDER_STATUS_UPDATED' }
+  );
+
+  webhookService.dispatch('order:status_changed', {
+    orderId: updated.id,
+    orderNumber: updated.orderNumber,
+    newStatus: updated.status,
+    trackingNumber: updated.trackingNumber,
+    updatedAt: new Date().toISOString()
+  }).catch(() => {});
 
   res.json({ success: true, order: updated });
 });
@@ -178,6 +233,13 @@ router.post('/:id/cancel', authenticateToken, (req: AuthenticatedRequest, res: R
     details: `Order ${order.orderNumber} was cancelled by ${user.username}.`,
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
+
+  webhookService.dispatch('order:cancelled', {
+    orderId: updated?.id || id,
+    orderNumber: order.orderNumber,
+    cancelledBy: user.username,
+    cancelledAt: new Date().toISOString()
+  }).catch(() => {});
 
   res.json({ success: true, order: updated });
 });

@@ -20,6 +20,8 @@ import auditRoutes from './routes/auditRoutes.js';
 import systemRoutes from './routes/systemRoutes.js';
 import borrowRoutes from './routes/borrowRoutes.js';
 import coverageRoutes from './routes/coverageRoutes.js';
+import kafkaRoutes from './routes/kafkaRoutes.js';
+import webhookRoutes from './routes/webhookRoutes.js';
 
 dotenv.config();
 
@@ -126,6 +128,8 @@ app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);
 app.use('/api/v1/system', systemRoutes);
 app.use('/api/v1/coverage', coverageRoutes);
+app.use('/api/v1/kafka', kafkaRoutes);
+app.use('/api/v1/webhooks', webhookRoutes);
 
 // In production or if client build exists, serve static React frontend
 const candidateClientDirs = [

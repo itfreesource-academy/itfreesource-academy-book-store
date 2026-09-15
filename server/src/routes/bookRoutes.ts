@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { store } from '../data/store.js';
 import { authenticateToken, optionalAuthenticateToken, requirePermission, AuthenticatedRequest } from '../middleware/auth.js';
 import { ROLE_PERMISSIONS } from '../types/index.js';
+import { kafkaBroker } from '../services/kafkaBroker.js';
+import { webhookService } from '../services/webhookService.js';
 
 const router = Router();
 
@@ -152,6 +154,39 @@ router.put('/:id', authenticateToken, requirePermission('catalog:update'), (req:
   if (updates.stock) updates.stock = parseInt(updates.stock, 10);
 
   const updated = store.updateBook(id, updates);
+
+  if (updates.price !== undefined && updates.price !== existing.price) {
+    kafkaBroker.produce(
+      'bookstore.pricing.updated',
+      {
+        bookId: id,
+        title: existing.title,
+        previousPrice: existing.price,
+        newPrice: updates.price,
+        changedBy: req.user!.username,
+        updatedAt: new Date().toISOString()
+      },
+      id,
+      { 'event-type': 'PRICE_MODIFIED' }
+    );
+
+    webhookService.dispatch('price:changed', {
+      bookId: id,
+      title: existing.title,
+      oldPrice: existing.price,
+      newPrice: updates.price,
+      changedBy: req.user!.username
+    }).catch(() => {});
+  }
+
+  if (updates.stock !== undefined && updates.stock <= 5) {
+    webhookService.dispatch('inventory:low_stock', {
+      bookId: id,
+      title: existing.title,
+      currentStock: updates.stock,
+      threshold: 5
+    }).catch(() => {});
+  }
 
   store.addAuditLog({
     id: `aud_${Date.now().toString(36)}`,

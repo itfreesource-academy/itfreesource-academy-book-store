@@ -11,6 +11,8 @@ import {
   OrderStatus
 } from './server/src/types/index.js';
 import { swaggerDefinition } from './server/src/config/swagger.js';
+import { kafkaBroker } from './server/src/services/kafkaBroker.js';
+import { webhookService } from './server/src/services/webhookService.js';
 
 interface Fetcher {
   fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
@@ -1532,6 +1534,193 @@ app.post('/api/v1/coverage/external', async (c) => {
     message: 'External automation report imported successfully.',
     report: newReport
   }, 201);
+});
+
+// ==========================================
+// Kafka Event Streaming Endpoints
+// ==========================================
+app.get('/api/v1/kafka/topics', (c) => {
+  const topics = kafkaBroker.getTopics();
+  return c.json({
+    success: true,
+    data: topics,
+    cluster: { clusterId: 'itfreesource-kafka-cluster-01', brokerCount: 3, status: 'healthy' }
+  });
+});
+
+app.get('/api/v1/kafka/topics/:topic/messages', (c) => {
+  const topic = c.req.param('topic');
+  const limit = parseInt(c.req.query('limit') || '50', 10);
+  const offset = c.req.query('offset') !== undefined ? parseInt(c.req.query('offset')!, 10) : undefined;
+  const result = kafkaBroker.getMessages(topic, limit, offset);
+  return c.json({
+    success: true,
+    topic,
+    totalMessages: result.total,
+    count: result.messages.length,
+    data: result.messages
+  });
+});
+
+app.post('/api/v1/kafka/produce', async (c) => {
+  const { topic, value, key, headers } = await c.req.json();
+  if (!topic || value === undefined) {
+    return c.json({ success: false, error: 'topic and value are required' }, 400);
+  }
+  const message = kafkaBroker.produce(topic, value, key || null, headers || {});
+  return c.json({ success: true, message: `Produced to ${topic}`, data: message }, 201);
+});
+
+app.get('/api/v1/kafka/consumer-groups', (c) => {
+  return c.json({ success: true, data: kafkaBroker.getConsumerGroups() });
+});
+
+app.post('/api/v1/kafka/consumer-groups/:groupId/commit', async (c) => {
+  const groupId = c.req.param('groupId');
+  const { topic, offset } = await c.req.json();
+  if (!topic || typeof offset !== 'number') {
+    return c.json({ success: false, error: 'Missing topic or numeric offset' }, 400);
+  }
+  const updated = kafkaBroker.commitOffset(groupId, topic, offset);
+  return c.json({ success: true, data: updated });
+});
+
+app.post('/api/v1/kafka/chaos/poison-pill', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const { topic = 'bookstore.orders.created', reason = 'PAYLOAD_SCHEMA_VIOLATION_POISON_PILL' } = body || {};
+  const result = kafkaBroker.injectPoisonPill(topic, reason);
+  return c.json({ success: true, data: result }, 201);
+});
+
+app.post('/api/v1/kafka/dlq/replay', async (c) => {
+  const { dlqMessageId } = await c.req.json();
+  if (!dlqMessageId) {
+    return c.json({ success: false, error: 'Missing dlqMessageId' }, 400);
+  }
+  const replayed = kafkaBroker.replayDlqMessage(dlqMessageId);
+  if (!replayed) {
+    return c.json({ success: false, error: `DLQ message ${dlqMessageId} not found` }, 404);
+  }
+  return c.json({ success: true, data: replayed });
+});
+
+app.post('/api/v1/kafka/reset', (c) => {
+  kafkaBroker.initDefaultBrokerState();
+  return c.json({ success: true, message: 'Kafka broker reset to defaults' });
+});
+
+// ==========================================
+// Enterprise Webhooks Endpoints
+// ==========================================
+app.get('/api/v1/webhooks/subscriptions', (c) => {
+  return c.json({ success: true, data: webhookService.getSubscriptions() });
+});
+
+app.post('/api/v1/webhooks/subscriptions', async (c) => {
+  const { url, events, secret, active, description } = await c.req.json();
+  if (!url) return c.json({ success: false, error: 'Target URL is required' }, 400);
+  const sub = webhookService.createSubscription({
+    url,
+    events: events || ['*'],
+    secret: secret || '',
+    active: active !== false,
+    description: description || 'Custom QA Test Webhook'
+  });
+  return c.json({ success: true, data: sub }, 201);
+});
+
+app.put('/api/v1/webhooks/subscriptions/:id', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  const updated = webhookService.updateSubscription(id, body);
+  if (!updated) return c.json({ success: false, error: 'Subscription not found' }, 404);
+  return c.json({ success: true, data: updated });
+});
+
+app.delete('/api/v1/webhooks/subscriptions/:id', (c) => {
+  const id = c.req.param('id');
+  const deleted = webhookService.deleteSubscription(id);
+  if (!deleted) return c.json({ success: false, error: 'Subscription not found' }, 404);
+  return c.json({ success: true, message: 'Subscription deleted' });
+});
+
+app.post('/api/v1/webhooks/test-ping', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const { event = 'order:created', customPayload } = body || {};
+  const payload = customPayload || {
+    orderId: `ord_test_${Date.now()}`,
+    orderNumber: `ORD-TEST-${Math.floor(1000 + Math.random() * 9000)}`,
+    status: 'paid',
+    amount: 89.95,
+    currency: 'USD'
+  };
+  const deliveries = await webhookService.dispatch(event, payload);
+  return c.json({ success: true, deliveriesCount: deliveries.length, data: deliveries });
+});
+
+app.get('/api/v1/webhooks/deliveries', (c) => {
+  const subId = c.req.query('subscriptionId');
+  return c.json({ success: true, data: webhookService.getDeliveries(subId) });
+});
+
+app.post('/api/v1/webhooks/deliveries/:id/redeliver', async (c) => {
+  const id = c.req.param('id');
+  const delivery = await webhookService.redeliver(id);
+  if (!delivery) return c.json({ success: false, error: 'Delivery not found' }, 404);
+  return c.json({ success: true, data: delivery });
+});
+
+app.post('/api/v1/webhooks/mock-receiver', async (c) => {
+  const chaos = webhookService.getMockChaos();
+  if (chaos.shouldFail) {
+    return c.json({ success: false, error: 'Chaos injection simulated webhook receiver outage' }, chaos.statusCode as any);
+  }
+  const body = await c.req.json().catch(() => ({}));
+  const sigHeader = c.req.header('x-bookstore-signature') || '';
+  const eventName = c.req.header('x-bookstore-event') || 'unknown';
+  const deliveryId = c.req.header('x-bookstore-delivery') || `del_${Date.now()}`;
+  const isValid = webhookService.verifyHmac('whsec_itfreesource_test_secret_2026', body, sigHeader);
+
+  webhookService.recordMockEvent({
+    id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    receivedAt: new Date().toISOString(),
+    event: eventName,
+    deliveryId,
+    signature: sigHeader,
+    isValidSignature: isValid,
+    headers: {
+      'x-bookstore-signature': sigHeader,
+      'x-bookstore-event': eventName,
+      'x-bookstore-delivery': deliveryId
+    },
+    payload: body
+  });
+
+  return c.json({ success: true, verified: isValid, deliveryId });
+});
+
+app.get('/api/v1/webhooks/mock-receiver/events', (c) => {
+  return c.json({ success: true, data: webhookService.getMockEvents() });
+});
+
+app.post('/api/v1/webhooks/mock-receiver/chaos', async (c) => {
+  const { shouldFail = false, statusCode = 500 } = await c.req.json().catch(() => ({}));
+  webhookService.setMockChaos(Boolean(shouldFail), Number(statusCode));
+  return c.json({ success: true, chaos: webhookService.getMockChaos() });
+});
+
+app.post('/api/v1/webhooks/verify-signature', async (c) => {
+  const { secret, payload, signature } = await c.req.json();
+  if (!secret || payload === undefined || !signature) {
+    return c.json({ success: false, error: 'Missing secret, payload, or signature' }, 400);
+  }
+  const isValid = webhookService.verifyHmac(secret, payload, signature);
+  return c.json({ success: true, isValid });
+});
+
+app.post('/api/v1/webhooks/reset', (c) => {
+  webhookService.initDefaultSubscriptions();
+  return c.json({ success: true, message: 'Webhooks reset to defaults' });
 });
 
 // ==========================================

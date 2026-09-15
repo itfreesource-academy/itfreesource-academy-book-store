@@ -465,6 +465,208 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
           parameters: [{ name: 'status', in: 'query', schema: { type: 'integer', default: 500 } }],
           responses: { default: { description: 'Simulated error payload' } }
         }
+      },
+      '/api/v1/kafka/topics': {
+        get: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'List all Kafka topics, partitions, and message counts',
+          responses: { 200: { description: 'List of Kafka topics' } }
+        }
+      },
+      '/api/v1/kafka/topics/{topic}/messages': {
+        get: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'Stream messages from a specific Kafka topic',
+          parameters: [
+            { name: 'topic', in: 'path', required: true, schema: { type: 'string', example: 'bookstore.orders.created' } },
+            { name: 'limit', in: 'query', schema: { type: 'integer', default: 50 } },
+            { name: 'offset', in: 'query', schema: { type: 'integer' } }
+          ],
+          responses: { 200: { description: 'Topic message stream' } }
+        }
+      },
+      '/api/v1/kafka/produce': {
+        post: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'Publish an event message to any Kafka topic',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['topic', 'value'],
+                  properties: {
+                    topic: { type: 'string', example: 'bookstore.orders.created' },
+                    value: { type: 'object' },
+                    key: { type: 'string', example: 'customer_usr_009' }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 201: { description: 'Message published to topic' } }
+        }
+      },
+      '/api/v1/kafka/consumer-groups': {
+        get: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'Inspect consumer groups, committed offsets, and consumer lag',
+          responses: { 200: { description: 'Consumer groups status and lag' } }
+        }
+      },
+      '/api/v1/kafka/chaos/poison-pill': {
+        post: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'Inject malformed poison pill message to trigger consumer failure & DLQ capture',
+          requestBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    topic: { type: 'string', default: 'bookstore.orders.created' },
+                    reason: { type: 'string', default: 'SCHEMA_VIOLATION_CORRUPTED_PAYLOAD' }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 201: { description: 'Poison pill injected and routed to DLQ' } }
+        }
+      },
+      '/api/v1/kafka/dlq/replay': {
+        post: {
+          tags: ['Kafka Event Streaming'],
+          summary: 'Replay a message from Dead-Letter Queue (DLQ) back to its destination topic',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['dlqMessageId'],
+                  properties: { dlqMessageId: { type: 'string' } }
+                }
+              }
+            }
+          },
+          responses: { 200: { description: 'Message replayed from DLQ' } }
+        }
+      },
+      '/api/v1/webhooks/subscriptions': {
+        get: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'List all registered webhook subscriptions',
+          responses: { 200: { description: 'List of webhook subscriptions' } }
+        },
+        post: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Register a new webhook subscription',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['url'],
+                  properties: {
+                    url: { type: 'string', example: 'http://localhost:5000/api/v1/webhooks/mock-receiver' },
+                    events: { type: 'array', items: { type: 'string' }, example: ['order:created', 'borrow:created'] },
+                    secret: { type: 'string', example: 'whsec_my_custom_secret' },
+                    description: { type: 'string' }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 201: { description: 'Webhook registered' } }
+        }
+      },
+      '/api/v1/webhooks/test-ping': {
+        post: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Dispatch a test webhook event with HMAC-SHA256 signature to all subscribers',
+          requestBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    event: { type: 'string', default: 'order:created' },
+                    customPayload: { type: 'object' }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 200: { description: 'Webhook dispatched and delivery logged' } }
+        }
+      },
+      '/api/v1/webhooks/deliveries': {
+        get: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Inspect delivery audit logs, HTTP status codes, latency ms, and signatures',
+          parameters: [{ name: 'subscriptionId', in: 'query', schema: { type: 'string' } }],
+          responses: { 200: { description: 'Webhook delivery logs' } }
+        }
+      },
+      '/api/v1/webhooks/mock-receiver': {
+        post: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Built-in Mock Webhook Receiver Sandbox (validates X-BookStore-Signature and records events)',
+          responses: { 200: { description: 'Webhook processed by sandbox' } }
+        }
+      },
+      '/api/v1/webhooks/mock-receiver/events': {
+        get: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Get captured events from the built-in mock receiver sandbox',
+          responses: { 200: { description: 'List of received events' } }
+        }
+      },
+      '/api/v1/webhooks/mock-receiver/chaos': {
+        post: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Toggle simulated outage on the mock receiver (e.g. 500 error for retry testing)',
+          requestBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    shouldFail: { type: 'boolean', default: true },
+                    statusCode: { type: 'integer', default: 500 }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 200: { description: 'Mock receiver chaos state updated' } }
+        }
+      },
+      '/api/v1/webhooks/verify-signature': {
+        post: {
+          tags: ['Enterprise Webhooks'],
+          summary: 'Verify HMAC-SHA256 signature of a webhook payload',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['secret', 'payload', 'signature'],
+                  properties: {
+                    secret: { type: 'string' },
+                    payload: { type: 'object' },
+                    signature: { type: 'string' }
+                  }
+                }
+              }
+            }
+          },
+          responses: { 200: { description: 'Verification result' } }
+        }
       }
     }
   };

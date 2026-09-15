@@ -2,6 +2,8 @@ import { Router, Response } from 'express';
 import { store } from '../data/store.js';
 import { authenticateToken, requirePermission, AuthenticatedRequest } from '../middleware/auth.js';
 import { ROLE_PERMISSIONS, Currency, Timezone } from '../types/index.js';
+import { kafkaBroker } from '../services/kafkaBroker.js';
+import { webhookService } from '../services/webhookService.js';
 
 const router = Router();
 
@@ -51,6 +53,30 @@ router.post('/', authenticateToken, requirePermission('borrow:create'), (req: Au
     details: `User @${user.username} borrowed "${result.bookTitle}". Due Date: ${result.dueDate}. Base Fee: $${result.standardFee.toFixed(2)} (${userCurr}).`,
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
+
+  kafkaBroker.produce(
+    'bookstore.borrow.events',
+    {
+      borrowId: result.id,
+      userId: result.userId,
+      username: result.username,
+      bookId: result.bookId,
+      bookTitle: result.bookTitle,
+      dueDate: result.dueDate,
+      action: 'BOOK_BORROWED',
+      fee: result.standardFee
+    },
+    result.id,
+    { 'event-type': 'BORROW_LOAN_OPENED' }
+  );
+
+  webhookService.dispatch('borrow:created', {
+    borrowId: result.id,
+    borrower: result.username,
+    bookTitle: result.bookTitle,
+    dueDate: result.dueDate,
+    fee: result.standardFee
+  }).catch(() => {});
 
   res.status(201).json({ success: true, record: result, data: result });
 });
@@ -133,6 +159,27 @@ router.post('/:id/return', authenticateToken, requirePermission('borrow:return')
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
 
+  kafkaBroker.produce(
+    'bookstore.borrow.events',
+    {
+      borrowId: id,
+      action: 'BOOK_RETURNED',
+      bookTitle: result.bookTitle,
+      totalFee: result.totalFee,
+      lateFee: result.lateFee
+    },
+    id,
+    { 'event-type': 'BORROW_LOAN_CLOSED' }
+  );
+
+  webhookService.dispatch('borrow:returned', {
+    borrowId: id,
+    bookTitle: result.bookTitle,
+    totalFee: result.totalFee,
+    lateFee: result.lateFee,
+    returnedAt: new Date().toISOString()
+  }).catch(() => {});
+
   res.json({ success: true, record: result, data: result });
 });
 
@@ -174,6 +221,26 @@ router.post('/:id/lost', authenticateToken, requirePermission('borrow:return'), 
     details: `Declared "${result.bookTitle}" lost. Charged 2x book replacement fee of $${result.lostFee}. Total due: $${result.totalFee}.`,
     ipAddress: (req.ip as string) || '127.0.0.1'
   });
+
+  kafkaBroker.produce(
+    'bookstore.borrow.events',
+    {
+      borrowId: id,
+      action: 'BOOK_LOST',
+      bookTitle: result.bookTitle,
+      lostFee: result.lostFee,
+      totalFee: result.totalFee
+    },
+    id,
+    { 'event-type': 'BORROW_LOAN_LOST' }
+  );
+
+  webhookService.dispatch('borrow:lost', {
+    borrowId: id,
+    bookTitle: result.bookTitle,
+    lostFee: result.lostFee,
+    totalFee: result.totalFee
+  }).catch(() => {});
 
   res.json({ success: true, record: result, data: result });
 });
