@@ -4,7 +4,6 @@ import { ToastProvider } from './context/ToastContext.js';
 import { AuthProvider } from './context/AuthContext.js';
 import { CurrencyProvider } from './context/CurrencyContext.js';
 import { CartProvider } from './context/CartContext.js';
-import { QuickRoleBar } from './components/layout/QuickRoleBar.js';
 import { Navbar } from './components/layout/Navbar.js';
 import { Footer } from './components/layout/Footer.js';
 import { CartDrawer } from './components/layout/CartDrawer.js';
@@ -31,9 +30,6 @@ export const App: React.FC = () => {
           <CartProvider>
             <BrowserRouter>
               <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 selection:bg-brand-600 selection:text-white">
-                {/* Sticky Top QA Switcher Bar */}
-                <QuickRoleBar />
-
                 {/* Main App Navbar */}
                 <Navbar />
 

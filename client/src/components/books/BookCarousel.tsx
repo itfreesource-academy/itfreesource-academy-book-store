@@ -118,13 +118,17 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
 
         {/* Right: Book Cover Showcase */}
         <div className="relative flex-shrink-0">
-          <div className="relative w-48 sm:w-60 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10">
+          <div className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 bg-slate-900">
             <img
               src={currentBook.coverImage}
               alt={currentBook.title}
               data-testid="carousel-book-image"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop';
+              }}
               className="w-full h-full object-cover"
             />
+            <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-black/35 via-black/10 to-transparent pointer-events-none" />
           </div>
         </div>
       </div>

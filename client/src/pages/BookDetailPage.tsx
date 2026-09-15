@@ -131,13 +131,18 @@ export const BookDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column: Cover Image & Badges */}
           <div className="md:col-span-5 flex flex-col items-center">
-            <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-50">
+            <div className="relative w-full max-w-sm aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-50">
               <img
                 src={book.coverImage}
                 alt={book.title}
                 data-testid="detail-cover-img"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop';
+                }}
                 className="w-full h-full object-cover"
               />
+              {/* Subtle Book Spine Effect (Left Edge) */}
+              <div className="absolute inset-y-0 left-0 w-3.5 bg-gradient-to-r from-black/25 via-black/5 to-transparent pointer-events-none" />
               {book.isVipExclusive && (
                 <div
                   data-testid="detail-vip-badge"

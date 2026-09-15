@@ -47,19 +47,26 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
         <Link
           to={`/books/${book.id}`}
           data-testid={`book-cover-link-${book.id}`}
-          className="block relative aspect-[3/4] overflow-hidden bg-slate-100"
+          className="block relative aspect-[2/3] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 border-b border-slate-100"
         >
           <img
             src={book.coverImage}
             alt={book.title}
             data-testid={`book-cover-img-${book.id}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              // Graceful fallback to Unsplash book cover if external CDN fails
+              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop';
+            }}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 shadow-inner"
             loading="lazy"
           />
+          {/* Subtle Book Spine Effect (Left Edge) */}
+          <div className="absolute inset-y-0 left-0 w-2.5 bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none" />
+
           {book.stock <= 0 && (
             <div
               data-testid={`out-of-stock-overlay-${book.id}`}
-              className="absolute inset-0 bg-slate-900/70 flex items-center justify-center text-white font-bold text-xs"
+              className="absolute inset-0 bg-slate-900/70 flex items-center justify-center text-white font-bold text-xs backdrop-blur-[1px]"
             >
               OUT OF STOCK
             </div>
