@@ -55,21 +55,21 @@ export const BookTable: React.FC<BookTableProps> = ({
   const isIndeterminate = selectedIds.length > 0 && selectedIds.length < books.length;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm" data-testid="book-data-table-wrapper">
+    <div className="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-xl shadow-black/30" data-testid="book-data-table-wrapper">
       {/* Table Toolbar / Bulk Actions */}
       {selectedIds.length > 0 && (
         <div
           data-testid="bulk-actions-toolbar"
-          className="bg-brand-50 border-b border-brand-200 px-6 py-3 flex items-center justify-between text-xs animate-fade-in"
+          className="bg-indigo-950/60 border-b border-indigo-900/50 px-6 py-3 flex items-center justify-between text-xs animate-fade-in"
         >
-          <span className="font-bold text-brand-900" data-testid="selected-count-label">
+          <span className="font-bold text-indigo-300" data-testid="selected-count-label">
             {selectedIds.length} items selected
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={handleBulkExport}
               data-testid="bulk-export-btn"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-brand-700 font-semibold rounded-lg border border-brand-300 hover:bg-brand-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-indigo-300 font-semibold rounded-lg border border-indigo-800 hover:bg-slate-800 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Export JSON</span>
@@ -95,8 +95,8 @@ export const BookTable: React.FC<BookTableProps> = ({
 
       {/* Responsive Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-600" data-testid="books-table">
-          <thead className="bg-slate-50 text-slate-700 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+        <table className="w-full text-left text-xs text-slate-300" data-testid="books-table">
+          <thead className="bg-slate-950 text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-800">
             <tr>
               <th className="p-4 w-10">
                 <input
@@ -107,13 +107,13 @@ export const BookTable: React.FC<BookTableProps> = ({
                   }}
                   onChange={handleSelectAll}
                   data-testid="table-select-all-checkbox"
-                  className="rounded text-brand-600 focus:ring-brand-500 h-4 w-4"
+                  className="rounded text-brand-600 focus:ring-brand-500 h-4 w-4 bg-slate-950 border-slate-700"
                   aria-label="Select all rows"
                 />
               </th>
               <th className="py-4 px-3">Cover</th>
               <th
-                className="py-4 px-3 cursor-pointer hover:text-brand-600"
+                className="py-4 px-3 cursor-pointer hover:text-indigo-400"
                 onClick={() => onSort && onSort('title')}
                 data-testid="sort-col-title"
               >
@@ -124,7 +124,7 @@ export const BookTable: React.FC<BookTableProps> = ({
               </th>
               <th className="py-4 px-3">Category</th>
               <th
-                className="py-4 px-3 cursor-pointer hover:text-brand-600"
+                className="py-4 px-3 cursor-pointer hover:text-indigo-400"
                 onClick={() => onSort && onSort('price')}
                 data-testid="sort-col-price"
               >
@@ -134,7 +134,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                 </div>
               </th>
               <th
-                className="py-4 px-3 cursor-pointer hover:text-brand-600"
+                className="py-4 px-3 cursor-pointer hover:text-indigo-400"
                 onClick={() => onSort && onSort('rating')}
                 data-testid="sort-col-rating"
               >
@@ -144,7 +144,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                 </div>
               </th>
               <th
-                className="py-4 px-3 cursor-pointer hover:text-brand-600"
+                className="py-4 px-3 cursor-pointer hover:text-indigo-400"
                 onClick={() => onSort && onSort('stock')}
                 data-testid="sort-col-stock"
               >
@@ -156,15 +156,15 @@ export const BookTable: React.FC<BookTableProps> = ({
               <th className="py-4 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100" data-testid="books-table-body">
+          <tbody className="divide-y divide-slate-800" data-testid="books-table-body">
             {books.map((book) => {
               const isSelected = selectedIds.includes(book.id);
               return (
                 <tr
                   key={book.id}
                   data-testid={`table-row-${book.id}`}
-                  className={`hover:bg-slate-50/80 transition-colors ${
-                    isSelected ? 'bg-brand-50/50' : ''
+                  className={`hover:bg-slate-800/60 transition-colors ${
+                    isSelected ? 'bg-indigo-950/40' : ''
                   }`}
                 >
                   <td className="p-4">
@@ -173,7 +173,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                       checked={isSelected}
                       onChange={() => handleToggleRow(book.id)}
                       data-testid={`row-checkbox-${book.id}`}
-                      className="rounded text-brand-600 focus:ring-brand-500 h-4 w-4"
+                      className="rounded text-brand-600 focus:ring-brand-500 h-4 w-4 bg-slate-950 border-slate-700"
                       aria-label={`Select ${book.title}`}
                     />
                   </td>
@@ -181,31 +181,31 @@ export const BookTable: React.FC<BookTableProps> = ({
                     <img
                       src={book.coverImage}
                       alt={book.title}
-                      className="w-10 h-14 object-cover rounded shadow-sm"
+                      className="w-10 h-14 object-cover rounded shadow-sm border border-slate-800"
                     />
                   </td>
                   <td className="py-3 px-3 max-w-xs">
                     <Link
                       to={`/books/${book.id}`}
                       data-testid={`table-link-${book.id}`}
-                      className="font-bold text-slate-900 hover:text-brand-600 block line-clamp-1"
+                      className="font-bold text-slate-100 hover:text-indigo-400 block line-clamp-1"
                     >
                       {book.title}
                     </Link>
-                    <span className="text-[11px] text-slate-500 block">
+                    <span className="text-[11px] text-slate-400 block">
                       {book.authorName} • ISBN: {book.isbn}
                     </span>
                   </td>
                   <td className="py-3 px-3">
-                    <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium">
+                    <span className="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px] font-medium">
                       {book.categoryName}
                     </span>
                   </td>
-                  <td className="py-3 px-3 font-bold text-slate-900" data-testid={`table-price-${book.id}`}>
+                  <td className="py-3 px-3 font-bold text-white" data-testid={`table-price-${book.id}`}>
                     {formatPrice(book.price)}
                   </td>
                   <td className="py-3 px-3">
-                    <div className="flex items-center gap-1 text-amber-500 font-bold">
+                    <div className="flex items-center gap-1 text-amber-400 font-bold">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       <span>{book.rating}</span>
                     </div>
@@ -215,10 +215,10 @@ export const BookTable: React.FC<BookTableProps> = ({
                       data-testid={`stock-badge-${book.id}`}
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         book.stock > 20
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/50'
                           : book.stock > 0
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-rose-100 text-rose-800'
+                          ? 'bg-amber-950/60 text-amber-300 border border-amber-800/50'
+                          : 'bg-rose-950/60 text-rose-300 border border-rose-800/50'
                       }`}
                     >
                       {book.stock} units
@@ -229,7 +229,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                       <Link
                         to={`/books/${book.id}`}
                         data-testid={`action-view-${book.id}`}
-                        className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
@@ -239,7 +239,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                         <button
                           onClick={() => onEdit(book)}
                           data-testid={`action-edit-${book.id}`}
-                          className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors"
                           title="Edit Book"
                         >
                           <Edit className="w-4 h-4" />
@@ -250,7 +250,7 @@ export const BookTable: React.FC<BookTableProps> = ({
                         <button
                           onClick={() => onDelete(book.id)}
                           data-testid={`action-delete-${book.id}`}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
                           title="Delete Book"
                         >
                           <Trash2 className="w-4 h-4" />

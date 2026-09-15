@@ -102,12 +102,12 @@ export const OrdersPage: React.FC = () => {
 
   const getStatusBadge = (status: OrderStatus) => {
     const map = {
-      pending: 'bg-amber-100 text-amber-800 border-amber-300',
-      processing: 'bg-blue-100 text-blue-800 border-blue-300',
-      shipped: 'bg-indigo-100 text-indigo-800 border-indigo-300',
-      delivered: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      cancelled: 'bg-rose-100 text-rose-800 border-rose-300',
-      refunded: 'bg-purple-100 text-purple-800 border-purple-300'
+      pending: 'bg-amber-950/60 text-amber-300 border-amber-800/60',
+      processing: 'bg-blue-950/60 text-blue-300 border-blue-800/60',
+      shipped: 'bg-indigo-950/60 text-indigo-300 border-indigo-800/60',
+      delivered: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60',
+      cancelled: 'bg-rose-950/60 text-rose-300 border-rose-800/60',
+      refunded: 'bg-purple-950/60 text-purple-300 border-purple-800/60'
     };
     return (
       <span
@@ -123,12 +123,12 @@ export const OrdersPage: React.FC = () => {
     <div className="space-y-6 pb-16" data-testid="orders-page">
       <Breadcrumbs items={[{ label: 'Orders' }]} />
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900" data-testid="orders-page-title">
+          <h1 className="text-2xl font-extrabold text-white" data-testid="orders-page-title">
             Order Management & Tracking
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-400 mt-1">
             {hasPermission('orders:read_all')
               ? 'Viewing all system orders (Store Management & Fulfillment scope)'
               : 'Viewing your personal account purchase history'}
@@ -159,8 +159,8 @@ export const OrdersPage: React.FC = () => {
             data-testid={`status-tab-${st}`}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
               statusFilter === st
-                ? 'bg-brand-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
+                : 'bg-slate-900/80 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
             }`}
           >
             {st}
@@ -169,18 +169,18 @@ export const OrdersPage: React.FC = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl backdrop-blur-xl">
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">Loading orders...</div>
         ) : filteredOrders.length === 0 ? (
           <div className="p-12 text-center" data-testid="no-orders-found">
-            <Package className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs font-semibold text-slate-600">No matching orders found</p>
+            <Package className="w-10 h-10 text-slate-600 mx-auto mb-2" />
+            <p className="text-xs font-semibold text-slate-400">No matching orders found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-600" data-testid="orders-table">
-              <thead className="bg-slate-50 text-slate-700 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+            <table className="w-full text-left text-xs text-slate-300" data-testid="orders-table">
+              <thead className="bg-slate-950 text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-800">
                 <tr>
                   <th className="py-4 px-4">Order #</th>
                   <th className="py-4 px-4">Customer</th>
@@ -191,22 +191,22 @@ export const OrdersPage: React.FC = () => {
                   <th className="py-4 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100" data-testid="orders-table-body">
+              <tbody className="divide-y divide-slate-800" data-testid="orders-table-body">
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} data-testid={`order-row-${order.id}`} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-4 font-bold text-slate-900" data-testid={`order-num-${order.id}`}>
+                  <tr key={order.id} data-testid={`order-row-${order.id}`} className="hover:bg-slate-800/60 transition-colors">
+                    <td className="py-3 px-4 font-bold text-white" data-testid={`order-num-${order.id}`}>
                       {order.orderNumber}
                     </td>
-                    <td className="py-3 px-4 font-medium text-slate-700">
+                    <td className="py-3 px-4 font-medium text-slate-300">
                       @{order.username}
                     </td>
-                    <td className="py-3 px-4 text-slate-500">
+                    <td className="py-3 px-4 text-slate-400">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-semibold text-slate-800">{order.items.length} items</span>
+                      <span className="font-semibold text-slate-200">{order.items.length} items</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-900" data-testid={`order-total-${order.id}`}>
+                    <td className="py-3 px-4 font-bold text-white" data-testid={`order-total-${order.id}`}>
                       {formatPrice(order.total)}
                     </td>
                     <td className="py-3 px-4">
@@ -220,7 +220,7 @@ export const OrdersPage: React.FC = () => {
                             setIsDetailModalOpen(true);
                           }}
                           data-testid={`order-view-btn-${order.id}`}
-                          className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors"
                           title="View Order Details"
                         >
                           <Eye className="w-4 h-4" />
@@ -236,7 +236,7 @@ export const OrdersPage: React.FC = () => {
                               setIsStatusModalOpen(true);
                             }}
                             data-testid={`order-status-btn-${order.id}`}
-                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-950/50 rounded-lg transition-colors"
                             title="Update Status"
                           >
                             <Truck className="w-4 h-4" />
@@ -248,7 +248,7 @@ export const OrdersPage: React.FC = () => {
                           <button
                             onClick={() => handleRefundOrder(order.id)}
                             data-testid={`order-refund-btn-${order.id}`}
-                            className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-purple-950/50 rounded-lg transition-colors"
                             title="Issue Refund"
                           >
                             <RotateCcw className="w-4 h-4" />
@@ -260,7 +260,7 @@ export const OrdersPage: React.FC = () => {
                           <button
                             onClick={() => handleCancelOrder(order.id)}
                             data-testid={`order-cancel-btn-${order.id}`}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/50 rounded-lg transition-colors"
                             title="Cancel Order"
                           >
                             <XCircle className="w-4 h-4" />
@@ -286,53 +286,53 @@ export const OrdersPage: React.FC = () => {
           footer={
             <button
               onClick={() => setIsDetailModalOpen(false)}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700"
             >
               Close
             </button>
           }
         >
-          <div className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <div className="space-y-4 text-xs text-slate-200">
+            <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/70 rounded-xl border border-slate-800">
               <div>
                 <span className="text-slate-400 block mb-0.5">Status</span>
                 <div>{getStatusBadge(selectedOrder.status)}</div>
               </div>
               <div>
                 <span className="text-slate-400 block mb-0.5">Tracking Number</span>
-                <span className="font-semibold text-slate-800">{selectedOrder.trackingNumber || 'Awaiting Dispatch'}</span>
+                <span className="font-semibold text-slate-200">{selectedOrder.trackingNumber || 'Awaiting Dispatch'}</span>
               </div>
               <div>
                 <span className="text-slate-400 block mb-0.5">Expected Delivery</span>
-                <span className="font-semibold text-slate-800">{selectedOrder.deliveryDate}</span>
+                <span className="font-semibold text-slate-200">{selectedOrder.deliveryDate}</span>
               </div>
               <div>
                 <span className="text-slate-400 block mb-0.5">Payment Method</span>
-                <span className="font-semibold text-slate-800">{selectedOrder.paymentMethod}</span>
+                <span className="font-semibold text-slate-200">{selectedOrder.paymentMethod}</span>
               </div>
             </div>
 
             <div>
-              <h5 className="font-bold text-slate-900 mb-2">Purchased Items</h5>
-              <div className="divide-y divide-slate-100">
+              <h5 className="font-bold text-white mb-2">Purchased Items</h5>
+              <div className="divide-y divide-slate-800">
                 {selectedOrder.items.map((it, idx) => (
                   <div key={idx} className="py-2 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <img src={it.coverImage} alt={it.title} className="w-8 h-11 object-cover rounded shadow-sm" />
+                      <img src={it.coverImage} alt={it.title} className="w-8 h-11 object-cover rounded shadow-sm border border-slate-800" />
                       <div>
-                        <h6 className="font-bold text-slate-800">{it.title}</h6>
+                        <h6 className="font-bold text-white">{it.title}</h6>
                         <span className="text-slate-400">Qty: {it.quantity}</span>
                       </div>
                     </div>
-                    <span className="font-bold text-slate-900">{formatPrice(it.price * it.quantity)}</span>
+                    <span className="font-bold text-white">{formatPrice(it.price * it.quantity)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex justify-between font-black text-sm">
-              <span>Total Paid:</span>
-              <span className="text-brand-600">{formatPrice(selectedOrder.total)}</span>
+            <div className="pt-3 border-t border-slate-800 flex justify-between font-black text-sm">
+              <span className="text-slate-300">Total Paid:</span>
+              <span className="text-indigo-400">{formatPrice(selectedOrder.total)}</span>
             </div>
           </div>
         </Modal>
@@ -349,30 +349,30 @@ export const OrdersPage: React.FC = () => {
             <>
               <button
                 onClick={() => setIsStatusModalOpen(false)}
-                className="px-4 py-2 bg-white border border-slate-300 text-slate-600 text-xs font-semibold rounded-lg"
+                className="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold rounded-lg hover:text-white"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateStatus}
                 data-testid="status-confirm-btn"
-                className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-lg shadow"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg shadow-lg shadow-indigo-500/25"
               >
                 Save Status
               </button>
             </>
           }
         >
-          <div className="space-y-4 text-xs">
+          <div className="space-y-4 text-xs text-slate-200">
             <div>
-              <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
                 Select Lifecycle Status
               </label>
               <select
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
                 data-testid="order-status-select"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-slate-700 bg-slate-950 text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="pending">Pending</option>
                 <option value="processing">Processing</option>
@@ -383,7 +383,7 @@ export const OrdersPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
                 Carrier Tracking Number
               </label>
               <input
@@ -392,7 +392,7 @@ export const OrdersPage: React.FC = () => {
                 onChange={(e) => setTrackingNumber(e.target.value)}
                 placeholder="e.g. TRK-98124-FEDEX"
                 data-testid="order-tracking-input"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-slate-700 bg-slate-950 text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>

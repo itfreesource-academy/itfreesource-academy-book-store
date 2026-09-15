@@ -47,7 +47,7 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-2xl shadow-2xl w-full ${maxWidthClasses[maxWidth]} border border-slate-200 overflow-hidden my-8`}
+        className={`bg-slate-900 rounded-3xl shadow-2xl w-full ${maxWidthClasses[maxWidth]} border border-slate-800 overflow-hidden my-8 text-slate-100`}
         data-testid={testId}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -55,18 +55,18 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby={`${testId}-title`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
           <h3
             id={`${testId}-title`}
             data-testid={`${testId}-title`}
-            className="text-lg font-bold text-slate-800"
+            className="text-lg font-bold text-white"
           >
             {title}
           </h3>
           <button
             onClick={onClose}
             data-testid={`${testId}-close-btn`}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -81,7 +81,7 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Footer */}
         {footer && (
           <div
-            className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3"
+            className="px-6 py-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-end gap-3"
             data-testid={`${testId}-footer`}
           >
             {footer}

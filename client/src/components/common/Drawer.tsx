@@ -44,20 +44,20 @@ export const Drawer: React.FC<DrawerProps> = ({
 
       <div className={`fixed inset-y-0 ${positionClasses} flex max-w-full pl-10`}>
         <div
-          className={`w-screen ${width} bg-white shadow-2xl flex flex-col`}
+          className={`w-screen ${width} bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col text-slate-100`}
           data-testid={testId}
           role="dialog"
           aria-modal="true"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-            <h3 data-testid={`${testId}-title`} className="text-lg font-bold text-slate-800">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+            <h3 data-testid={`${testId}-title`} className="text-lg font-bold text-white">
               {title}
             </h3>
             <button
               onClick={onClose}
               data-testid={`${testId}-close-btn`}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               aria-label="Close drawer"
             >
               <X className="w-5 h-5" />

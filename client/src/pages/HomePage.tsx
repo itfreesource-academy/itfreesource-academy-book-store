@@ -51,53 +51,53 @@ export const HomePage: React.FC = () => {
       {stats && (
         <div
           data-testid="stats-counter-bar"
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-xl shadow-black/30 text-white"
         >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-xl bg-indigo-950/60 text-indigo-400 border border-indigo-800/40 flex items-center justify-center font-bold">
               <BookOpen className="w-6 h-6" />
             </div>
             <div>
-              <span className="block text-2xl font-black text-slate-900" data-testid="stat-total-books">
+              <span className="block text-2xl font-black text-white" data-testid="stat-total-books">
                 {stats.totalBooks}
               </span>
-              <span className="text-xs text-slate-500 font-medium">Catalog Titles</span>
+              <span className="text-xs text-slate-400 font-medium">Catalog Titles</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-xl bg-purple-950/60 text-purple-400 border border-purple-800/40 flex items-center justify-center font-bold">
               <Users className="w-6 h-6" />
             </div>
             <div>
-              <span className="block text-2xl font-black text-slate-900" data-testid="stat-total-users">
-                10
+              <span className="block text-2xl font-black text-white" data-testid="stat-total-users">
+                11
               </span>
-              <span className="text-xs text-slate-500 font-medium">RBAC Test Personas</span>
+              <span className="text-xs text-slate-400 font-medium">RBAC Test Personas</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-xl bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 flex items-center justify-center font-bold">
               <FileCode2 className="w-6 h-6" />
             </div>
             <div>
-              <span className="block text-2xl font-black text-slate-900" data-testid="stat-swagger-apis">
+              <span className="block text-2xl font-black text-white" data-testid="stat-swagger-apis">
                 25+
               </span>
-              <span className="text-xs text-slate-500 font-medium">Swagger CRUD APIs</span>
+              <span className="text-xs text-slate-400 font-medium">Swagger CRUD APIs</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-xl bg-amber-950/60 text-amber-400 border border-amber-800/40 flex items-center justify-center font-bold">
               <Layers className="w-6 h-6" />
             </div>
             <div>
-              <span className="block text-2xl font-black text-slate-900" data-testid="stat-stock-units">
+              <span className="block text-2xl font-black text-white" data-testid="stat-stock-units">
                 {stats.totalStockUnits}
               </span>
-              <span className="text-xs text-slate-500 font-medium">Units in Warehouse</span>
+              <span className="text-xs text-slate-400 font-medium">Units in Warehouse</span>
             </div>
           </div>
         </div>
@@ -107,12 +107,12 @@ export const HomePage: React.FC = () => {
       <section data-testid="featured-categories-section">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Explore by Category</h3>
-            <p className="text-xs text-slate-500">Discover hand-picked books across engineering and literature</p>
+            <h3 className="text-xl font-bold text-white">Explore by Category</h3>
+            <p className="text-xs text-slate-400">Discover hand-picked books across engineering and literature</p>
           </div>
           <Link
             to="/books"
-            className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors"
+            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -125,20 +125,20 @@ export const HomePage: React.FC = () => {
               key={cat.id}
               to={`/books?category=${cat.id}`}
               data-testid={`category-card-${cat.id}`}
-              className="p-5 bg-white rounded-2xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition-all group flex flex-col justify-between"
+              className="p-5 bg-slate-900/80 rounded-2xl border border-slate-800 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group flex flex-col justify-between text-white"
             >
               <div>
-                <span className="text-[10px] font-bold text-brand-600 uppercase tracking-wider bg-brand-50 px-2 py-0.5 rounded-full mb-2 inline-block">
+                <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider bg-indigo-950/60 border border-indigo-800/40 px-2.5 py-0.5 rounded-full mb-2 inline-block">
                   {cat.bookCount} Books Available
                 </span>
-                <h4 className="text-base font-bold text-slate-900 group-hover:text-brand-600 transition-colors mb-1">
+                <h4 className="text-base font-bold text-white group-hover:text-indigo-400 transition-colors mb-1">
                   {cat.name}
                 </h4>
-                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                   {cat.description}
                 </p>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
+              <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-indigo-400 group-hover:translate-x-1 transition-transform">
                 <span>Browse Category</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
@@ -151,12 +151,12 @@ export const HomePage: React.FC = () => {
       <section data-testid="bestsellers-section">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Popular & Recommended Titles</h3>
-            <p className="text-xs text-slate-500">Top-rated software engineering, science fiction, and leadership classics</p>
+            <h3 className="text-xl font-bold text-white">Popular & Recommended Titles</h3>
+            <p className="text-xs text-slate-400">Top-rated software engineering, science fiction, and leadership classics</p>
           </div>
           <Link
             to="/books"
-            className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors"
+            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
           >
             <span>Browse All {books.length} Books</span>
             <ArrowRight className="w-3.5 h-3.5" />

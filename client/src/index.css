@@ -8,24 +8,37 @@
     max-width: 100vw;
   }
   body {
-    @apply bg-slate-50 text-slate-900 selection:bg-brand-500 selection:text-white antialiased;
+    @apply bg-[#0B0F17] text-slate-100 selection:bg-brand-500 selection:text-white antialiased;
   }
 }
 
-/* Custom scrollbar for modern feel */
+/* Custom dark scrollbar for modern feel */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0B0F17;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
+}
+
+/* Glassmorphic & Modern Dark Utilities */
+.dark-glass-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+.dark-glass-nav {
+  background: rgba(11, 15, 23, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.7);
 }
 
 /* Animation utilities */

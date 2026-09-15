@@ -95,35 +95,35 @@ export const CartCheckoutPage: React.FC = () => {
   if (completedOrder) {
     return (
       <div className="max-w-2xl mx-auto py-12 px-4 text-center space-y-6" data-testid="order-success-screen">
-        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 bg-emerald-950/60 border border-emerald-800/80 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
           <PackageCheck className="w-10 h-10" />
         </div>
 
-        <h1 className="text-2xl font-extrabold text-slate-900" data-testid="order-success-heading">
+        <h1 className="text-2xl font-extrabold text-white" data-testid="order-success-heading">
           Order Confirmed!
         </h1>
-        <p className="text-xs text-slate-500">
-          Thank you, <span className="font-bold text-slate-800">{completedOrder.username}</span>. Your order has been placed and is queued for fulfillment.
+        <p className="text-xs text-slate-400">
+          Thank you, <span className="font-bold text-slate-200">{completedOrder.username}</span>. Your order has been placed and is queued for fulfillment.
         </p>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-left space-y-3 text-xs shadow-sm">
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="text-slate-500">Order Number:</span>
-            <span className="font-bold text-slate-900" data-testid="confirmed-order-number">
+        <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 text-left space-y-3 text-xs shadow-2xl backdrop-blur-xl">
+          <div className="flex justify-between border-b border-slate-800 pb-2">
+            <span className="text-slate-400">Order Number:</span>
+            <span className="font-bold text-white" data-testid="confirmed-order-number">
               {completedOrder.orderNumber}
             </span>
           </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="text-slate-500">Expected Delivery Date:</span>
-            <span className="font-semibold text-slate-900">{completedOrder.deliveryDate}</span>
+          <div className="flex justify-between border-b border-slate-800 pb-2">
+            <span className="text-slate-400">Expected Delivery Date:</span>
+            <span className="font-semibold text-slate-200">{completedOrder.deliveryDate}</span>
           </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="text-slate-500">Total Charged:</span>
-            <span className="font-black text-brand-600 text-sm">${completedOrder.total.toFixed(2)}</span>
+          <div className="flex justify-between border-b border-slate-800 pb-2">
+            <span className="text-slate-400">Total Charged:</span>
+            <span className="font-black text-indigo-400 text-sm">{formatPrice(completedOrder.total)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-500">Initial Status:</span>
-            <span className="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase text-[10px]">
+            <span className="text-slate-400">Initial Status:</span>
+            <span className="bg-amber-950/60 border border-amber-800/60 text-amber-300 font-bold px-2 py-0.5 rounded-full uppercase text-[10px]">
               {completedOrder.status}
             </span>
           </div>
@@ -133,13 +133,13 @@ export const CartCheckoutPage: React.FC = () => {
           <Link
             to="/orders"
             data-testid="view-orders-btn"
-            className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow transition-all"
+            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all"
           >
             View My Orders
           </Link>
           <Link
             to="/books"
-            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-all"
+            className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all border border-slate-700"
           >
             Continue Shopping
           </Link>
@@ -152,16 +152,16 @@ export const CartCheckoutPage: React.FC = () => {
     <div className="space-y-6 pb-16" data-testid="checkout-page">
       <Breadcrumbs items={[{ label: 'Catalog', href: '/books' }, { label: 'Cart & Checkout' }]} />
 
-      <h1 className="text-2xl font-extrabold text-slate-900">Checkout & Order Review</h1>
+      <h1 className="text-2xl font-extrabold text-white">Checkout & Order Review</h1>
 
       {items.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center" data-testid="empty-checkout-card">
-          <ShoppingBag className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-800 mb-1">Your cart is empty</h3>
-          <p className="text-xs text-slate-500 mb-4">Add books to proceed with multi-step checkout</p>
+        <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-12 text-center shadow-2xl backdrop-blur-xl" data-testid="empty-checkout-card">
+          <ShoppingBag className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-white mb-1">Your cart is empty</h3>
+          <p className="text-xs text-slate-400 mb-4">Add books to proceed with multi-step checkout</p>
           <Link
             to="/books"
-            className="px-5 py-2.5 bg-brand-600 text-white font-bold text-xs rounded-xl hover:bg-brand-700 transition-colors"
+            className="px-5 py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/25"
           >
             Browse Books
           </Link>
@@ -171,38 +171,44 @@ export const CartCheckoutPage: React.FC = () => {
           {/* Main Checkout Form / Steps (Left 8 Cols) */}
           <div className="lg:col-span-8 space-y-6">
             {/* Step Indicators */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between shadow-sm text-xs">
+            <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex items-center justify-between shadow-2xl backdrop-blur-xl text-xs">
               <div
                 className={`flex items-center gap-2 font-bold ${
-                  currentStep >= 1 ? 'text-brand-600' : 'text-slate-400'
+                  currentStep >= 1 ? 'text-indigo-400' : 'text-slate-600'
                 }`}
                 data-testid="step-indicator-1"
               >
-                <span className="w-6 h-6 rounded-full bg-brand-50 border border-brand-300 flex items-center justify-center text-xs">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                  currentStep >= 1 ? 'bg-indigo-950/80 border border-indigo-700 text-indigo-300' : 'bg-slate-800 border border-slate-700 text-slate-500'
+                }`}>
                   1
                 </span>
                 <span>Review Cart</span>
               </div>
-              <div className="w-12 h-0.5 bg-slate-200" />
+              <div className="w-12 h-0.5 bg-slate-800" />
               <div
                 className={`flex items-center gap-2 font-bold ${
-                  currentStep >= 2 ? 'text-brand-600' : 'text-slate-400'
+                  currentStep >= 2 ? 'text-indigo-400' : 'text-slate-600'
                 }`}
                 data-testid="step-indicator-2"
               >
-                <span className="w-6 h-6 rounded-full bg-slate-50 border border-slate-300 flex items-center justify-center text-xs">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                  currentStep >= 2 ? 'bg-indigo-950/80 border border-indigo-700 text-indigo-300' : 'bg-slate-800 border border-slate-700 text-slate-500'
+                }`}>
                   2
                 </span>
                 <span>Shipping & Date</span>
               </div>
-              <div className="w-12 h-0.5 bg-slate-200" />
+              <div className="w-12 h-0.5 bg-slate-800" />
               <div
                 className={`flex items-center gap-2 font-bold ${
-                  currentStep === 3 ? 'text-brand-600' : 'text-slate-400'
+                  currentStep === 3 ? 'text-indigo-400' : 'text-slate-600'
                 }`}
                 data-testid="step-indicator-3"
               >
-                <span className="w-6 h-6 rounded-full bg-slate-50 border border-slate-300 flex items-center justify-center text-xs">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                  currentStep === 3 ? 'bg-indigo-950/80 border border-indigo-700 text-indigo-300' : 'bg-slate-800 border border-slate-700 text-slate-500'
+                }`}>
                   3
                 </span>
                 <span>Payment</span>
@@ -211,21 +217,21 @@ export const CartCheckoutPage: React.FC = () => {
 
             {/* Step 1: Review Items */}
             {currentStep === 1 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4" data-testid="step-1-content">
-                <h3 className="text-base font-bold text-slate-900">Step 1: Review Cart Items</h3>
-                <div className="divide-y divide-slate-100" data-testid="checkout-items-list">
+              <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl space-y-4" data-testid="step-1-content">
+                <h3 className="text-base font-bold text-white">Step 1: Review Cart Items</h3>
+                <div className="divide-y divide-slate-800" data-testid="checkout-items-list">
                   {items.map((item) => (
                     <div key={item.book.id} className="py-3 flex items-center justify-between gap-4 text-xs">
                       <div className="flex items-center gap-3">
                         <img
                           src={item.book.coverImage}
                           alt={item.book.title}
-                          className="w-12 h-16 object-cover rounded shadow-sm"
+                          className="w-12 h-16 object-cover rounded shadow-sm border border-slate-800"
                         />
                         <div>
-                          <h4 className="font-bold text-slate-900">{item.book.title}</h4>
-                          <span className="text-slate-500">{item.book.authorName}</span>
-                          <div className="font-bold text-brand-600 mt-1">{formatPrice(item.book.price)} each</div>
+                          <h4 className="font-bold text-white">{item.book.title}</h4>
+                          <span className="text-slate-400">{item.book.authorName}</span>
+                          <div className="font-bold text-indigo-400 mt-1">{formatPrice(item.book.price)} each</div>
                         </div>
                       </div>
 
@@ -237,12 +243,12 @@ export const CartCheckoutPage: React.FC = () => {
                           value={item.quantity}
                           onChange={(e) => updateQuantity(item.book.id, parseInt(e.target.value, 10))}
                           data-testid={`checkout-qty-input-${item.book.id}`}
-                          className="w-16 px-2 py-1 border border-slate-300 rounded text-center"
+                          className="w-16 px-2 py-1 border border-slate-700 bg-slate-950 text-slate-100 rounded text-center focus:ring-2 focus:ring-indigo-500"
                         />
                         <button
                           onClick={() => removeFromCart(item.book.id)}
                           data-testid={`checkout-remove-btn-${item.book.id}`}
-                          className="text-slate-400 hover:text-rose-600 p-1"
+                          className="text-slate-500 hover:text-rose-400 p-1"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -255,7 +261,7 @@ export const CartCheckoutPage: React.FC = () => {
                   <button
                     onClick={handleNextStep}
                     data-testid="step-1-next-btn"
-                    className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition-all"
                   >
                     <span>Proceed to Shipping</span>
                     <ArrowRight className="w-4 h-4" />
@@ -266,54 +272,54 @@ export const CartCheckoutPage: React.FC = () => {
 
             {/* Step 2: Shipping Address & DatePicker */}
             {currentStep === 2 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4" data-testid="step-2-content">
-                <h3 className="text-base font-bold text-slate-900">Step 2: Shipping Destination & Calendar Date</h3>
+              <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl space-y-4" data-testid="step-2-content">
+                <h3 className="text-base font-bold text-white">Step 2: Shipping Destination & Calendar Date</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div className="sm:col-span-2">
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      Recipient Full Name <span className="text-rose-500">*</span>
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                      Recipient Full Name <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       data-testid="shipping-name-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      Street Address <span className="text-rose-500">*</span>
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                      Street Address <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={street}
                       onChange={(e) => setStreet(e.target.value)}
                       data-testid="shipping-street-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      City <span className="text-rose-500">*</span>
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                      City <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       data-testid="shipping-city-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
                       State / Province
                     </label>
                     <input
@@ -321,26 +327,26 @@ export const CartCheckoutPage: React.FC = () => {
                       value={state}
                       onChange={(e) => setState(e.target.value)}
                       data-testid="shipping-state-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      ZIP / Postal Code <span className="text-rose-500">*</span>
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                      ZIP / Postal Code <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
                       data-testid="shipping-zip-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1">
                       Country
                     </label>
                     <input
@@ -348,7 +354,7 @@ export const CartCheckoutPage: React.FC = () => {
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
                       data-testid="shipping-country-input"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-700 bg-slate-950 rounded-lg text-slate-100 focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -367,7 +373,7 @@ export const CartCheckoutPage: React.FC = () => {
                 <div className="flex justify-between pt-4">
                   <button
                     onClick={() => setCurrentStep(1)}
-                    className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-800 text-xs font-semibold"
+                    className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white text-xs font-semibold"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
@@ -375,7 +381,7 @@ export const CartCheckoutPage: React.FC = () => {
                   <button
                     onClick={handleNextStep}
                     data-testid="step-2-next-btn"
-                    className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition-all"
                   >
                     <span>Proceed to Payment</span>
                     <ArrowRight className="w-4 h-4" />
@@ -386,8 +392,8 @@ export const CartCheckoutPage: React.FC = () => {
 
             {/* Step 3: Payment & Final Submit */}
             {currentStep === 3 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4" data-testid="step-3-content">
-                <h3 className="text-base font-bold text-slate-900">Step 3: Payment Method</h3>
+              <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl space-y-4" data-testid="step-3-content">
+                <h3 className="text-base font-bold text-white">Step 3: Payment Method</h3>
 
                 <div className="space-y-2 text-xs">
                   {['Credit Card (Sandbox)', 'PayPal Mock Sandbox', 'Corporate Purchase Order'].map((pm) => (
@@ -396,8 +402,8 @@ export const CartCheckoutPage: React.FC = () => {
                       data-testid={`payment-method-${pm.split(' ')[0]}`}
                       className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                         paymentMethod === pm
-                          ? 'border-brand-500 bg-brand-50/50'
-                          : 'border-slate-200 hover:bg-slate-50'
+                          ? 'border-indigo-500 bg-indigo-950/50 text-white'
+                          : 'border-slate-800 bg-slate-950/60 text-slate-300 hover:bg-slate-800/60'
                       }`}
                     >
                       <input
@@ -405,10 +411,10 @@ export const CartCheckoutPage: React.FC = () => {
                         name="paymentMethod"
                         checked={paymentMethod === pm}
                         onChange={() => setPaymentMethod(pm)}
-                        className="text-brand-600 focus:ring-brand-500"
+                        className="text-indigo-600 focus:ring-indigo-500"
                       />
-                      <CreditCard className="w-4 h-4 text-brand-600" />
-                      <span className="font-semibold text-slate-800">{pm}</span>
+                      <CreditCard className="w-4 h-4 text-indigo-400" />
+                      <span className="font-semibold">{pm}</span>
                     </label>
                   ))}
                 </div>
@@ -416,7 +422,7 @@ export const CartCheckoutPage: React.FC = () => {
                 <div className="flex justify-between pt-4">
                   <button
                     onClick={() => setCurrentStep(2)}
-                    className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-800 text-xs font-semibold"
+                    className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white text-xs font-semibold"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
@@ -425,7 +431,7 @@ export const CartCheckoutPage: React.FC = () => {
                     onClick={handlePlaceOrder}
                     disabled={isSubmitting}
                     data-testid="place-order-submit-btn"
-                    className="flex items-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>{isSubmitting ? 'Placing Order...' : `Authorize & Pay ${formatPrice(total)}`}</span>
@@ -437,42 +443,42 @@ export const CartCheckoutPage: React.FC = () => {
 
           {/* Right Column: Order Summary (4 Cols) */}
           <div className="lg:col-span-4">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 text-xs sticky top-24" data-testid="checkout-summary-card">
-              <h4 className="font-bold text-slate-900 text-sm pb-2 border-b border-slate-100">
+            <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl space-y-4 text-xs sticky top-24" data-testid="checkout-summary-card">
+              <h4 className="font-bold text-white text-sm pb-2 border-b border-slate-800">
                 Order Summary
               </h4>
 
               {isVip && (
-                <div className="flex items-center gap-2 bg-gradient-to-r from-rose-50 to-amber-50 p-2.5 rounded-lg border border-rose-200 text-rose-800 font-semibold text-[11px]">
-                  <Crown className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 bg-gradient-to-r from-rose-950/40 to-amber-950/40 p-2.5 rounded-lg border border-rose-800/60 text-rose-300 font-semibold text-[11px]">
+                  <Crown className="w-4 h-4 text-rose-400 flex-shrink-0" />
                   <span>VIP 20% discount applied</span>
                 </div>
               )}
 
-              <div className="space-y-2 text-slate-600">
+              <div className="space-y-2 text-slate-400">
                 <div className="flex justify-between">
                   <span>Subtotal ({items.length} items)</span>
-                  <span className="font-semibold text-slate-900">{formatPrice(subtotal)}</span>
+                  <span className="font-semibold text-slate-200">{formatPrice(subtotal)}</span>
                 </div>
                 {discount > 0 && (
-                  <div className="flex justify-between text-rose-600 font-semibold">
+                  <div className="flex justify-between text-rose-400 font-semibold">
                     <span>VIP Member Discount</span>
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Sales Tax (8%)</span>
-                  <span>{formatPrice(tax)}</span>
+                  <span className="text-slate-200">{formatPrice(tax)}</span>
                 </div>
-                <div className="flex justify-between text-emerald-600">
+                <div className="flex justify-between text-emerald-400">
                   <span>Standard Shipping</span>
                   <span className="font-bold">FREE</span>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex justify-between items-baseline font-black text-slate-900">
+              <div className="pt-3 border-t border-slate-800 flex justify-between items-baseline font-black text-white">
                 <span className="text-sm">Total Due</span>
-                <span className="text-lg text-brand-600" data-testid="checkout-final-total">
+                <span className="text-lg text-indigo-400" data-testid="checkout-final-total">
                   {formatPrice(total)}
                 </span>
               </div>

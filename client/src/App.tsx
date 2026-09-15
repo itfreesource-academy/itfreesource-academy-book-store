@@ -31,7 +31,7 @@ export const App: React.FC = () => {
         <CurrencyProvider>
           <CartProvider>
             <BrowserRouter>
-              <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 selection:bg-brand-600 selection:text-white">
+              <div className="flex flex-col min-h-screen bg-[#0B0F17] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(11,15,23,0))] text-slate-100 selection:bg-brand-500 selection:text-white">
                 {/* Main App Navbar */}
                 <Navbar />
 

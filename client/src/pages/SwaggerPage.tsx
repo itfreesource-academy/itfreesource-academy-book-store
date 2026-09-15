@@ -168,24 +168,24 @@ export const SwaggerPage: React.FC = () => {
 
       {/* Loading state */}
       {isLoading && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <h3 className="text-sm font-bold text-slate-800">Initializing Interactive Swagger UI...</h3>
-          <p className="text-xs text-slate-500 mt-1">Loading OpenAPI 3.0 definitions & schema components</p>
+        <div className="bg-slate-900/90 rounded-3xl border border-slate-800 p-12 text-center shadow-2xl backdrop-blur-xl">
+          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <h3 className="text-sm font-bold text-white">Initializing Interactive Swagger UI...</h3>
+          <p className="text-xs text-slate-400 mt-1">Loading OpenAPI 3.0 definitions & schema components</p>
         </div>
       )}
 
       {/* Error state */}
       {loadError && (
-        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-rose-800 flex items-start gap-4">
-          <ShieldAlert className="w-6 h-6 text-rose-600 flex-shrink-0 mt-0.5" />
+        <div className="bg-rose-950/40 border border-rose-900/60 rounded-3xl p-6 text-rose-300 flex items-start gap-4">
+          <ShieldAlert className="w-6 h-6 text-rose-400 flex-shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <h4 className="text-sm font-bold">Failed to load Swagger UI Console</h4>
-            <p className="text-xs text-rose-700">{loadError}</p>
+            <h4 className="text-sm font-bold text-white">Failed to load Swagger UI Console</h4>
+            <p className="text-xs text-rose-300">{loadError}</p>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={initSwagger}
-                className="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700"
+                className="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-500 transition-colors"
               >
                 Retry Loading
               </button>
@@ -193,7 +193,7 @@ export const SwaggerPage: React.FC = () => {
                 href="/api/swagger.json"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-white border border-rose-300 text-rose-700 text-xs font-bold rounded-lg hover:bg-rose-50"
+                className="px-3 py-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors"
               >
                 View OpenAPI JSON Directly
               </a>
@@ -203,14 +203,19 @@ export const SwaggerPage: React.FC = () => {
       )}
 
       {/* Swagger UI Mount Target */}
-      <div className={`bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm overflow-hidden ${isLoading ? 'hidden' : 'block'}`}>
+      <div className={`bg-slate-900/90 rounded-3xl border border-slate-800 p-4 sm:p-6 shadow-2xl overflow-hidden backdrop-blur-xl ${isLoading ? 'hidden' : 'block'}`}>
         <style>{`
           .swagger-ui .topbar { display: none !important; }
           .swagger-ui .wrapper { padding: 0 !important; max-width: 100% !important; }
           .swagger-ui .info { margin: 20px 0 !important; }
-          .swagger-ui .scheme-container { background: #f8fafc !important; padding: 15px !important; border-radius: 12px; margin-bottom: 20px !important; }
+          .swagger-ui .info .title { color: #f8fafc !important; }
+          .swagger-ui .info p, .swagger-ui .info li { color: #94a3b8 !important; }
+          .swagger-ui .scheme-container { background: #020617 !important; padding: 15px !important; border-radius: 12px; margin-bottom: 20px !important; border: 1px solid #1e293b !important; }
+          .swagger-ui .schemes-title { color: #cbd5e1 !important; }
+          .swagger-ui select { background: #0f172a !important; color: #f8fafc !important; border: 1px solid #334155 !important; }
           .swagger-ui .opblock { border-radius: 10px !important; }
-          .swagger-ui .btn.authorize { background-color: #059669 !important; border-color: #059669 !important; color: white !important; border-radius: 8px !important; font-weight: 700 !important; }
+          .swagger-ui .opblock-tag { color: #f8fafc !important; border-bottom: 1px solid #1e293b !important; }
+          .swagger-ui .btn.authorize { background-color: #4f46e5 !important; border-color: #4f46e5 !important; color: white !important; border-radius: 8px !important; font-weight: 700 !important; }
           .swagger-ui .btn.authorize svg { fill: white !important; }
         `}</style>
         <div id="swagger-ui-container" ref={containerRef} />

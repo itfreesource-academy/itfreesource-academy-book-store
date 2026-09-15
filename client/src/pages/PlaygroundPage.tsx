@@ -197,14 +197,14 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 1: Network Latency Simulation Slider */}
         <div
           data-testid="latency-simulator-card"
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+          className="bg-slate-900/90 rounded-3xl border border-slate-800 p-6 shadow-2xl space-y-4 backdrop-blur-xl"
         >
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-amber-500" />
-            <h3 className="font-bold text-slate-900 text-sm">Network Latency Simulator</h3>
+            <Clock className="w-5 h-5 text-amber-400" />
+            <h3 className="font-bold text-white text-sm">Network Latency Simulator</h3>
           </div>
-          <p className="text-xs text-slate-500">
-            Inject artificial server response delay into every <code className="text-brand-600 bg-brand-50 px-1 py-0.5 rounded">/api</code> endpoint to test loading spinners, skeleton states, and timeout handling.
+          <p className="text-xs text-slate-400">
+            Inject artificial server response delay into every <code className="text-indigo-300 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">/api</code> endpoint to test loading spinners, skeleton states, and timeout handling.
           </p>
 
           <SingleSlider
@@ -218,9 +218,9 @@ export const PlaygroundPage: React.FC = () => {
             testId="playground-latency-slider"
           />
 
-          <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
-            <span className="text-slate-500">Active Delay Header:</span>
-            <code className="font-mono text-brand-600 bg-brand-50 px-2 py-0.5 rounded">
+          <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800">
+            <span className="text-slate-400">Active Delay Header:</span>
+            <code className="font-mono text-indigo-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
               x-mock-delay: {latencyMs}ms
             </code>
           </div>
@@ -229,13 +229,13 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 2: HTTP Status Code Fault Injector */}
         <div
           data-testid="error-simulator-card"
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+          className="bg-slate-900/90 rounded-3xl border border-slate-800 p-6 shadow-2xl space-y-4 backdrop-blur-xl"
         >
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-rose-500" />
-            <h3 className="font-bold text-slate-900 text-sm">HTTP Error Simulation Triggers</h3>
+            <AlertTriangle className="w-5 h-5 text-rose-400" />
+            <h3 className="font-bold text-white text-sm">HTTP Error Simulation Triggers</h3>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400">
             Trigger simulated backend faults to verify client toast popups and error fallback handling.
           </p>
 
@@ -245,7 +245,7 @@ export const PlaygroundPage: React.FC = () => {
                 key={code}
                 onClick={() => handleSimulateError(code)}
                 data-testid={`trigger-error-${code}`}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all"
+                className="px-3 py-1.5 bg-slate-800 hover:bg-rose-950/80 hover:text-rose-300 hover:border-rose-700 border border-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-all"
               >
                 {code}
               </button>
@@ -256,7 +256,7 @@ export const PlaygroundPage: React.FC = () => {
           {simulatedResult && (
             <div
               data-testid="error-inspector-output"
-              className="p-3 bg-slate-900 text-emerald-400 rounded-xl font-mono text-xs overflow-x-auto"
+              className="p-3 bg-slate-950 border border-slate-800 text-emerald-400 rounded-xl font-mono text-xs overflow-x-auto"
             >
               <pre>{JSON.stringify(simulatedResult, null, 2)}</pre>
             </div>
@@ -266,35 +266,35 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 3: Native Browser Dialog Triggers */}
         <div
           data-testid="native-dialogs-card"
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+          className="bg-slate-900/90 rounded-3xl border border-slate-800 p-6 shadow-2xl space-y-4 backdrop-blur-xl"
         >
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-blue-500" />
-            <h3 className="font-bold text-slate-900 text-sm">Native Browser Dialogs</h3>
+            <MessageSquare className="w-5 h-5 text-blue-400" />
+            <h3 className="font-bold text-white text-sm">Native Browser Dialogs</h3>
           </div>
-          <p className="text-xs text-slate-500">
-            Test Playwright dialog handlers: <code className="text-brand-600 bg-brand-50 px-1 py-0.5 rounded">page.on('dialog', dialog =&gt; dialog.accept())</code>
+          <p className="text-xs text-slate-400">
+            Test Playwright dialog handlers: <code className="text-indigo-300 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">page.on(&apos;dialog&apos;, dialog =&gt; dialog.accept())</code>
           </p>
 
           <div className="flex flex-wrap gap-3">
             <button
               onClick={triggerAlert}
               data-testid="trigger-alert-btn"
-              className="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-200 text-xs font-bold rounded-lg transition-colors"
+              className="px-4 py-2 bg-blue-950 text-blue-300 hover:bg-blue-600 hover:text-white border border-blue-800/60 text-xs font-bold rounded-lg transition-colors"
             >
               window.alert()
             </button>
             <button
               onClick={triggerConfirm}
               data-testid="trigger-confirm-btn"
-              className="px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white border border-purple-200 text-xs font-bold rounded-lg transition-colors"
+              className="px-4 py-2 bg-purple-950 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-800/60 text-xs font-bold rounded-lg transition-colors"
             >
               window.confirm()
             </button>
             <button
               onClick={triggerPrompt}
               data-testid="trigger-prompt-btn"
-              className="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 text-xs font-bold rounded-lg transition-colors"
+              className="px-4 py-2 bg-emerald-950 text-emerald-300 hover:bg-emerald-600 hover:text-white border border-emerald-800/60 text-xs font-bold rounded-lg transition-colors"
             >
               window.prompt()
             </button>
@@ -303,7 +303,7 @@ export const PlaygroundPage: React.FC = () => {
           {dialogResult && (
             <div
               data-testid="dialog-result-text"
-              className="text-xs font-semibold text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200"
+              className="text-xs font-semibold text-slate-200 bg-slate-950 p-3 rounded-xl border border-slate-800"
             >
               Result: {dialogResult}
             </div>
@@ -313,20 +313,20 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 4: File Download and Data Export */}
         <div
           data-testid="file-download-card"
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+          className="bg-slate-900/90 rounded-3xl border border-slate-800 p-6 shadow-2xl space-y-4 backdrop-blur-xl"
         >
           <div className="flex items-center gap-2">
-            <FileDown className="w-5 h-5 text-emerald-500" />
-            <h3 className="font-bold text-slate-900 text-sm">File Export & Download Automations</h3>
+            <FileDown className="w-5 h-5 text-emerald-400" />
+            <h3 className="font-bold text-white text-sm">File Export & Download Automations</h3>
           </div>
-          <p className="text-xs text-slate-500">
-            Automate file download verification using Playwright: <code className="text-brand-600 bg-brand-50 px-1 py-0.5 rounded">page.waitForEvent('download')</code>
+          <p className="text-xs text-slate-400">
+            Automate file download verification using Playwright: <code className="text-indigo-300 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">page.waitForEvent(&apos;download&apos;)</code>
           </p>
 
           <button
             onClick={handleDownloadSampleCsv}
             data-testid="download-csv-btn"
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
           >
             <FileDown className="w-4 h-4" />
             <span>Download Sample Catalog CSV</span>
@@ -351,17 +351,17 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 8: Microservices Architecture & Chaos Fault Injection Lab */}
         <div
           data-testid="microservices-chaos-card"
-          className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6"
+          className="lg:col-span-2 bg-slate-900/90 rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 backdrop-blur-xl"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Server className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-extrabold text-slate-900 text-lg">
+                <Server className="w-5 h-5 text-indigo-400" />
+                <h3 className="font-extrabold text-white text-lg">
                   Monorepo Microservices & Chaos Engineering Lab
                 </h3>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Test service resilience and circuit breaking. Inject simulated outages or latency into individual microservices while the rest of the application remains fully functional.
               </p>
             </div>
@@ -370,9 +370,9 @@ export const PlaygroundPage: React.FC = () => {
               type="button"
               onClick={handleResetServices}
               data-testid="reset-all-services-btn"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors self-start sm:self-auto"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+              <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
               <span>Restore All 7 Services</span>
             </button>
           </div>
@@ -386,41 +386,41 @@ export const PlaygroundPage: React.FC = () => {
                   data-testid={`service-card-${svc.name}`}
                   className={`p-4 rounded-2xl border transition-all ${
                     isFailing
-                      ? 'bg-rose-50/70 border-rose-200 shadow-sm'
-                      : 'bg-slate-50/70 border-slate-200 hover:border-slate-300'
+                      ? 'bg-rose-950/40 border-rose-900/60 shadow-lg'
+                      : 'bg-slate-950/80 border-slate-800 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs font-black uppercase tracking-wider text-slate-800">
+                    <span className="font-mono text-xs font-black uppercase tracking-wider text-white">
                       {svc.name} Service
                     </span>
                     <span
                       data-testid={`service-status-${svc.name}`}
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
                         isFailing
-                          ? 'bg-rose-100 text-rose-800 border border-rose-300'
-                          : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          ? 'bg-rose-950 text-rose-300 border border-rose-800'
+                          : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
                       }`}
                     >
                       {isFailing ? (
                         <>
-                          <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
+                          <AlertCircle className="w-2.5 h-2.5 text-rose-400" />
                           <span>FAULT 503</span>
                         </>
                       ) : (
                         <>
-                          <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
+                          <CheckCircle className="w-2.5 h-2.5 text-emerald-400" />
                           <span>HEALTHY</span>
                         </>
                       )}
                     </span>
                   </div>
 
-                  <p className="text-[11px] text-slate-500 mb-3 min-h-[32px] leading-snug">
+                  <p className="text-[11px] text-slate-400 mb-3 min-h-[32px] leading-snug">
                     {svc.description}
                   </p>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-3 pt-2 border-t border-slate-200/50">
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mb-3 pt-2 border-t border-slate-800">
                     <span>Latency: {svc.latencyMs}ms</span>
                     <span>Error: {svc.errorRate}%</span>
                   </div>
@@ -431,8 +431,8 @@ export const PlaygroundPage: React.FC = () => {
                     data-testid={`toggle-service-${svc.name}`}
                     className={`w-full py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       isFailing
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow'
-                        : 'bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200'
+                        ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30'
+                        : 'bg-slate-800 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-800/60'
                     }`}
                   >
                     <Zap className="w-3.5 h-3.5" />

@@ -45,12 +45,12 @@ export const ReviewsPage: React.FC = () => {
     <div className="space-y-6 pb-16" data-testid="reviews-page">
       <Breadcrumbs items={[{ label: 'Review Moderation' }]} />
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900" data-testid="reviews-title">
+          <h1 className="text-2xl font-extrabold text-white" data-testid="reviews-title">
             Review Moderation Queue
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-400 mt-1">
             Review, verify, and approve community critiques before publication
           </p>
         </div>
@@ -64,8 +64,8 @@ export const ReviewsPage: React.FC = () => {
               data-testid={`review-filter-${st}`}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold capitalize transition-all ${
                 statusFilter === st
-                  ? 'bg-brand-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
               }`}
             >
               {st}
@@ -79,30 +79,30 @@ export const ReviewsPage: React.FC = () => {
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">Loading reviews...</div>
         ) : reviews.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center" data-testid="no-reviews-msg">
-            <MessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs font-semibold text-slate-600">No reviews found in this status queue.</p>
+          <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-12 text-center shadow-2xl backdrop-blur-xl" data-testid="no-reviews-msg">
+            <MessageSquare className="w-10 h-10 text-slate-600 mx-auto mb-2" />
+            <p className="text-xs font-semibold text-slate-400">No reviews found in this status queue.</p>
           </div>
         ) : (
           reviews.map((rev) => (
             <div
               key={rev.id}
               data-testid={`moderation-card-${rev.id}`}
-              className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row justify-between gap-4"
+              className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row justify-between gap-4"
             >
               <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-3">
-                  <span className="font-bold text-slate-900 text-xs">@{rev.username}</span>
+                  <span className="font-bold text-white text-xs">@{rev.username}</span>
                   <span className="text-[10px] text-slate-400">
                     {new Date(rev.createdAt).toLocaleString()}
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                       rev.status === 'approved'
-                        ? 'bg-emerald-100 text-emerald-800'
+                        ? 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300'
                         : rev.status === 'rejected'
-                        ? 'bg-rose-100 text-rose-800'
-                        : 'bg-amber-100 text-amber-800'
+                        ? 'bg-rose-950/60 border-rose-800/60 text-rose-300'
+                        : 'bg-amber-950/60 border-amber-800/60 text-amber-300'
                     }`}
                   >
                     {rev.status}
@@ -111,10 +111,10 @@ export const ReviewsPage: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <StarRating rating={rev.rating} size="sm" />
-                  <h4 className="font-bold text-slate-900 text-sm">{rev.title}</h4>
+                  <h4 className="font-bold text-white text-sm">{rev.title}</h4>
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed max-w-3xl">{rev.comment}</p>
+                <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">{rev.comment}</p>
               </div>
 
               {/* Action Buttons */}
@@ -124,7 +124,7 @@ export const ReviewsPage: React.FC = () => {
                     onClick={() => handleModerate(rev.id, 'approved')}
                     disabled={rev.status === 'approved'}
                     data-testid={`approve-btn-${rev.id}`}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-300 text-xs font-bold rounded-lg transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-emerald-950/60 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-800/80 text-xs font-bold rounded-lg transition-colors disabled:opacity-40 disabled:pointer-events-none"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Approve</span>
@@ -133,7 +133,7 @@ export const ReviewsPage: React.FC = () => {
                     onClick={() => handleModerate(rev.id, 'rejected')}
                     disabled={rev.status === 'rejected'}
                     data-testid={`reject-btn-${rev.id}`}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-300 text-xs font-bold rounded-lg transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-800/80 text-xs font-bold rounded-lg transition-colors disabled:opacity-40 disabled:pointer-events-none"
                   >
                     <X className="w-3.5 h-3.5" />
                     <span>Reject</span>

@@ -110,52 +110,52 @@ export const InventoryPage: React.FC = () => {
 
       {/* Header and Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+        <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-xl flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-800/80 text-indigo-400 flex items-center justify-center font-bold">
             <Layers className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-slate-900" data-testid="inv-total-stock">
+            <h4 className="text-2xl font-black text-white" data-testid="inv-total-stock">
               {totalStock}
             </h4>
-            <span className="text-xs text-slate-500 font-medium">Total Books in Stock</span>
+            <span className="text-xs text-slate-400 font-medium">Total Books in Stock</span>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+        <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-xl flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-950/60 border border-amber-800/80 text-amber-400 flex items-center justify-center font-bold">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-slate-900" data-testid="inv-low-stock-count">
+            <h4 className="text-2xl font-black text-white" data-testid="inv-low-stock-count">
               {lowStockCount}
             </h4>
-            <span className="text-xs text-slate-500 font-medium">Low Stock Alerts (&lt; 15 units)</span>
+            <span className="text-xs text-slate-400 font-medium">Low Stock Alerts (&lt; 15 units)</span>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+        <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-xl flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-emerald-400 flex items-center justify-center font-bold">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-slate-900">{inventory.length}</h4>
-            <span className="text-xs text-slate-500 font-medium">Catalog SKUs Managed</span>
+            <h4 className="text-2xl font-black text-white">{inventory.length}</h4>
+            <span className="text-xs text-slate-400 font-medium">Catalog SKUs Managed</span>
           </div>
         </div>
       </div>
 
       {/* Controls Bar: Search + Export/Import CSV */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3 w-full sm:w-auto sm:flex-1">
-          <Search className="w-4 h-4 text-slate-400" />
+          <Search className="w-4 h-4 text-slate-500" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Filter inventory by book title, ISBN, or genre..."
             data-testid="inv-search-input"
-            className="w-full text-xs outline-none bg-transparent"
+            className="w-full text-xs outline-none bg-transparent text-slate-100 placeholder-slate-500"
           />
         </div>
 
@@ -165,10 +165,10 @@ export const InventoryPage: React.FC = () => {
             type="button"
             onClick={handleExportCsv}
             data-testid="export-inventory-csv-btn"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors"
             title="Export full inventory list to Excel CSV format with UTF-8 BOM"
           >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <Download className="w-3.5 h-3.5 text-slate-400" />
             <span>Export CSV</span>
           </button>
 
@@ -178,10 +178,10 @@ export const InventoryPage: React.FC = () => {
               type="button"
               onClick={() => setIsBulkModalOpen(true)}
               data-testid="import-inventory-csv-btn"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-300 bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-700 transition-colors"
               title="Bulk update book stock counts from CSV"
             >
-              <Upload className="w-3.5 h-3.5 text-indigo-600" />
+              <Upload className="w-3.5 h-3.5 text-indigo-400" />
               <span>Bulk Stock Import</span>
             </button>
           )}
@@ -189,10 +189,10 @@ export const InventoryPage: React.FC = () => {
       </div>
 
       {/* Inventory Table with Interactive Sliders */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600" data-testid="inventory-table">
-            <thead className="bg-slate-50 text-slate-700 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
+          <table className="w-full text-left text-xs text-slate-300" data-testid="inventory-table">
+            <thead className="bg-slate-950 text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-800">
               <tr>
                 <th className="py-4 px-4">Book Title & ISBN</th>
                 <th className="py-4 px-4">Category</th>
@@ -202,26 +202,26 @@ export const InventoryPage: React.FC = () => {
                 <th className="py-4 px-4 text-right">Batch Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100" data-testid="inventory-table-body">
+            <tbody className="divide-y divide-slate-800" data-testid="inventory-table-body">
               {filteredItems.map((item) => {
                 const isLow = item.stock < 15;
                 return (
-                  <tr key={item.id} data-testid={`inv-row-${item.id}`} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={item.id} data-testid={`inv-row-${item.id}`} className="hover:bg-slate-800/60 transition-colors">
                     <td className="py-3 px-4 max-w-xs">
-                      <span className="font-bold text-slate-900 block truncate">{item.title}</span>
-                      <span className="text-[11px] text-slate-500">ISBN: {item.isbn}</span>
+                      <span className="font-bold text-white block truncate">{item.title}</span>
+                      <span className="text-[11px] text-slate-400">ISBN: {item.isbn}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-semibold">
+                      <span className="bg-slate-800 border border-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px] font-semibold">
                         {item.categoryName}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-900" data-testid={`inv-price-${item.id}`}>{formatPrice(item.price)}</td>
+                    <td className="py-3 px-4 font-bold text-white" data-testid={`inv-price-${item.id}`}>{formatPrice(item.price)}</td>
                     <td className="py-3 px-4">
                       <span
                         data-testid={`stock-status-pill-${item.id}`}
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          isLow ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                          isLow ? 'bg-amber-950/60 border border-amber-800/60 text-amber-300' : 'bg-emerald-950/60 border border-emerald-800/60 text-emerald-300'
                         }`}
                       >
                         {isLow ? 'LOW STOCK' : 'HEALTHY'}
@@ -238,11 +238,11 @@ export const InventoryPage: React.FC = () => {
                           disabled={!hasPermission('inventory:update')}
                           onChange={(e) => handleStockUpdate(item.id, parseInt(e.target.value, 10))}
                           data-testid={`inv-stock-slider-${item.id}`}
-                          className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600 disabled:opacity-40"
+                          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500 disabled:opacity-40"
                         />
                         <span
                           data-testid={`inv-stock-val-${item.id}`}
-                          className="w-12 text-center font-black text-slate-900 bg-slate-100 px-2 py-1 rounded-md"
+                          className="w-12 text-center font-black text-white bg-slate-800 border border-slate-700 px-2 py-1 rounded-md"
                         >
                           {item.stock}
                         </span>
@@ -253,7 +253,7 @@ export const InventoryPage: React.FC = () => {
                         <button
                           onClick={() => handleStockUpdate(item.id, item.stock + 50)}
                           data-testid={`inv-restock-btn-${item.id}`}
-                          className="px-2.5 py-1 bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 text-xs font-semibold rounded-lg transition-colors"
+                          className="px-2.5 py-1 bg-indigo-950/60 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-800/80 text-xs font-semibold rounded-lg transition-colors"
                         >
                           +50 Units
                         </button>

@@ -65,42 +65,42 @@ export const CartDrawer: React.FC = () => {
               <div
                 key={item.book.id}
                 data-testid={`cart-item-${item.book.id}`}
-                className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200"
+                className="flex items-center gap-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-slate-100"
               >
                 <img
                   src={item.book.coverImage}
                   alt={item.book.title}
-                  className="w-14 h-20 object-cover rounded-md shadow-sm flex-shrink-0"
+                  className="w-14 h-20 object-cover rounded-md shadow-sm flex-shrink-0 border border-slate-800"
                 />
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-slate-900 truncate" title={item.book.title}>
+                  <h4 className="text-xs font-bold text-white truncate" title={item.book.title}>
                     {item.book.title}
                   </h4>
-                  <p className="text-[11px] text-slate-500 mb-2 truncate">
+                  <p className="text-[11px] text-slate-400 mb-2 truncate">
                     {item.book.authorName}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-brand-600">
+                    <span className="text-xs font-bold text-indigo-400">
                       {formatPrice(item.book.price)}
                     </span>
-                    <div className="flex items-center border border-slate-300 rounded-lg bg-white">
+                    <div className="flex items-center border border-slate-700 rounded-lg bg-slate-800">
                       <button
                         onClick={() => updateQuantity(item.book.id, item.quantity - 1)}
                         data-testid={`cart-decrease-qty-${item.book.id}`}
-                        className="p-1 hover:bg-slate-100 text-slate-600 rounded-l-lg"
+                        className="p-1 hover:bg-slate-700 text-slate-300 rounded-l-lg transition-colors"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
                       <span
                         data-testid={`cart-qty-value-${item.book.id}`}
-                        className="px-2 text-xs font-bold text-slate-800"
+                        className="px-2 text-xs font-bold text-white"
                       >
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.book.id, item.quantity + 1)}
                         data-testid={`cart-increase-qty-${item.book.id}`}
-                        className="p-1 hover:bg-slate-100 text-slate-600 rounded-r-lg"
+                        className="p-1 hover:bg-slate-700 text-slate-300 rounded-r-lg transition-colors"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
@@ -110,7 +110,7 @@ export const CartDrawer: React.FC = () => {
                 <button
                   onClick={() => removeFromCart(item.book.id)}
                   data-testid={`cart-remove-item-${item.book.id}`}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-rose-950/40 transition-colors"
                   title="Remove item"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -122,31 +122,31 @@ export const CartDrawer: React.FC = () => {
 
         {/* Pricing Summary & Checkout Button */}
         {items.length > 0 && (
-          <div className="pt-4 mt-auto border-t border-slate-200 space-y-2 text-xs" data-testid="cart-summary">
-            <div className="flex justify-between text-slate-600">
+          <div className="pt-4 mt-auto border-t border-slate-800 space-y-2 text-xs" data-testid="cart-summary">
+            <div className="flex justify-between text-slate-400">
               <span>Subtotal</span>
-              <span data-testid="cart-subtotal">{formatPrice(subtotal)}</span>
+              <span data-testid="cart-subtotal" className="text-slate-200">{formatPrice(subtotal)}</span>
             </div>
             {discount > 0 && (
-              <div className="flex justify-between text-rose-600 font-semibold">
+              <div className="flex justify-between text-rose-400 font-semibold">
                 <span>VIP Discount (20%)</span>
                 <span data-testid="cart-discount">-{formatPrice(discount)}</span>
               </div>
             )}
-            <div className="flex justify-between text-slate-600">
+            <div className="flex justify-between text-slate-400">
               <span>Estimated Tax (8%)</span>
-              <span data-testid="cart-tax">{formatPrice(tax)}</span>
+              <span data-testid="cart-tax" className="text-slate-200">{formatPrice(tax)}</span>
             </div>
-            <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-100">
+            <div className="flex justify-between text-sm font-extrabold text-white pt-2 border-t border-slate-800">
               <span>Order Total</span>
-              <span data-testid="cart-total">{formatPrice(total)}</span>
+              <span data-testid="cart-total" className="text-indigo-400">{formatPrice(total)}</span>
             </div>
 
             <Link
               to="/checkout"
               onClick={closeCart}
               data-testid="cart-checkout-btn"
-              className="w-full mt-3 flex items-center justify-center gap-2 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 transition-all text-xs"
+              className="w-full mt-3 flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs"
             >
               <span>Proceed to Checkout</span>
               <ArrowRight className="w-4 h-4" />
