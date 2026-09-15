@@ -12,7 +12,7 @@ This repository contains the **ITFreeSource Academy Book Store**, a fullstack Ty
 - **API Documentation**: OpenAPI 3.0 via `swagger-ui-express` served exclusively at `/api/swagger` (raw JSON at `/api/swagger.json`).
 - **Test Engine**: Vitest 5 with v8 coverage provider (`@vitest/coverage-v8`), Supertest for HTTP integration tests.
 - **CI/CD**: GitHub Actions workflow at `.github/workflows/ci.yml`.
-- **Cloudflare Deployment**: Configured via `wrangler.jsonc` (project name `itfs-book-store`) deploying static SPA assets from `./dist` with SPA routing fallback.
+- **Cloudflare Deployment**: Configured via `wrangler.jsonc` (project name `bookstore`) deploying static SPA assets from `./dist` with SPA routing fallback.
 
 ---
 
