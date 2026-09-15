@@ -31,6 +31,7 @@ export const BooksCatalogPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [filterTab, setFilterTab] = useState<'all' | 'in_house' | 'marketplace' | 'rental'>('all');
 
   // Modal State
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,6 +40,13 @@ export const BooksCatalogPage: React.FC = () => {
 
   const { hasPermission } = useAuth();
   const { addToast } = useToast();
+
+  const filteredBooks = books.filter((b) => {
+    if (filterTab === 'in_house') return b.sellerType !== 'marketplace';
+    if (filterTab === 'marketplace') return b.sellerType === 'marketplace';
+    if (filterTab === 'rental') return (b.rentalPrice && b.rentalPrice > 0);
+    return true;
+  });
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -217,6 +225,54 @@ export const BooksCatalogPage: React.FC = () => {
 
         {/* Books Content Area */}
         <div className="lg:col-span-3 space-y-6">
+          {/* Persona & Purchase Mode Quick Filters */}
+          <div className="flex flex-wrap items-center gap-2 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm" data-testid="catalog-mode-tabs">
+            <button
+              onClick={() => setFilterTab('all')}
+              data-testid="filter-tab-all"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                filterTab === 'all'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              All Titles ({books.length})
+            </button>
+            <button
+              onClick={() => setFilterTab('in_house')}
+              data-testid="filter-tab-in-house"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                filterTab === 'in_house'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              🏢 In-House Catalog
+            </button>
+            <button
+              onClick={() => setFilterTab('marketplace')}
+              data-testid="filter-tab-marketplace"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                filterTab === 'marketplace'
+                  ? 'bg-amber-600 text-white shadow-sm'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              🏪 Marketplace Sellers
+            </button>
+            <button
+              onClick={() => setFilterTab('rental')}
+              data-testid="filter-tab-rental"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                filterTab === 'rental'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              🔖 Academic 10-Day Rental
+            </button>
+          </div>
+
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" data-testid="loading-skeletons">
               {Array.from({ length: 6 }).map((_, idx) => (
@@ -227,14 +283,17 @@ export const BooksCatalogPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : books.length === 0 ? (
+          ) : filteredBooks.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center" data-testid="no-books-found">
               <h3 className="text-base font-bold text-slate-800 mb-1">No Books Found</h3>
               <p className="text-xs text-slate-500 mb-4">
-                Try adjusting your search criteria, price range sliders, or category filter.
+                Try adjusting your search criteria, price range sliders, or filter tabs.
               </p>
               <button
-                onClick={handleResetFilters}
+                onClick={() => {
+                  setFilterTab('all');
+                  handleResetFilters();
+                }}
                 data-testid="reset-filters-empty-btn"
                 className="px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-lg hover:bg-brand-700 transition-colors"
               >
@@ -246,13 +305,13 @@ export const BooksCatalogPage: React.FC = () => {
               className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
               data-testid="books-grid"
             >
-              {books.map((book) => (
+              {filteredBooks.map((book) => (
                 <BookCard key={book.id} book={book} />
               ))}
             </div>
           ) : (
             <BookTable
-              books={books}
+              books={filteredBooks}
               onEdit={(book) => {
                 setEditingBook(book);
                 setIsFormOpen(true);

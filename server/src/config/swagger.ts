@@ -188,8 +188,16 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
       '/api/v1/auth/users': {
         get: {
           tags: ['Users & RBAC'],
-          summary: 'List all 10 preconfigured user accounts with regional timezones',
+          summary: 'List all user accounts & QA personas (Requires users:manage)',
+          security: [{ bearerAuth: [] }],
           responses: { 200: { description: 'List of users' } }
+        },
+        post: {
+          tags: ['Users & RBAC'],
+          summary: 'Create custom QA user account (Admin only)',
+          security: [{ bearerAuth: [] }],
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object' } } } },
+          responses: { 201: { description: 'User created' } }
         }
       },
       '/api/v1/auth/users/{id}': {
@@ -207,7 +215,7 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
                   properties: {
                     fullName: { type: 'string', example: 'Emma Watson-Brown' },
                     email: { type: 'string', example: 'emma.brown@outlook.com' },
-                    role: { type: 'string', enum: ['admin', 'store_manager', 'inventory_clerk', 'content_editor', 'order_fulfillment', 'support_agent', 'book_reviewer', 'auditor', 'vip_customer', 'standard_customer'], example: 'store_manager' },
+                    role: { type: 'string', enum: ['admin', 'store_manager', 'inventory_clerk', 'content_editor', 'order_fulfillment', 'support_agent', 'book_reviewer', 'auditor', 'vip_customer', 'standard_customer', 'marketplace_seller'], example: 'store_manager' },
                     status: { type: 'string', enum: ['active', 'suspended'], example: 'active' },
                     currency: { type: 'string', enum: ['USD', 'AED', 'INR', 'JPY', 'AUD'], example: 'INR' },
                     timezone: { type: 'string', example: 'Asia/Kolkata' }
@@ -219,6 +227,16 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
           responses: {
             200: { description: 'User updated successfully' },
             403: { description: 'Forbidden: Requires users:manage permission' }
+          }
+        },
+        delete: {
+          tags: ['Users & RBAC'],
+          summary: 'Delete custom user account (Baseline 11 core personas cannot be deleted)',
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: {
+            200: { description: 'User deleted' },
+            400: { description: 'Core personas cannot be deleted' }
           }
         }
       },
@@ -384,6 +402,46 @@ Interactive OpenAPI 3.0 API documentation and live test execution console.
           summary: 'Inspect immutable system activity trail (Auditor & Admin only)',
           security: [{ bearerAuth: [] }],
           responses: { 200: { description: 'Audit log entries' } }
+        }
+      },
+      '/api/v1/auth/users/bulk': {
+        post: {
+          tags: ['Authentication & Users'],
+          summary: 'Bulk create users from CSV / JSON dataset (Admin only)',
+          security: [{ bearerAuth: [] }],
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object' } } } },
+          responses: { 201: { description: 'Bulk users created' } }
+        }
+      },
+      '/api/v1/inventory/bulk': {
+        post: {
+          tags: ['Inventory'],
+          summary: 'Bulk update book inventory stock from CSV',
+          security: [{ bearerAuth: [] }],
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object' } } } },
+          responses: { 200: { description: 'Stock updated for batch' } }
+        }
+      },
+      '/api/v1/system/services': {
+        get: {
+          tags: ['System & QA Sandbox'],
+          summary: 'Inspect operational health and latency for all 7 decoupled monorepo microservices',
+          responses: { 200: { description: 'Microservices health statuses' } }
+        }
+      },
+      '/api/v1/system/services/{name}/toggle': {
+        post: {
+          tags: ['System & QA Sandbox'],
+          summary: 'Inject chaos fault (503) or restore specific microservice',
+          parameters: [{ name: 'name', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: { 200: { description: 'Service fault toggled' } }
+        }
+      },
+      '/api/v1/system/services/reset': {
+        post: {
+          tags: ['System & QA Sandbox'],
+          summary: 'Restore all microservices back to HEALTHY operational state',
+          responses: { 200: { description: 'All microservices healthy' } }
         }
       },
       '/api/v1/system/reset': {

@@ -7,10 +7,10 @@ describe('Authentication & RBAC Unit Tests', () => {
     store.resetToSeedData();
   });
 
-  describe('10 Personas Initialization & Credentials', () => {
-    it('should initialize with exactly 10 distinct test personas', () => {
+  describe('11 Personas Initialization & Credentials', () => {
+    it('should initialize with exactly 11 distinct test personas', () => {
       const users = store.getUsers();
-      expect(users.length).toBe(10);
+      expect(users.length).toBe(11);
 
       const roles = users.map(u => u.role);
       expect(roles).toContain('admin');
@@ -23,6 +23,36 @@ describe('Authentication & RBAC Unit Tests', () => {
       expect(roles).toContain('auditor');
       expect(roles).toContain('vip_customer');
       expect(roles).toContain('standard_customer');
+      expect(roles).toContain('marketplace_seller');
+    });
+
+    it('should protect core personas from deletion but allow custom user deletion', () => {
+      const admin = store.getUserByUsername('admin');
+      expect(admin).toBeDefined();
+
+      // Deleting core persona should return error
+      const failRes = store.deleteUser(admin!.id);
+      expect(failRes.success).toBe(false);
+      expect(failRes.error).toMatch(/cannot delete core/i);
+
+      // Creating and deleting custom user should succeed
+      const customRes = store.createUser({
+        username: 'custom_tester',
+        password: 'Pass@12345',
+        fullName: 'Custom QA Tester',
+        email: 'tester@custom.org',
+        role: 'standard_customer',
+        currency: 'USD',
+        timezone: 'America/New_York'
+      });
+      expect(customRes.success).toBe(true);
+      expect(customRes.user).toBeDefined();
+      expect(store.getUserByUsername('custom_tester')).toBeDefined();
+
+      // Deleting custom user
+      const deletedRes = store.deleteUser(customRes.user!.id);
+      expect(deletedRes.success).toBe(true);
+      expect(store.getUserByUsername('custom_tester')).toBeUndefined();
     });
 
     it('should authenticate admin user with valid password', () => {

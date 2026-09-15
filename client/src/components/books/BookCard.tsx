@@ -5,7 +5,7 @@ import { StarRating } from '../common/StarRating.js';
 import { useCart } from '../../context/CartContext.js';
 import { useCurrency } from '../../context/CurrencyContext.js';
 import { BorrowModal } from '../borrow/BorrowModal.js';
-import { ShoppingCart, Crown, AlertCircle, Bookmark } from 'lucide-react';
+import { ShoppingCart, Crown, AlertCircle, Bookmark, Store, Building2, Info } from 'lucide-react';
 
 interface BookCardProps {
   book: Book;
@@ -16,6 +16,14 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const { formatPrice } = useCurrency();
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
 
+  const discountPercent =
+    book.originalPrice && book.originalPrice > book.price
+      ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
+      : null;
+
+  const rentalFee = book.rentalPrice || 2.00;
+  const isMarketplace = book.sellerType === 'marketplace';
+
   return (
     <>
       <div
@@ -23,7 +31,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
         className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col group relative"
       >
         {/* Top Badges */}
-        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1 items-start">
           {book.isVipExclusive && (
             <span
               data-testid={`vip-badge-${book.id}`}
@@ -33,12 +41,33 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
               VIP ONLY
             </span>
           )}
-          {book.isFeatured && !book.isVipExclusive && (
+
+          {isMarketplace ? (
             <span
-              data-testid={`featured-badge-${book.id}`}
-              className="bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow"
+              data-testid={`seller-badge-${book.id}`}
+              className="inline-flex items-center gap-1 bg-amber-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow"
+              title={`Marketplace Seller: @${book.sellerUsername || 'seller'} (Subject to 10% sale commission & 15% rental fee)`}
             >
-              BESTSELLER
+              <Store className="w-2.5 h-2.5" />
+              <span>Seller: @{book.sellerUsername || 'marketplace'}</span>
+            </span>
+          ) : (
+            <span
+              data-testid={`seller-badge-${book.id}`}
+              className="inline-flex items-center gap-1 bg-indigo-600 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow"
+              title="In-House Official Academy Warehouse Inventory"
+            >
+              <Building2 className="w-2.5 h-2.5" />
+              <span>In-House</span>
+            </span>
+          )}
+
+          {discountPercent && (
+            <span
+              data-testid={`discount-badge-${book.id}`}
+              className="bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md shadow"
+            >
+              -{discountPercent}% OFF
             </span>
           )}
         </div>
@@ -54,8 +83,8 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
             alt={book.title}
             data-testid={`book-cover-img-${book.id}`}
             onError={(e) => {
-              // Graceful fallback to Unsplash book cover if external CDN fails
-              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop';
+              (e.target as HTMLImageElement).src =
+                'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop';
             }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 shadow-inner"
             loading="lazy"
@@ -116,25 +145,39 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
             </div>
           )}
 
-          {/* Price & Action Buttons */}
-          <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-            <div className="flex items-baseline gap-1.5">
-              <span
-                data-testid={`book-price-${book.id}`}
-                className="text-base font-black text-slate-900"
-              >
-                {formatPrice(book.price)}
-              </span>
-              {book.originalPrice && book.originalPrice > book.price && (
+          {/* Multi-tier Price & QA Tooltip */}
+          <div
+            className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between gap-2"
+            title={`QA Multi-Tier Pricing: List Price (MSRP): ${formatPrice(
+              book.originalPrice || book.price
+            )} | Active Selling Price: ${formatPrice(book.price)} | Academic Rental Fee: ${formatPrice(
+              rentalFee
+            )} / 10 days | Seller: ${isMarketplace ? `@${book.sellerUsername}` : 'In-House'}`}
+            data-testid={`pricing-breakdown-${book.id}`}
+          >
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-1.5">
                 <span
-                  data-testid={`book-orig-price-${book.id}`}
-                  className="text-xs text-slate-400 line-through"
+                  data-testid={`book-price-${book.id}`}
+                  className="text-base font-black text-slate-900"
                 >
-                  {formatPrice(book.originalPrice)}
+                  {formatPrice(book.price)}
                 </span>
-              )}
+                {book.originalPrice && book.originalPrice > book.price && (
+                  <span
+                    data-testid={`book-orig-price-${book.id}`}
+                    className="text-xs text-slate-400 line-through"
+                  >
+                    {formatPrice(book.originalPrice)}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] text-slate-400 font-medium">
+                Rent: {formatPrice(rentalFee)} / 10d
+              </span>
             </div>
 
+            {/* Dual Mode Action Buttons: Buy to Own vs Rent */}
             <div className="flex items-center gap-1.5">
               {/* Borrow Button */}
               <button
@@ -142,22 +185,23 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
                 onClick={() => setIsBorrowModalOpen(true)}
                 data-testid={`borrow-btn-${book.id}`}
                 className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 transition-colors text-xs font-semibold flex items-center gap-1"
-                title={`Borrow for ${formatPrice(2.00)} / 10 days`}
+                title={`Academic 10-day borrow for ${formatPrice(rentalFee)}`}
               >
                 <Bookmark className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Borrow</span>
               </button>
 
-              {/* Add to Cart */}
+              {/* Add to Cart (Buy to Own) */}
               <button
                 onClick={() => addToCart(book)}
                 disabled={book.stock <= 0}
                 data-testid={`add-to-cart-btn-${book.id}`}
-                className="p-2 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                title="Add to Cart"
-                aria-label={`Add ${book.title} to cart`}
+                className="px-2.5 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white border border-brand-200 transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1 text-xs font-bold"
+                title={`Buy to own for ${formatPrice(book.price)}`}
+                aria-label={`Buy ${book.title} to own`}
               >
-                <ShoppingCart className="w-4 h-4" />
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Buy</span>
               </button>
             </div>
           </div>
@@ -172,3 +216,5 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
     </>
   );
 };
+
+export default BookCard;

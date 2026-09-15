@@ -22,11 +22,13 @@ import {
   RotateCcw,
   Sparkles,
   Shield,
-  SlidersHorizontal
+  SlidersHorizontal,
+  PlusCircle
 } from 'lucide-react';
 import { useCurrency, SUPPORTED_CURRENCIES } from '../../context/CurrencyContext.js';
 import { Currency } from '../../types/index.js';
 import { PersonaSwitchModal } from './PersonaSwitchModal.js';
+import { SellerListingModal } from '../books/SellerListingModal.js';
 import { apiClient } from '../../api/client.js';
 import { useToast } from '../../context/ToastContext.js';
 
@@ -42,6 +44,7 @@ export const Navbar: React.FC = () => {
   const [isManageMenuOpen, setIsManageMenuOpen] = useState(false);
   const [isQaMenuOpen, setIsQaMenuOpen] = useState(false);
   const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
+  const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -99,6 +102,12 @@ export const Navbar: React.FC = () => {
       hasPermission('audit:read') ||
       hasPermission('orders:read_all') ||
       hasPermission('orders:read_own'));
+
+  const isSellerOrAdmin =
+    isAuthenticated &&
+    (user?.role === 'marketplace_seller' ||
+      user?.role === 'admin' ||
+      hasPermission('marketplace:sell'));
 
   return (
     <>
@@ -272,6 +281,29 @@ export const Navbar: React.FC = () => {
                   </div>
                 )}
               </div>
+
+              {/* About Project Page Link */}
+              <Link
+                to="/about"
+                data-testid="nav-link-about"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-indigo-600 hover:bg-slate-50 transition-colors"
+              >
+                About
+              </Link>
+
+              {/* Seller Listing Button */}
+              {isSellerOrAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setIsSellerModalOpen(true)}
+                  data-testid="nav-list-book-btn"
+                  className="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm flex items-center gap-1 transition-colors"
+                  title="List a book to sell or rent with platform fee calculation"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>List Book</span>
+                </button>
+              )}
             </nav>
 
             {/* Right: Currency, Cart & User Account */}
@@ -533,6 +565,25 @@ export const Navbar: React.FC = () => {
               >
                 Swagger API Documentation
               </a>
+              <Link
+                to="/about"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 mt-1"
+              >
+                About & Creator
+              </Link>
+              {isSellerOrAdmin && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsSellerModalOpen(true);
+                  }}
+                  className="w-full text-left block px-3 py-2 rounded-xl text-xs font-bold text-amber-800 bg-amber-100 mt-1"
+                >
+                  + List Book for Sale/Rent
+                </button>
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-3">
@@ -565,6 +616,15 @@ export const Navbar: React.FC = () => {
       <PersonaSwitchModal
         isOpen={isPersonaModalOpen}
         onClose={() => setIsPersonaModalOpen(false)}
+      />
+
+      {/* Marketplace Seller Book Listing Modal */}
+      <SellerListingModal
+        isOpen={isSellerModalOpen}
+        onClose={() => setIsSellerModalOpen(false)}
+        onSuccess={() => {
+          navigate('/books');
+        }}
       />
     </>
   );

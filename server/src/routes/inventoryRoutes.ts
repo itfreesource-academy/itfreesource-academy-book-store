@@ -42,4 +42,30 @@ router.patch('/:id/stock', authenticateToken, requirePermission('inventory:updat
   res.json({ success: true, book: updated });
 });
 
+// POST /api/v1/inventory/bulk (Bulk update stock/prices from CSV, Requires inventory:update)
+router.post('/bulk', authenticateToken, requirePermission('inventory:update'), (req: AuthenticatedRequest, res: Response): void => {
+  const updates = req.body.updates;
+  if (!Array.isArray(updates) || updates.length === 0) {
+    res.status(400).json({ success: false, error: 'Request body must contain a non-empty updates array.' });
+    return;
+  }
+
+  const result = store.bulkUpdateInventory(updates);
+
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: req.user!.id,
+    username: req.user!.username,
+    role: req.user!.role,
+    action: 'INVENTORY_BULK_UPDATE',
+    entity: 'Inventory',
+    entityId: 'bulk',
+    details: `Updated ${result.updatedCount} inventory items in bulk with ${result.errors.length} errors.`,
+    ipAddress: (req.ip as string) || '127.0.0.1'
+  });
+
+  res.json({ success: true, ...result });
+});
+
 export default router;

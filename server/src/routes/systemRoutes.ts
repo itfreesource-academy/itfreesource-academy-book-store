@@ -131,4 +131,44 @@ router.post('/upload', upload.single('file'), (req: Request, res: Response): voi
   });
 });
 
+// GET /api/v1/system/services (List health status of all 7 decoupled microservices)
+router.get('/services', (_req: Request, res: Response): void => {
+  const services = store.getMicroservicesHealth();
+  const allHealthy = services.every(s => s.status === 'healthy');
+  res.json({
+    success: true,
+    overallStatus: allHealthy ? 'HEALTHY' : 'DEGRADED',
+    services,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// POST /api/v1/system/services/:name/toggle (Chaos engineering: toggle simulated fault on a microservice)
+router.post('/services/:name/toggle', (req: Request, res: Response): void => {
+  const name = req.params.name as any;
+  const faultType = req.body.faultType || '503_unavailable';
+  const updated = store.toggleMicroserviceFault(name, faultType);
+
+  if (!updated) {
+    res.status(404).json({ success: false, error: `Microservice '${name}' not recognized.` });
+    return;
+  }
+
+  res.json({
+    success: true,
+    message: `Microservice '${name}' is now ${updated.status.toUpperCase()} (fault: ${updated.isFaultInjected ? updated.faultType : 'none'}).`,
+    service: updated
+  });
+});
+
+// POST /api/v1/system/services/reset (Restore all microservices to 100% healthy)
+router.post('/services/reset', (_req: Request, res: Response): void => {
+  const services = store.resetMicroservicesHealth();
+  res.json({
+    success: true,
+    message: 'All 7 microservices restored to HEALTHY operational status.',
+    services
+  });
+});
+
 export default router;

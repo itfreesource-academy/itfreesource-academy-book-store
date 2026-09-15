@@ -117,7 +117,7 @@ const swaggerHtml = `<!DOCTYPE html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ITFreeSource Academy | Interactive Book Store API Documentation</title>
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css" />
   <style>
     .swagger-ui .topbar { display: none }
     body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #fafafa; }
@@ -125,7 +125,8 @@ const swaggerHtml = `<!DOCTYPE html>
 </head>
 <body>
   <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-standalone-preset.min.js" crossorigin="anonymous"></script>
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
@@ -134,8 +135,9 @@ const swaggerHtml = `<!DOCTYPE html>
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,
-          SwaggerUIBundle.SwaggerUIStandalonePreset
+          SwaggerUIStandalonePreset
         ],
+        layout: "StandaloneLayout",
         persistAuthorization: true,
         tryItOutEnabled: true,
         displayRequestDuration: true,
@@ -335,6 +337,120 @@ app.put('/api/v1/auth/users/:id', async (c) => {
 
   const { password: _, ...userSafe } = updated;
   return c.json({ success: true, user: userSafe });
+});
+
+// POST /api/v1/auth/users (Admin: Create User)
+app.post('/api/v1/auth/users', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'users:manage');
+  if (permErr) return permErr;
+
+  const { username, email, fullName, role, password, currency, timezone, status } = await c.req.json();
+  if (!username || !email || !fullName || !role) {
+    return c.json({ success: false, error: 'Missing required fields: username, email, fullName, and role are required.' }, 400);
+  }
+
+  const result = store.createUser({
+    username,
+    email,
+    fullName,
+    role,
+    password,
+    currency,
+    timezone,
+    status
+  });
+
+  if (!result.success || !result.user) {
+    return c.json({ success: false, error: result.error || 'Failed to create user.' }, 400);
+  }
+
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: authRes.user.id,
+    username: authRes.user.username,
+    role: authRes.user.role,
+    action: 'USER_CREATE',
+    entity: 'User',
+    entityId: result.user.id,
+    details: `Admin created user @${result.user.username} with role ${result.user.role}.`,
+    ipAddress: clientIp
+  });
+
+  return c.json({ success: true, user: result.user }, 201);
+});
+
+// DELETE /api/v1/auth/users/:id (Admin: Delete Custom User)
+app.delete('/api/v1/auth/users/:id', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'users:manage');
+  if (permErr) return permErr;
+
+  const id = c.req.param('id');
+  if (authRes.user.id === id) {
+    return c.json({ success: false, error: 'Cannot delete your own active administrator account.' }, 400);
+  }
+
+  const target = store.getUserById(id);
+  if (!target) {
+    return c.json({ success: false, error: 'User not found.' }, 404);
+  }
+
+  const result = store.deleteUser(id);
+  if (!result.success) {
+    return c.json({ success: false, error: result.error }, 400);
+  }
+
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: authRes.user.id,
+    username: authRes.user.username,
+    role: authRes.user.role,
+    action: 'USER_DELETE',
+    entity: 'User',
+    entityId: id,
+    details: `Admin deleted custom user @${target.username}.`,
+    ipAddress: clientIp
+  });
+
+  return c.json({ success: true, message: `User @${target.username} has been deleted successfully.` });
+});
+
+// POST /api/v1/auth/users/bulk (Admin: Bulk Import Users)
+app.post('/api/v1/auth/users/bulk', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'users:manage');
+  if (permErr) return permErr;
+
+  const { users } = await c.req.json();
+  if (!Array.isArray(users) || users.length === 0) {
+    return c.json({ success: false, error: 'Request body must contain a non-empty users array.' }, 400);
+  }
+
+  const result = store.bulkCreateUsers(users);
+
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: authRes.user.id,
+    username: authRes.user.username,
+    role: authRes.user.role,
+    action: 'USER_BULK_IMPORT',
+    entity: 'User',
+    entityId: 'bulk',
+    details: `Admin bulk imported ${result.createdCount} users with ${result.errors.length} errors.`,
+    ipAddress: clientIp
+  });
+
+  return c.json({ success: true, ...result }, 201);
 });
 
 // GET /api/v1/auth/roles
@@ -1180,6 +1296,126 @@ app.post('/api/v1/system/upload', (c) => {
       size: 1024,
       url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=80'
     }
+  });
+});
+
+// ==========================================
+// Inventory Routes (/api/v1/inventory)
+// ==========================================
+app.get('/api/v1/inventory', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'inventory:read');
+  if (permErr) return permErr;
+
+  const inv = store.getInventory();
+  return c.json({ success: true, ...inv });
+});
+
+app.patch('/api/v1/inventory/:id/stock', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'inventory:update');
+  if (permErr) return permErr;
+
+  const id = c.req.param('id');
+  const { stock } = await c.req.json();
+  if (stock === undefined || isNaN(parseInt(stock, 10))) {
+    return c.json({ success: false, error: 'Valid stock number is required.' }, 400);
+  }
+
+  const updated = store.updateStock(id, parseInt(stock, 10));
+  if (!updated) {
+    return c.json({ success: false, error: 'Book not found in inventory.' }, 404);
+  }
+
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: authRes.user.id,
+    username: authRes.user.username,
+    role: authRes.user.role,
+    action: 'INVENTORY_ADJUST',
+    entity: 'Inventory',
+    entityId: id,
+    details: `Updated stock level for "${updated.title}" to ${updated.stock} units.`,
+    ipAddress: clientIp
+  });
+
+  return c.json({ success: true, book: updated });
+});
+
+app.post('/api/v1/inventory/bulk', async (c) => {
+  const authRes = await requireAuth(c);
+  if (authRes instanceof Response) return authRes;
+  const permErr = checkPermission(authRes.user, 'inventory:update');
+  if (permErr) return permErr;
+
+  const { updates } = await c.req.json();
+  if (!Array.isArray(updates) || updates.length === 0) {
+    return c.json({ success: false, error: 'Request body must contain a non-empty updates array.' }, 400);
+  }
+
+  const result = store.bulkUpdateInventory(updates);
+
+  const clientIp = c.req.header('cf-connecting-ip') || '127.0.0.1';
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: authRes.user.id,
+    username: authRes.user.username,
+    role: authRes.user.role,
+    action: 'INVENTORY_BULK_UPDATE',
+    entity: 'Inventory',
+    entityId: 'bulk',
+    details: `Updated ${result.updatedCount} inventory items in bulk with ${result.errors.length} errors.`,
+    ipAddress: clientIp
+  });
+
+  return c.json({ success: true, ...result });
+});
+
+// GET /api/v1/system/services (Microservices Health Status)
+app.get('/api/v1/system/services', (c) => {
+  const services = store.getMicroservicesHealth();
+  const allHealthy = services.every(s => s.status === 'healthy');
+  return c.json({
+    success: true,
+    overallStatus: allHealthy ? 'HEALTHY' : 'DEGRADED',
+    services,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// POST /api/v1/system/services/:name/toggle (Chaos fault injection)
+app.post('/api/v1/system/services/:name/toggle', async (c) => {
+  const name = c.req.param('name') as any;
+  let faultType: any = '503_unavailable';
+  try {
+    const b = await c.req.json();
+    if (b.faultType) faultType = b.faultType;
+  } catch {}
+
+  const updated = store.toggleMicroserviceFault(name, faultType);
+  if (!updated) {
+    return c.json({ success: false, error: `Microservice '${name}' not recognized.` }, 404);
+  }
+
+  return c.json({
+    success: true,
+    message: `Microservice '${name}' is now ${updated.status.toUpperCase()}.`,
+    service: updated
+  });
+});
+
+// POST /api/v1/system/services/reset (Restore all microservices)
+app.post('/api/v1/system/services/reset', (c) => {
+  const services = store.resetMicroservicesHealth();
+  return c.json({
+    success: true,
+    message: 'All 7 microservices restored to HEALTHY operational status.',
+    services
   });
 });
 

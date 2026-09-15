@@ -178,6 +178,110 @@ router.put('/users/:id', authenticateToken, requirePermission('users:manage'), (
   res.json({ success: true, user: userSafe });
 });
 
+// POST /api/v1/auth/users (Admin: Create User)
+router.post('/users', authenticateToken, requirePermission('users:manage'), (req: AuthenticatedRequest, res: Response): void => {
+  const { username, email, fullName, role, password, currency, timezone, status } = req.body;
+
+  if (!username || !email || !fullName || !role) {
+    res.status(400).json({ success: false, error: 'Missing required fields: username, email, fullName, and role are required.' });
+    return;
+  }
+
+  const result = store.createUser({
+    username,
+    email,
+    fullName,
+    role,
+    password,
+    currency,
+    timezone,
+    status
+  });
+
+  if (!result.success || !result.user) {
+    res.status(400).json({ success: false, error: result.error || 'Failed to create user.' });
+    return;
+  }
+
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: req.user!.id,
+    username: req.user!.username,
+    role: req.user!.role,
+    action: 'USER_CREATE',
+    entity: 'User',
+    entityId: result.user.id,
+    details: `Admin created user @${result.user.username} with role ${result.user.role}.`,
+    ipAddress: (req.ip as string) || '127.0.0.1'
+  });
+
+  res.status(201).json({ success: true, user: result.user });
+});
+
+// DELETE /api/v1/auth/users/:id (Admin: Delete Custom User)
+router.delete('/users/:id', authenticateToken, requirePermission('users:manage'), (req: AuthenticatedRequest, res: Response): void => {
+  const id = req.params.id as string;
+
+  if (req.user!.id === id) {
+    res.status(400).json({ success: false, error: 'Cannot delete your own active administrator account.' });
+    return;
+  }
+
+  const target = store.getUserById(id);
+  if (!target) {
+    res.status(404).json({ success: false, error: 'User not found.' });
+    return;
+  }
+
+  const result = store.deleteUser(id);
+  if (!result.success) {
+    res.status(400).json({ success: false, error: result.error });
+    return;
+  }
+
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: req.user!.id,
+    username: req.user!.username,
+    role: req.user!.role,
+    action: 'USER_DELETE',
+    entity: 'User',
+    entityId: id,
+    details: `Admin deleted custom user @${target.username}.`,
+    ipAddress: (req.ip as string) || '127.0.0.1'
+  });
+
+  res.json({ success: true, message: `User @${target.username} has been deleted successfully.` });
+});
+
+// POST /api/v1/auth/users/bulk (Admin: Bulk Import Users)
+router.post('/users/bulk', authenticateToken, requirePermission('users:manage'), (req: AuthenticatedRequest, res: Response): void => {
+  const usersList = req.body.users;
+  if (!Array.isArray(usersList) || usersList.length === 0) {
+    res.status(400).json({ success: false, error: 'Request body must contain a non-empty users array.' });
+    return;
+  }
+
+  const result = store.bulkCreateUsers(usersList);
+
+  store.addAuditLog({
+    id: `aud_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+    userId: req.user!.id,
+    username: req.user!.username,
+    role: req.user!.role,
+    action: 'USER_BULK_IMPORT',
+    entity: 'User',
+    entityId: 'bulk',
+    details: `Admin bulk imported ${result.createdCount} users with ${result.errors.length} errors.`,
+    ipAddress: (req.ip as string) || '127.0.0.1'
+  });
+
+  res.status(201).json({ success: true, ...result });
+});
+
 // GET /api/v1/auth/roles
 router.get('/roles', (_req: Request, res: Response): void => {
   res.json({

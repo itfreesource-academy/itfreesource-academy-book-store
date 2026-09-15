@@ -11,7 +11,8 @@ export type UserRole =
   | 'book_reviewer'
   | 'auditor'
   | 'vip_customer'
-  | 'standard_customer';
+  | 'standard_customer'
+  | 'marketplace_seller';
 
 export type Permission =
   | 'catalog:read'
@@ -29,13 +30,15 @@ export type Permission =
   | 'borrow:read'
   | 'borrow:create'
   | 'borrow:return'
+  | 'borrow:read_all'
   | 'reviews:read'
   | 'reviews:moderate'
   | 'reviews:create'
   | 'users:manage'
   | 'audit:read'
   | 'system:reset'
-  | 'discount:vip';
+  | 'discount:vip'
+  | 'marketplace:sell';
 
 export interface User {
   id: string;
@@ -47,6 +50,7 @@ export interface User {
   status: 'active' | 'suspended';
   timezone?: Timezone;
   currency?: Currency;
+  isSystem?: boolean;
   createdAt: string;
 }
 
@@ -81,8 +85,11 @@ export interface Book {
   authorName: string;
   categoryId: string;
   categoryName: string;
-  price: number;
-  originalPrice?: number;
+  price: number; // Active Selling Price
+  originalPrice?: number; // List Price / MSRP (struck-through markdown)
+  costPrice?: number; // Base wholesale / publisher acquisition cost
+  rentalPrice?: number; // 10-day academic rental price, default $2.00
+  discountPercent?: number; // Calculated markdown percentage
   rating: number;
   reviewCount: number;
   stock: number;
@@ -93,6 +100,11 @@ export interface Book {
   tags: string[];
   isFeatured: boolean;
   isVipExclusive: boolean;
+  sellerType?: 'in_house' | 'marketplace';
+  sellerUsername?: string;
+  sellerId?: string;
+  platformFeePercentSale?: number; // default 10%
+  platformFeePercentRental?: number; // default 15%
 }
 
 export interface Category {
@@ -164,6 +176,7 @@ export interface Review {
   title: string;
   comment: string;
   status: 'pending' | 'approved' | 'rejected';
+  isVerifiedPurchase?: boolean;
   createdAt: string;
 }
 
@@ -186,4 +199,28 @@ export interface PersonaInfo {
   label: string;
   description: string;
   badgeColor: string;
+}
+
+export type MicroserviceName =
+  | 'auth'
+  | 'catalog'
+  | 'pricing'
+  | 'inventory'
+  | 'orders'
+  | 'borrow'
+  | 'reviews';
+
+export type MicroserviceStatus = 'healthy' | 'degraded' | 'down';
+
+export interface MicroserviceHealth {
+  name: MicroserviceName;
+  label: string;
+  description?: string;
+  status: MicroserviceStatus;
+  latencyMs: number;
+  errorRate?: number;
+  endpoint: string;
+  lastChecked: string;
+  isFaultInjected?: boolean;
+  faultType?: '500_error' | '503_unavailable' | 'high_latency';
 }

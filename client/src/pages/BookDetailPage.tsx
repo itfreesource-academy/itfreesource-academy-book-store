@@ -22,7 +22,10 @@ import {
   MessageSquare,
   ShieldCheck,
   CheckCircle2,
-  Bookmark
+  Bookmark,
+  Store,
+  Building2,
+  Info
 } from 'lucide-react';
 
 export const BookDetailPage: React.FC = () => {
@@ -205,21 +208,63 @@ export const BookDetailPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Price Section */}
-            <div className="flex items-baseline gap-3 mb-6">
-              <span data-testid="detail-price" className="text-3xl font-black text-slate-900">
-                {formatPrice(book.price)}
-              </span>
-              {book.originalPrice && book.originalPrice > book.price && (
+            {/* Price & Multi-Tier Pricing Breakdown */}
+            <div className="space-y-3 mb-6">
+              <div className="flex flex-wrap items-baseline gap-3">
+                <span data-testid="detail-price" className="text-3xl font-black text-slate-900">
+                  {formatPrice(book.price)}
+                </span>
+                {book.originalPrice && book.originalPrice > book.price && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400 line-through" data-testid="detail-list-price">
+                      List: {formatPrice(book.originalPrice)}
+                    </span>
+                    <span
+                      data-testid="detail-discount-badge"
+                      className="text-xs font-black text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded"
+                    >
+                      Save {Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)}% OFF
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Academic Rental Price */}
+              <div className="flex items-center gap-2 text-xs text-blue-700 bg-blue-50/70 border border-blue-100 px-3 py-1.5 rounded-xl max-w-fit">
+                <Bookmark className="w-3.5 h-3.5" />
+                <span className="font-semibold">
+                  10-Day Academic Borrowing: <strong className="text-blue-900">{formatPrice(book.rentalPrice || 2.00)}</strong>
+                </span>
+              </div>
+
+              {/* Seller Persona & Platform Fee Metadata */}
+              <div
+                className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1"
+                data-testid="detail-seller-box"
+                title={`QA Platform Fee Rule: Marketplace sales incur 10% commission (${formatPrice(
+                  book.price * 0.1
+                )}), rentals incur 15% platform fee (${formatPrice((book.rentalPrice || 2.0) * 0.15)}).`}
+              >
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-400 line-through">
-                    {formatPrice(book.originalPrice)}
-                  </span>
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                    Save {(100 - (book.price / book.originalPrice) * 100).toFixed(0)}%
+                  {book.sellerType === 'marketplace' ? (
+                    <span className="inline-flex items-center gap-1 text-amber-800 font-bold bg-amber-100 border border-amber-200 px-2 py-0.5 rounded">
+                      <Store className="w-3 h-3 text-amber-600" />
+                      <span>Marketplace Seller: @{book.sellerUsername || 'marketplace_seller'}</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-indigo-800 font-bold bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                      <Building2 className="w-3 h-3 text-indigo-600" />
+                      <span>Fulfillment: ITFreeSource In-House Warehouse</span>
+                    </span>
+                  )}
+                  <span className="text-[11px] text-slate-400">|</span>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {book.sellerType === 'marketplace'
+                      ? '10% Sale Commission | 15% Rental Fee'
+                      : 'Zero-Fee Direct Academy Fulfillment'}
                   </span>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* VIP Discount Notification */}
@@ -451,6 +496,16 @@ export const BookDetailPage: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-slate-900 text-xs">@{rev.username}</span>
+                          {rev.isVerifiedPurchase && (
+                            <span
+                              data-testid={`verified-badge-${rev.id}`}
+                              className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-full"
+                              title="Verified by system: Reader purchased or borrowed this title"
+                            >
+                              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                              <span>Verified Purchaser</span>
+                            </span>
+                          )}
                           <span className="text-[10px] text-slate-400">
                             {new Date(rev.createdAt).toLocaleDateString()}
                           </span>

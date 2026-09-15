@@ -3,7 +3,16 @@ import { apiClient } from '../api/client.js';
 import { Breadcrumbs } from '../components/common/Breadcrumbs.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
-import { Layers, AlertTriangle, CheckCircle2, ArrowUpRight, Search, Sliders } from 'lucide-react';
+import { exportToCsv } from '../utils/csvHelper.js';
+import { BulkImportModal } from '../components/common/BulkImportModal.js';
+import {
+  Layers,
+  AlertTriangle,
+  CheckCircle2,
+  Search,
+  Download,
+  Upload
+} from 'lucide-react';
 
 interface InventoryItem {
   id: string;
@@ -20,6 +29,7 @@ export const InventoryPage: React.FC = () => {
   const [lowStockCount, setLowStockCount] = useState(0);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
 
   const { hasPermission } = useAuth();
   const { addToast } = useToast();
@@ -52,6 +62,37 @@ export const InventoryPage: React.FC = () => {
     } catch (err: any) {
       addToast(err.message || 'Failed to update stock.', 'error');
     }
+  };
+
+  const handleExportCsv = () => {
+    const data = inventory.map((item) => ({
+      id: item.id,
+      title: item.title,
+      isbn: item.isbn,
+      stock: item.stock,
+      price: item.price,
+      categoryName: item.categoryName
+    }));
+    exportToCsv(data, 'itfreesource-bookstore-inventory.csv');
+    addToast('Inventory exported to Excel CSV format!', 'success');
+  };
+
+  const handleBulkImport = async (rows: Record<string, string>[]) => {
+    const updates = rows
+      .map((r) => ({
+        id: r.id || r.bookId || r.book_id || '',
+        isbn: r.isbn,
+        stock: parseInt(r.stock || '0', 10)
+      }))
+      .filter((u) => (u.id || u.isbn) && !isNaN(u.stock));
+
+    if (updates.length === 0) {
+      throw new Error('No valid stock updates found. Columns required: id (or isbn), stock');
+    }
+
+    const res = await apiClient.post('/inventory/bulk', { updates });
+    addToast(`Updated stock for ${res.data.updated} books successfully!`, 'success');
+    fetchInventory();
   };
 
   const filteredItems = inventory.filter(
@@ -102,17 +143,47 @@ export const InventoryPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
-        <Search className="w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Filter inventory by book title, ISBN, or genre..."
-          data-testid="inv-search-input"
-          className="w-full text-xs outline-none bg-transparent"
-        />
+      {/* Controls Bar: Search + Export/Import CSV */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto sm:flex-1">
+          <Search className="w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Filter inventory by book title, ISBN, or genre..."
+            data-testid="inv-search-input"
+            className="w-full text-xs outline-none bg-transparent"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          {/* Export Inventory CSV */}
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            data-testid="export-inventory-csv-btn"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors"
+            title="Export full inventory list to Excel CSV format with UTF-8 BOM"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Export CSV</span>
+          </button>
+
+          {/* Bulk Import Stock CSV */}
+          {hasPermission('inventory:update') && (
+            <button
+              type="button"
+              onClick={() => setIsBulkModalOpen(true)}
+              data-testid="import-inventory-csv-btn"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+              title="Bulk update book stock counts from CSV"
+            >
+              <Upload className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Bulk Stock Import</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Inventory Table with Interactive Sliders */}
@@ -193,6 +264,22 @@ export const InventoryPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Bulk Stock Import Modal */}
+      <BulkImportModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        title="Bulk Update Inventory Stock"
+        sampleHeaders={['id', 'isbn', 'stock']}
+        sampleRows={[
+          { id: 'book_001', isbn: '978-0132350884', stock: '75' },
+          { id: 'book_002', isbn: '978-0134757599', stock: '40' },
+          { id: 'book_003', isbn: '978-0441172719', stock: '90' }
+        ]}
+        onImport={handleBulkImport}
+      />
     </div>
   );
 };
+
+export default InventoryPage;

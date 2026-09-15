@@ -1,4 +1,20 @@
-import { User, Book, Category, Author, Order, Review, AuditLog, OrderStatus, BorrowRecord, BorrowStatus, Currency, Timezone } from '../types/index.js';
+import {
+  User,
+  UserRole,
+  Book,
+  Category,
+  Author,
+  Order,
+  Review,
+  AuditLog,
+  OrderStatus,
+  BorrowRecord,
+  BorrowStatus,
+  Currency,
+  Timezone,
+  MicroserviceName,
+  MicroserviceHealth
+} from '../types/index.js';
 import {
   INITIAL_USERS,
   INITIAL_CATEGORIES,
@@ -11,6 +27,20 @@ import {
 } from './seedData.js';
 import { v4 as uuidv4 } from 'uuid';
 
+const CORE_PERSONA_USERNAMES = new Set([
+  'admin',
+  'store_manager',
+  'inventory_clerk',
+  'content_editor',
+  'order_fulfillment',
+  'support_agent',
+  'book_reviewer',
+  'auditor',
+  'vip_customer',
+  'standard_customer',
+  'marketplace_seller'
+]);
+
 class InMemoryStore {
   private users: User[] = [];
   private categories: Category[] = [];
@@ -20,6 +50,15 @@ class InMemoryStore {
   private reviews: Review[] = [];
   private auditLogs: AuditLog[] = [];
   private borrows: BorrowRecord[] = [];
+  private microservices: Map<MicroserviceName, MicroserviceHealth> = new Map([
+    ['auth', { name: 'auth', label: 'Auth & Identity Service', status: 'healthy', latencyMs: 15, endpoint: '/api/v1/auth', lastChecked: new Date().toISOString() }],
+    ['catalog', { name: 'catalog', label: 'Book Catalog Service', status: 'healthy', latencyMs: 22, endpoint: '/api/v1/books', lastChecked: new Date().toISOString() }],
+    ['pricing', { name: 'pricing', label: 'Pricing & Promotions Engine', status: 'healthy', latencyMs: 18, endpoint: '/api/v1/pricing', lastChecked: new Date().toISOString() }],
+    ['inventory', { name: 'inventory', label: 'Warehouse Inventory Service', status: 'healthy', latencyMs: 25, endpoint: '/api/v1/inventory', lastChecked: new Date().toISOString() }],
+    ['orders', { name: 'orders', label: 'Order Fulfillment & Checkout', status: 'healthy', latencyMs: 30, endpoint: '/api/v1/orders', lastChecked: new Date().toISOString() }],
+    ['borrow', { name: 'borrow', label: 'Academic Lending Service', status: 'healthy', latencyMs: 20, endpoint: '/api/v1/borrow', lastChecked: new Date().toISOString() }],
+    ['reviews', { name: 'reviews', label: 'Review & Moderation Service', status: 'healthy', latencyMs: 16, endpoint: '/api/v1/reviews', lastChecked: new Date().toISOString() }]
+  ]);
 
   constructor() {
     this.reset(true);
@@ -34,6 +73,7 @@ class InMemoryStore {
     this.reviews = JSON.parse(JSON.stringify(INITIAL_REVIEWS));
     this.auditLogs = JSON.parse(JSON.stringify(INITIAL_AUDIT_LOGS));
     this.borrows = JSON.parse(JSON.stringify(INITIAL_BORROWS));
+    this.resetMicroservicesHealth();
 
     this.addAuditLog({
       id: isInitial ? 'aud_seed_init' : `aud_${uuidv4().substring(0, 8)}`,
@@ -66,6 +106,100 @@ class InMemoryStore {
     return this.users.find(u => u.id === id);
   }
 
+  public createUser(userData: {
+    username: string;
+    email: string;
+    fullName: string;
+    password?: string;
+    role: UserRole;
+    currency?: Currency;
+    timezone?: Timezone;
+    status?: 'active' | 'suspended';
+  }): { success: boolean; user?: User; error?: string } {
+    const usernameNorm = userData.username.trim().toLowerCase();
+    if (this.users.some(u => u.username.toLowerCase() === usernameNorm)) {
+      return { success: false, error: `Username '@${userData.username}' is already taken.` };
+    }
+    if (this.users.some(u => u.email.toLowerCase() === userData.email.trim().toLowerCase())) {
+      return { success: false, error: `Email '${userData.email}' is already registered.` };
+    }
+
+    const newUser: User = {
+      id: `usr_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`,
+      username: usernameNorm,
+      password: userData.password || 'User@Pass123',
+      email: userData.email.trim(),
+      fullName: userData.fullName.trim(),
+      role: userData.role,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${usernameNorm}`,
+      status: userData.status || 'active',
+      currency: userData.currency || 'USD',
+      timezone: userData.timezone || 'America/New_York',
+      isSystem: false,
+      createdAt: new Date().toISOString()
+    };
+
+    this.users.push(newUser);
+    const { password: _, ...safeUser } = newUser;
+    return { success: true, user: safeUser as User };
+  }
+
+  public deleteUser(id: string): { success: boolean; error?: string } {
+    const user = this.users.find(u => u.id === id);
+    if (!user) {
+      return { success: false, error: 'User not found.' };
+    }
+    if (user.isSystem || CORE_PERSONA_USERNAMES.has(user.username.toLowerCase())) {
+      return {
+        success: false,
+        error: `Cannot delete core system test persona '@${user.username}'. These 11 baseline accounts are permanently protected for automated QA testing suites.`
+      };
+    }
+    this.users = this.users.filter(u => u.id !== id);
+    return { success: true };
+  }
+
+  public bulkCreateUsers(usersList: any[]): {
+    createdCount: number;
+    createdUsers: User[];
+    errors: { row: number; username: string; error: string }[];
+  } {
+    const createdUsers: User[] = [];
+    const errors: { row: number; username: string; error: string }[] = [];
+
+    usersList.forEach((u, idx) => {
+      if (!u.username || !u.email || !u.fullName) {
+        errors.push({
+          row: idx + 1,
+          username: u.username || 'unknown',
+          error: 'Missing required field (username, email, or fullName)'
+        });
+        return;
+      }
+      const res = this.createUser({
+        username: u.username,
+        email: u.email,
+        fullName: u.fullName,
+        password: u.password,
+        role: u.role || 'standard_customer',
+        currency: u.currency,
+        timezone: u.timezone,
+        status: u.status
+      });
+      if (res.success && res.user) {
+        createdUsers.push(res.user);
+      } else {
+        errors.push({
+          row: idx + 1,
+          username: u.username,
+          error: res.error || 'Failed to create user'
+        });
+      }
+    });
+
+    return { createdCount: createdUsers.length, createdUsers, errors };
+  }
+
   public updateUserStatus(id: string, status: 'active' | 'suspended'): User | null {
     const user = this.users.find(u => u.id === id);
     if (!user) return null;
@@ -83,6 +217,36 @@ class InMemoryStore {
     if (updates.currency !== undefined) user.currency = updates.currency;
     if (updates.timezone !== undefined) user.timezone = updates.timezone;
     return user;
+  }
+
+  // Microservices Health & Chaos
+  public getMicroservicesHealth(): MicroserviceHealth[] {
+    return Array.from(this.microservices.values()).map(s => ({
+      ...s,
+      lastChecked: new Date().toISOString()
+    }));
+  }
+
+  public toggleMicroserviceFault(name: MicroserviceName, faultType: '500_error' | '503_unavailable' | 'high_latency' = '503_unavailable'): MicroserviceHealth | null {
+    const service = this.microservices.get(name);
+    if (!service) return null;
+    service.isFaultInjected = !service.isFaultInjected;
+    service.status = service.isFaultInjected ? (faultType === '503_unavailable' ? 'down' : 'degraded') : 'healthy';
+    service.faultType = service.isFaultInjected ? faultType : undefined;
+    service.latencyMs = service.isFaultInjected && faultType === 'high_latency' ? 3200 : (service.isFaultInjected ? 500 : 20);
+    service.lastChecked = new Date().toISOString();
+    return { ...service };
+  }
+
+  public resetMicroservicesHealth(): MicroserviceHealth[] {
+    for (const [, service] of this.microservices.entries()) {
+      service.status = 'healthy';
+      service.isFaultInjected = false;
+      service.faultType = undefined;
+      service.latencyMs = 20;
+      service.lastChecked = new Date().toISOString();
+    }
+    return this.getMicroservicesHealth();
   }
 
   public getAllBooks(): Book[] {
@@ -285,6 +449,22 @@ class InMemoryStore {
   }
 
   // Reviews
+  public hasUserPurchasedOrBorrowed(userId: string, bookId: string): boolean {
+    const hasPurchased = this.orders.some(o =>
+      o.userId === userId &&
+      o.status !== 'cancelled' &&
+      o.status !== 'refunded' &&
+      o.items.some(i => i.bookId === bookId)
+    );
+    if (hasPurchased) return true;
+
+    const hasBorrowed = this.borrows.some(b =>
+      b.userId === userId &&
+      b.bookId === bookId
+    );
+    return hasBorrowed;
+  }
+
   public getReviews(bookId?: string, statusFilter?: 'all' | 'approved' | 'pending' | 'rejected'): Review[] {
     let result = [...this.reviews];
     if (bookId) {
@@ -296,11 +476,14 @@ class InMemoryStore {
     return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
-  public createReview(reviewData: Omit<Review, 'id' | 'status' | 'createdAt'>, autoApprove = false): Review {
+  public createReview(reviewData: Omit<Review, 'id' | 'status' | 'createdAt' | 'isVerifiedPurchase'>, autoApprove = false): Review {
+    const isVerified = this.hasUserPurchasedOrBorrowed(reviewData.userId, reviewData.bookId);
+
     const newReview: Review = {
       ...reviewData,
       id: `rev_${uuidv4().substring(0, 8)}`,
       status: autoApprove ? 'approved' : 'pending',
+      isVerifiedPurchase: isVerified,
       createdAt: new Date().toISOString()
     };
     this.reviews.unshift(newReview);
@@ -350,6 +533,36 @@ class InMemoryStore {
     if (!book) return null;
     book.stock = Math.max(0, newStock);
     return book;
+  }
+
+  public bulkUpdateInventory(updates: Array<{ id?: string; isbn?: string; stock?: number; price?: number }>): {
+    updatedCount: number;
+    errors: { identifier: string; error: string }[];
+  } {
+    let updatedCount = 0;
+    const errors: { identifier: string; error: string }[] = [];
+
+    for (const item of updates) {
+      const target = this.books.find(b =>
+        (item.id && b.id === item.id) ||
+        (item.isbn && b.isbn.replace(/[-\s]/g, '') === String(item.isbn).replace(/[-\s]/g, ''))
+      );
+
+      if (!target) {
+        errors.push({ identifier: item.id || item.isbn || 'unknown', error: 'Book not found in inventory' });
+        continue;
+      }
+
+      if (item.stock !== undefined && !isNaN(Number(item.stock))) {
+        target.stock = Math.max(0, parseInt(String(item.stock), 10));
+      }
+      if (item.price !== undefined && !isNaN(Number(item.price))) {
+        target.price = Math.max(0.01, parseFloat(String(item.price)));
+      }
+      updatedCount++;
+    }
+
+    return { updatedCount, errors };
   }
 
   // Borrowing Subsystem

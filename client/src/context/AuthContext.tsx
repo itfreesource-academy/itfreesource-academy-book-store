@@ -73,6 +73,13 @@ export const TEST_PERSONAS: PersonaInfo[] = [
     label: 'Regular Customer',
     description: 'Browse catalog, standard cart, checkout, personal orders.',
     badgeColor: 'bg-green-100 text-green-800 border-green-300'
+  },
+  {
+    username: 'marketplace_seller',
+    role: 'marketplace_seller',
+    label: 'Marketplace Seller',
+    description: 'Independent publisher: list books for rent/sale with live platform fee & commission calculation.',
+    badgeColor: 'bg-amber-100 text-amber-900 border-amber-400'
   }
 ];
 
@@ -86,7 +93,8 @@ export const PERSONA_PASSWORDS: Record<string, string> = {
   book_reviewer: 'Reviewer@Pass123',
   auditor: 'Audit@Pass123',
   vip_customer: 'Vip@Pass123',
-  standard_customer: 'User@Pass123'
+  standard_customer: 'User@Pass123',
+  marketplace_seller: 'Seller@Pass123'
 };
 
 interface AuthContextType {

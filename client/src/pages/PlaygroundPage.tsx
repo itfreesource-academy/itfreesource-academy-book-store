@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Breadcrumbs } from '../components/common/Breadcrumbs.js';
 import { ShadowDomWidget } from '../components/playground/ShadowDomWidget.js';
 import { IFrameWidget } from '../components/playground/IFrameWidget.js';
@@ -16,10 +16,21 @@ import {
   Upload,
   Sparkles,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Server,
+  Zap,
+  RefreshCw,
+  CheckCircle,
+  AlertCircle,
+  ShieldAlert
 } from 'lucide-react';
+import { MicroserviceHealth } from '../types/index.js';
 
 export const PlaygroundPage: React.FC = () => {
+  // Microservices Health & Chaos State
+  const [services, setServices] = useState<MicroserviceHealth[]>([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+
   // Latency Simulator
   const [latencyMs, setLatencyMs] = useState<number>(() => {
     const saved = localStorage.getItem('mock_latency');
@@ -37,6 +48,42 @@ export const PlaygroundPage: React.FC = () => {
   const [dialogResult, setDialogResult] = useState<string>('');
 
   const { addToast } = useToast();
+
+  const fetchServices = async () => {
+    setLoadingServices(true);
+    try {
+      const res = await apiClient.get('/system/services');
+      setServices(res.data.services || []);
+    } catch (err: any) {
+      console.error('Failed to load services:', err);
+    } finally {
+      setLoadingServices(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const handleToggleService = async (serviceName: string) => {
+    try {
+      const res = await apiClient.post(`/system/services/${serviceName}/toggle`);
+      addToast(`Microservice "${serviceName}" status toggled to: ${res.data.service.status.toUpperCase()}`, 'info');
+      fetchServices();
+    } catch (err: any) {
+      addToast('Failed to toggle service fault: ' + err.message, 'error');
+    }
+  };
+
+  const handleResetServices = async () => {
+    try {
+      await apiClient.post('/system/services/reset');
+      addToast('All 7 microservices restored to operational state!', 'success');
+      fetchServices();
+    } catch (err: any) {
+      addToast('Failed to reset services: ' + err.message, 'error');
+    }
+  };
 
   const handleLatencyChange = async (ms: number) => {
     setLatencyMs(ms);
@@ -299,6 +346,102 @@ export const PlaygroundPage: React.FC = () => {
         {/* Widget 7: HTML5 Drag and Drop Reorder List */}
         <div className="lg:col-span-2">
           <DragDropList />
+        </div>
+
+        {/* Widget 8: Microservices Architecture & Chaos Fault Injection Lab */}
+        <div
+          data-testid="microservices-chaos-card"
+          className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Server className="w-5 h-5 text-indigo-600" />
+                <h3 className="font-extrabold text-slate-900 text-lg">
+                  Monorepo Microservices & Chaos Engineering Lab
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500">
+                Test service resilience and circuit breaking. Inject simulated outages or latency into individual microservices while the rest of the application remains fully functional.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetServices}
+              data-testid="reset-all-services-btn"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-colors self-start sm:self-auto"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+              <span>Restore All 7 Services</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {services.map((svc) => {
+              const isFailing = svc.status === 'down';
+              return (
+                <div
+                  key={svc.name}
+                  data-testid={`service-card-${svc.name}`}
+                  className={`p-4 rounded-2xl border transition-all ${
+                    isFailing
+                      ? 'bg-rose-50/70 border-rose-200 shadow-sm'
+                      : 'bg-slate-50/70 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs font-black uppercase tracking-wider text-slate-800">
+                      {svc.name} Service
+                    </span>
+                    <span
+                      data-testid={`service-status-${svc.name}`}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                        isFailing
+                          ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                          : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                      }`}
+                    >
+                      {isFailing ? (
+                        <>
+                          <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
+                          <span>FAULT 503</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
+                          <span>HEALTHY</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 mb-3 min-h-[32px] leading-snug">
+                    {svc.description}
+                  </p>
+
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-3 pt-2 border-t border-slate-200/50">
+                    <span>Latency: {svc.latencyMs}ms</span>
+                    <span>Error: {svc.errorRate}%</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleToggleService(svc.name)}
+                    data-testid={`toggle-service-${svc.name}`}
+                    className={`w-full py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                      isFailing
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow'
+                        : 'bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{isFailing ? 'Restore Service' : 'Inject Failure (503)'}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

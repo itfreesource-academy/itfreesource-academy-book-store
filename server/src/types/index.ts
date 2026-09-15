@@ -8,7 +8,8 @@ export type UserRole =
   | 'book_reviewer'
   | 'auditor'
   | 'vip_customer'
-  | 'standard_customer';
+  | 'standard_customer'
+  | 'marketplace_seller';
 
 export type Currency = 'USD' | 'AED' | 'INR' | 'JPY' | 'AUD';
 
@@ -42,7 +43,8 @@ export type Permission =
   | 'borrow:read'
   | 'borrow:create'
   | 'borrow:return'
-  | 'borrow:read_all';
+  | 'borrow:read_all'
+  | 'marketplace:sell';
 
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   admin: [
@@ -51,7 +53,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'orders:read_all', 'orders:read_own', 'orders:update_status', 'orders:cancel', 'orders:refund',
     'reviews:read', 'reviews:moderate', 'reviews:create',
     'users:manage', 'audit:read', 'system:reset', 'discount:vip',
-    'borrow:read', 'borrow:create', 'borrow:return', 'borrow:read_all'
+    'borrow:read', 'borrow:create', 'borrow:return', 'borrow:read_all',
+    'marketplace:sell'
   ],
   store_manager: [
     'catalog:read', 'catalog:create', 'catalog:update', 'catalog:edit_price',
@@ -106,6 +109,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'orders:read_own', 'orders:cancel',
     'reviews:read', 'reviews:create',
     'borrow:read', 'borrow:create', 'borrow:return'
+  ],
+  marketplace_seller: [
+    'catalog:read', 'catalog:create', 'catalog:update',
+    'orders:read_own',
+    'reviews:read', 'reviews:create',
+    'borrow:read',
+    'marketplace:sell'
   ]
 };
 
@@ -120,6 +130,7 @@ export interface User {
   status: 'active' | 'suspended';
   currency: Currency;
   timezone: Timezone;
+  isSystem?: boolean;
   createdAt: string;
 }
 
@@ -131,8 +142,11 @@ export interface Book {
   authorName: string;
   categoryId: string;
   categoryName: string;
-  price: number;
-  originalPrice?: number;
+  price: number; // Active Selling Price
+  originalPrice?: number; // List Price / MSRP (struck-through markdown)
+  costPrice?: number; // Base wholesale / publisher acquisition cost
+  rentalPrice?: number; // 10-day academic rental price, default $2.00
+  discountPercent?: number; // Calculated markdown percentage
   rating: number;
   reviewCount: number;
   stock: number;
@@ -143,6 +157,11 @@ export interface Book {
   tags: string[];
   isFeatured: boolean;
   isVipExclusive: boolean;
+  sellerType?: 'in_house' | 'marketplace';
+  sellerUsername?: string;
+  sellerId?: string;
+  platformFeePercentSale?: number; // default 10%
+  platformFeePercentRental?: number; // default 15%
 }
 
 export interface Category {
@@ -209,6 +228,7 @@ export interface Review {
   title: string;
   comment: string;
   status: 'pending' | 'approved' | 'rejected';
+  isVerifiedPurchase?: boolean;
   createdAt: string;
 }
 
@@ -248,3 +268,28 @@ export interface AuditLog {
   details: string;
   ipAddress: string;
 }
+
+export type MicroserviceName =
+  | 'auth'
+  | 'catalog'
+  | 'pricing'
+  | 'inventory'
+  | 'orders'
+  | 'borrow'
+  | 'reviews';
+
+export type MicroserviceStatus = 'healthy' | 'degraded' | 'down';
+
+export interface MicroserviceHealth {
+  name: MicroserviceName;
+  label: string;
+  description?: string;
+  status: MicroserviceStatus;
+  latencyMs: number;
+  errorRate?: number;
+  endpoint: string;
+  lastChecked: string;
+  isFaultInjected?: boolean;
+  faultType?: '500_error' | '503_unavailable' | 'high_latency';
+}
+

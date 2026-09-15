@@ -12,6 +12,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'USD',
     timezone: 'America/New_York',
+    isSystem: true,
     createdAt: '2026-01-01T00:00:00.000Z'
   },
   {
@@ -25,6 +26,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'AED',
     timezone: 'Asia/Dubai',
+    isSystem: true,
     createdAt: '2026-01-05T00:00:00.000Z'
   },
   {
@@ -38,6 +40,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'INR',
     timezone: 'Asia/Kolkata',
+    isSystem: true,
     createdAt: '2026-01-10T00:00:00.000Z'
   },
   {
@@ -51,6 +54,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'JPY',
     timezone: 'Asia/Tokyo',
+    isSystem: true,
     createdAt: '2026-01-12T00:00:00.000Z'
   },
   {
@@ -64,6 +68,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'AUD',
     timezone: 'Australia/Sydney',
+    isSystem: true,
     createdAt: '2026-01-15T00:00:00.000Z'
   },
   {
@@ -77,6 +82,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'AED',
     timezone: 'Asia/Dubai',
+    isSystem: true,
     createdAt: '2026-01-20T00:00:00.000Z'
   },
   {
@@ -90,6 +96,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'USD',
     timezone: 'America/New_York',
+    isSystem: true,
     createdAt: '2026-01-25T00:00:00.000Z'
   },
   {
@@ -103,6 +110,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'JPY',
     timezone: 'Asia/Tokyo',
+    isSystem: true,
     createdAt: '2026-01-28T00:00:00.000Z'
   },
   {
@@ -116,6 +124,7 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'AED',
     timezone: 'Asia/Dubai',
+    isSystem: true,
     createdAt: '2026-02-01T00:00:00.000Z'
   },
   {
@@ -129,7 +138,22 @@ export const INITIAL_USERS: User[] = [
     status: 'active',
     currency: 'INR',
     timezone: 'Asia/Kolkata',
+    isSystem: true,
     createdAt: '2026-02-05T00:00:00.000Z'
+  },
+  {
+    id: 'usr_011',
+    username: 'marketplace_seller',
+    password: 'Seller@Pass123',
+    email: 'seller@itfreesource.org',
+    fullName: 'Marcus Vance',
+    role: 'marketplace_seller',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
+    status: 'active',
+    currency: 'USD',
+    timezone: 'America/New_York',
+    isSystem: true,
+    createdAt: '2026-02-10T00:00:00.000Z'
   }
 ];
 
@@ -227,6 +251,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Technology & Programming',
     price: 44.99,
     originalPrice: 52.99,
+    costPrice: 28.00,
+    rentalPrice: 2.00,
+    discountPercent: 15,
     rating: 4.8,
     reviewCount: 342,
     stock: 48,
@@ -236,7 +263,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code. This book is a must-read for any developer looking to write professional, testable, and maintainable software.',
     tags: ['Programming', 'Agile', 'Clean Code', 'Best Practices'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_002',
@@ -248,6 +279,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Technology & Programming',
     price: 54.50,
     originalPrice: 59.99,
+    costPrice: 35.00,
+    rentalPrice: 2.00,
+    discountPercent: 9,
     rating: 4.9,
     reviewCount: 215,
     stock: 22,
@@ -257,7 +291,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Refactoring is a controlled technique for improving the design of an existing code base. Its essence is applying a series of small behavior-preserving transformations. Fully updated with JavaScript and TypeScript code samples.',
     tags: ['Architecture', 'Refactoring', 'Testing', 'Software Engineering'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_003',
@@ -269,6 +307,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Science Fiction',
     price: 36.00,
     originalPrice: 42.00,
+    costPrice: 22.00,
+    rentalPrice: 2.00,
+    discountPercent: 14,
     rating: 4.9,
     reviewCount: 890,
     stock: 65,
@@ -278,7 +319,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the spice melange. A triumph of science fiction.',
     tags: ['Sci-Fi', 'Classic', 'Epic', 'Space Opera'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_004',
@@ -290,6 +335,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Psychology & Growth',
     price: 18.99,
     originalPrice: 27.00,
+    costPrice: 11.50,
+    rentalPrice: 2.00,
+    discountPercent: 30,
     rating: 4.9,
     reviewCount: 1420,
     stock: 120,
@@ -299,7 +347,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'No matter your goals, Atomic Habits offers a proven framework for improving every day. James Clear reveals practical strategies to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.',
     tags: ['Habits', 'Self-Improvement', 'Psychology', 'Productivity'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_005',
@@ -311,6 +363,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'History & Philosophy',
     price: 24.95,
     originalPrice: 35.00,
+    costPrice: 15.00,
+    rentalPrice: 2.00,
+    discountPercent: 29,
     rating: 4.7,
     reviewCount: 1105,
     stock: 54,
@@ -320,7 +375,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'From a renowned historian comes a groundbreaking narrative of humanity’s creation and evolution.',
     tags: ['History', 'Anthropology', 'Evolution', 'Philosophy'],
     isFeatured: false,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_006',
@@ -332,6 +391,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Technology & Programming',
     price: 49.99,
     originalPrice: 55.00,
+    costPrice: 31.00,
+    rentalPrice: 2.00,
+    discountPercent: 9,
     rating: 4.8,
     reviewCount: 94,
     stock: 30,
@@ -341,7 +403,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Modern design patterns in JavaScript and TypeScript including Creational, Structural, and Behavioral patterns.',
     tags: ['JavaScript', 'Design Patterns', 'TypeScript', 'Web Dev'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_007',
@@ -353,6 +419,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Technology & Programming',
     price: 46.99,
     originalPrice: 59.99,
+    costPrice: 29.50,
+    rentalPrice: 2.00,
+    discountPercent: 22,
     rating: 4.9,
     reviewCount: 512,
     stock: 41,
@@ -362,7 +431,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Examines the core process: taking a requirement and producing working, maintainable code that delights users.',
     tags: ['Career', 'Software Engineering', 'Philosophy', 'Craftsmanship'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_008',
@@ -374,6 +447,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Technology & Programming',
     price: 52.00,
     originalPrice: 65.00,
+    costPrice: 33.00,
+    rentalPrice: 2.00,
+    discountPercent: 20,
     rating: 5.0,
     reviewCount: 780,
     stock: 18,
@@ -383,7 +459,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Data is at the center of many challenges in system design today. Scale, consistency, reliability, efficiency.',
     tags: ['Distributed Systems', 'Databases', 'Architecture', 'Big Data'],
     isFeatured: true,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_009',
@@ -395,6 +475,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Science Fiction',
     price: 89.99,
     originalPrice: 110.00,
+    costPrice: 55.00,
+    rentalPrice: 2.00,
+    discountPercent: 18,
     rating: 4.8,
     reviewCount: 310,
     stock: 14,
@@ -404,7 +487,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'The story of psychohistory, the fall of a twelve-thousand-year-old Galactic Empire.',
     tags: ['Sci-Fi', 'Space', 'Empire', 'Classics'],
     isFeatured: false,
-    isVipExclusive: true
+    isVipExclusive: true,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_010',
@@ -416,6 +503,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Psychology & Growth',
     price: 21.50,
     originalPrice: 30.00,
+    costPrice: 13.00,
+    rentalPrice: 2.00,
+    discountPercent: 28,
     rating: 4.6,
     reviewCount: 654,
     stock: 35,
@@ -425,7 +515,12 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Nobel Prize winner Daniel Kahneman takes us on a groundbreaking tour of the mind.',
     tags: ['Psychology', 'Decision Making', 'Cognition', 'Behavioral Economics'],
     isFeatured: false,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'marketplace',
+    sellerUsername: 'marketplace_seller',
+    sellerId: 'usr_011',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_011',
@@ -437,6 +532,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Business & Leadership',
     price: 19.99,
     originalPrice: 27.00,
+    costPrice: 12.00,
+    rentalPrice: 2.00,
+    discountPercent: 26,
     rating: 4.7,
     reviewCount: 540,
     stock: 29,
@@ -446,7 +544,12 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'How to build singular ways to create new things and escape competition.',
     tags: ['Startups', 'Entrepreneurship', 'Venture Capital', 'Business'],
     isFeatured: false,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'marketplace',
+    sellerUsername: 'marketplace_seller',
+    sellerId: 'usr_011',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   },
   {
     id: 'book_012',
@@ -458,6 +561,9 @@ export const INITIAL_BOOKS: Book[] = [
     categoryName: 'Science Fiction',
     price: 26.50,
     originalPrice: 32.00,
+    costPrice: 16.00,
+    rentalPrice: 2.00,
+    discountPercent: 17,
     rating: 4.7,
     reviewCount: 420,
     stock: 8,
@@ -467,7 +573,11 @@ export const INITIAL_BOOKS: Book[] = [
     description: 'Case was the sharpest data-thief in the matrix until his nervous system was crippled.',
     tags: ['Cyberpunk', 'AI', 'Matrix', 'Cult Classic'],
     isFeatured: false,
-    isVipExclusive: false
+    isVipExclusive: false,
+    sellerType: 'in_house',
+    sellerUsername: 'itfreesource_official',
+    platformFeePercentSale: 10,
+    platformFeePercentRental: 15
   }
 ];
 

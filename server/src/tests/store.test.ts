@@ -155,7 +155,7 @@ describe('Data Store, Catalog, Orders & System Reset Unit Tests', () => {
       // Verify restored back to initial seed data
       const resetBook = store.getBookById(book.id);
       expect(resetBook?.stock).toBe(initialStock);
-      expect(store.getUsers().length).toBe(10);
+      expect(store.getUsers().length).toBe(11);
       expect(store.getAllBooks().length).toBeGreaterThanOrEqual(12);
     });
   });
