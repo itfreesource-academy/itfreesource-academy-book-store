@@ -42,7 +42,7 @@ app/
         │   ├── theme/
         │   │   └── Theme.kt             # Dark palette, brand colors, typography
         │   ├── components/
-        │   │   ├── TopAppBarWithRoleSwitcher.kt # Sticky 1-click persona switcher and currency dropdown
+        │   │   ├── TopAppBarWithRoleSwitcher.kt # Top app bar with brand, currency dropdown, and user profile pill
         │   │   ├── BookCard.kt          # Grid and List book cards with accessibility IDs
         │   │   ├── NavigationComponent.kt # Bottom navigation bar with cart badge count
         │   │   └── ProfileDialog.kt     # User profile details and manual login form

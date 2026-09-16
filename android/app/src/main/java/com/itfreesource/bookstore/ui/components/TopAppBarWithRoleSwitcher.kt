@@ -2,9 +2,7 @@ package com.itfreesource.bookstore.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -207,55 +205,6 @@ fun TopAppBarWithRoleSwitcher(
 
 
         Divider(color = SlateBorder, thickness = 0.5.dp)
-
-        // Horizontal 1-Click Role Switcher Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "SWITCH ROLE:",
-                color = TextSecondary,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(end = 6.dp)
-            )
-
-            repo.users.forEach { user ->
-                val isSelected = currentUser?.id == user.id
-                Surface(
-                    color = if (isSelected) IndigoPrimary else SlateBackground,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 3.dp)
-                        .clickable { repo.switchUser(user) }
-                        .semantics { contentDescription = repo.getTestId("role_chip_${user.username}") }
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            text = when (user.role.name) {
-                                "admin" -> "👑 "
-                                "vip_customer" -> "💎 "
-                                "book_reviewer" -> "⭐ "
-                                "order_fulfillment" -> "📦 "
-                                "inventory_clerk" -> "📊 "
-                                "support_agent" -> "🎧 "
-                                else -> "👤 "
-                            } + user.role.label,
-                            color = if (isSelected) Color.White else TextSecondary,
-                            fontSize = 11.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                }
-            }
-        }
     }
 
     if (showServerDialog) {
