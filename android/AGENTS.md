@@ -78,6 +78,7 @@ app/
             ├── components/
             │   ├── TopAppBarWithRoleSwitcher.kt  # Top app bar: brand title + currency picker + profile pill
             │   ├── AddToCartControl.kt            # ★ Shared cart control composable (button ↔ stepper)
+            │   ├── AttributionFooter.kt           # ★ Attribution strip — "Open Source Contribution by Vishal Prajapati" (links to LinkedIn)
             │   ├── BookCard.kt                    # Grid/list book cards using AddToCartControl
             │   ├── NavigationComponent.kt         # Bottom nav bar with cart badge count
             │   ├── ProfileDialog.kt               # User profile details & manual login
@@ -206,6 +207,8 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 | 2026-09-16 | `48c5a1a` | Created `AddToCartControl.kt`; refactored `BookCard.kt`, `BookDetailDialog.kt`, `BookStoreRepository.kt` (index-based mutations + `getCartQuantity`) | Unified cart UI service across web + Android |
 | 2026-09-16 | `0c5e33d` | Removed all debug/connection UI: ONLINE/LOCAL badge, ServerConnectionDialog, sync banners in Cart/Orders/Rentals/Management | User: "don't want to show … api integration, wifi etc" |
 | 2026-09-16 | *(current)* | Brand logo: generated PNG logo; added `assets/ic_logo.png`; mipmap PNGs (all densities); updated vector drawables; changed app label to "BookStore" | User: "standards android assets folder … prepare a good logo" |
+| 2026-09-16 | `bd200de` | Reverted app label to `"ITFreeSource BookStore"` | User confirmed testing platform identity |
+| 2026-09-16 | *(current)* | Created `AttributionFooter.kt` composable; added to `MainActivity` `bottomBar` below `BottomNavigationBar`; tapping "Vishal Prajapati" opens LinkedIn profile | "add the label at last saying Open Source Contribution by Vishal Prajapati…pointing to my LinkedIn profile" |
 
 ---
 

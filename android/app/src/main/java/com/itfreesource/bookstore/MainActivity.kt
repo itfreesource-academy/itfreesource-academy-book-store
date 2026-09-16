@@ -17,6 +17,7 @@ import androidx.compose.ui.semantics.semantics
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.Book
 import com.itfreesource.bookstore.ui.components.AppScreen
+import com.itfreesource.bookstore.ui.components.AttributionFooter
 import com.itfreesource.bookstore.ui.components.BottomNavigationBar
 import com.itfreesource.bookstore.ui.components.ProfileDialog
 import com.itfreesource.bookstore.ui.components.TopAppBarWithRoleSwitcher
@@ -45,11 +46,14 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     bottomBar = {
-                        BottomNavigationBar(
-                            currentScreen = currentScreen,
-                            onScreenSelected = { currentScreen = it },
-                            cartItemCount = repo.cartItems.sumOf { it.quantity }
-                        )
+                        Column {
+                            BottomNavigationBar(
+                                currentScreen = currentScreen,
+                                onScreenSelected = { currentScreen = it },
+                                cartItemCount = repo.cartItems.sumOf { it.quantity }
+                            )
+                            AttributionFooter()
+                        }
                     },
                     modifier = Modifier.semantics { contentDescription = repo.getTestId("app_main_scaffold") }
                 ) { innerPadding ->
