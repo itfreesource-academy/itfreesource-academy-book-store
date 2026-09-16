@@ -1,0 +1,16 @@
+# Gradle & Build caches
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+
+# Local configuration
+local.properties
+.cxx/
+captures/
+
+# IDE files
+.idea/
+*.iml
+.DS_Store

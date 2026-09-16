@@ -26,3 +26,11 @@ Thumbs.db
 .vscode/
 .idea/
 .wrangler/
+
+# Android Build Outputs
+.gradle/
+android/.gradle/
+android/**/build/
+*.apk
+*.aab
+local.properties
