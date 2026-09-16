@@ -1,10 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    BookStore Launcher Foreground — Adaptive Icon Foreground Layer
+    Renders on top of ic_launcher_background. Safe zone = inner 72dp of the 108dp canvas.
+    Icon: Open book (white) + gold sparkle accent, matching the generated PNG logo.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- ── Open Book Body ── -->
+    <!-- Left page -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M32,24h44c2.2,0 4,1.8 4,4v52c0,2.2 -1.8,4 -4,4H32c-2.2,0 -4,-1.8 -4,-4V28c0,-2.2 1.8,-4 4,-4zm4,8v44h36V32H36zm6,8h24v4H42v-4zm0,10h24v4H42v-4zm0,10h16v4H42v-4z"/>
+        android:pathData="
+            M54,30
+            L24,36
+            L24,74
+            C24,74 36,71 54,72
+            Z" />
+    <!-- Right page -->
+    <path
+        android:fillColor="#F0EEFF"
+        android:pathData="
+            M54,30
+            L84,36
+            L84,74
+            C84,74 72,71 54,72
+            Z" />
+
+    <!-- Spine / binding centre -->
+    <path
+        android:fillColor="#C7C0FF"
+        android:pathData="M52,72 L56,72 L56,30 L52,30 Z" />
+
+    <!-- Left page line hints -->
+    <path
+        android:strokeColor="#DDD6FE"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M30,46 L51,43" />
+    <path
+        android:strokeColor="#DDD6FE"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M30,52 L51,50" />
+    <path
+        android:strokeColor="#DDD6FE"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M30,58 L51,57" />
+    <path
+        android:strokeColor="#DDD6FE"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M30,64 L51,64" />
+
+    <!-- Right page line hints -->
+    <path
+        android:strokeColor="#C4B5FD"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M57,43 L78,46" />
+    <path
+        android:strokeColor="#C4B5FD"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M57,50 L78,52" />
+    <path
+        android:strokeColor="#C4B5FD"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M57,57 L78,58" />
+    <path
+        android:strokeColor="#C4B5FD"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M57,64 L78,64" />
+
+    <!-- ── Bottom pages arc (stacked pages) ── -->
+    <path
+        android:fillColor="#E0DBFF"
+        android:pathData="M24,72 Q54,80 84,72 L84,76 Q54,84 24,76 Z" />
+
+    <!-- ── Gold Sparkle (4-pointed star) top-right ── -->
+    <!-- Large arm vertical -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M79,25 L80.2,28 L81.4,25 L80.2,22 Z" />
+    <!-- Large arm horizontal -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M76,27.2 L79,28.4 L82,27.2 L79,26 Z" />
+    <!-- Small sparkle dot -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M83,22 Q83.5,23 84,22 Q83.5,21 83,22 Z" />
+
 </vector>

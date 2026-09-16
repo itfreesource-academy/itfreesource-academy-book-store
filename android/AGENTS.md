@@ -1,100 +1,219 @@
-# AGENTS.md: ITFreeSource Bookstore Android & Appium Mobile Testing Platform
+# AGENTS.md — ITFreeSource BookStore Android App
 
-This directory contains the native Android application and Appium test automation suite for the **ITFreeSource Academy Book Store**.
+> **⚠️ MANDATORY RULE FOR ALL AGENTS:**
+> After EVERY completed task or user prompt that results in any code or configuration change in this repository, you MUST update this `AGENTS.md` file to reflect:
+> - What changed (file, section, summary of change)
+> - Why it changed (user request / bug fix / feature)
+> - Any new build steps or commands introduced
+>
+> This rule applies to ALL agents working in ANY repo directory — Android, client, server, or root. Future agents depend on this file being current to continue work seamlessly.
 
 ---
 
 ## 🎯 Purpose & Scope
-This app serves as a mobile test automation benchmark for Appium, encompassing:
-1. **Full Functional Fidelity**: 10 user personas, multi-currency (USD, AED, INR, JPY, AUD), multi-timezone, catalog browsing, reviews, cart, multi-step checkout, order fulfillment, academic book borrowing, and inventory management.
-2. **Deterministic Test Locators**: Semantic `contentDescription` attributes on all buttons, inputs, cards, sliders, chips, badges, and modals.
-3. **Appium QA Automation Sandbox**: Dedicated `/playground` screen for dynamic locator testing, touch gestures (swipe, long-press, double-tap, priority drag/drop), native Android dialogs (`AlertDialog`, `DatePickerDialog`, `TimePickerDialog`), and hybrid app `WebView` context switching (`WEBVIEW_com.itfreesource.bookstore`).
+
+This directory contains the native Android application for the **ITFreeSource Academy Book Store**.
+
+The app is a fully-featured mobile bookstore with:
+- Catalog browsing, search, filtering by category/price/rating
+- Cart management with quantity steppers (shared `AddToCartControl` composable)
+- Multi-step checkout with promo codes and VIP discounts
+- Academic book rentals with overdue/lost-fee logic
+- Order management and tracking
+- Inventory management (admin view)
+- Multi-currency support (USD, AED, INR, JPY, AUD)
+- 10 user personas with profile switching
+- Appium QA Automation Sandbox (PlaygroundScreen)
 
 ---
 
 ## 🏗️ Technical Architecture
 
-- **Application ID**: `com.itfreesource.bookstore`
-- **Main Launcher Activity**: `com.itfreesource.bookstore.MainActivity`
-- **Compile & Target SDK**: 34 (Android 14) \| **Min SDK**: 24 (Android 7.0+)
-- **UI Framework**: Jetpack Compose (Material Design)
-- **State Store**: `com.itfreesource.bookstore.data.BookStoreRepository` (reactive in-memory mock store initialized with `SeedData.kt`)
-- **Build System**: Gradle 9.5.0 + Android Gradle Plugin 9.3.1 + Kotlin 2.2.10
+| Property | Value |
+|---|---|
+| **Application ID** | `com.itfreesource.bookstore` |
+| **Launcher Activity** | `com.itfreesource.bookstore.MainActivity` |
+| **Compile/Target SDK** | 34 (Android 14) |
+| **Min SDK** | 24 (Android 7.0+) |
+| **UI Framework** | Jetpack Compose + Material 3 |
+| **State** | In-memory reactive store (`BookStoreRepository` singleton) |
+| **Build** | Gradle 9.5.0 + AGP 9.3.1 + Kotlin 2.2.10 |
 
-### Directory Layout
+---
+
+## 📁 Directory Layout
+
 ```
 app/
-├── release.jks                          # Production release signing keystore
-├── proguard-rules.pro                   # R8/Proguard rules for Google Play Release
+├── release.jks                          # Production signing keystore
+├── proguard-rules.pro                   # R8/Proguard rules
 └── src/main/
-    ├── AndroidManifest.xml              # Manifest with adaptive icons, permissions, resize mode
+    ├── AndroidManifest.xml              # App manifest: label="BookStore", adaptive icon, permissions
+    ├── assets/
+    │   └── ic_logo.png                  # 512×512 high-res brand logo (for use in About screens etc.)
     ├── res/
-    │   ├── drawable/                    # Vector launcher icons (background & foreground)
-    │   └── mipmap-anydpi-v26/           # Adaptive icons for all Android densities
+    │   ├── drawable/
+    │   │   ├── ic_launcher_background.xml   # Indigo gradient (#3730A3→#4F46E5) background layer
+    │   │   ├── ic_launcher_foreground.xml   # Open-book vector + gold sparkle foreground layer
+    │   │   └── ic_launcher.xml              # Legacy bitmap adaptive icon ref
+    │   ├── mipmap-mdpi/                 # ic_launcher.png + ic_launcher_round.png (48×48)
+    │   ├── mipmap-hdpi/                 # (72×72)
+    │   ├── mipmap-xhdpi/                # (96×96)
+    │   ├── mipmap-xxhdpi/               # (144×144)
+    │   ├── mipmap-xxxhdpi/              # (192×192)
+    │   ├── mipmap-anydpi-v26/
+    │   │   ├── ic_launcher.xml          # Adaptive icon: background + foreground layers
+    │   │   └── ic_launcher_round.xml    # Round adaptive icon variant
+    │   └── values/
     └── java/com/itfreesource/bookstore/
-        ├── MainActivity.kt              # Root activity, Scaffold, navigation routing, dialog coordinator
+        ├── MainActivity.kt              # Root activity: Scaffold, bottom nav, routing, dialog coordinator
         ├── model/
-        │   └── Models.kt                # Data classes: User, Book, Category, Author, Order, Review, BorrowRecord
+        │   └── Models.kt                # Data classes: User, Book, Category, Author, Order, CartItem, BorrowRecord, Review
         ├── data/
-        │   ├── SeedData.kt              # Initial seed records matching server/src/data/seedData.ts
-        │   └── BookStoreRepository.kt   # Central reactive state engine, FX conversion, checkout & rental logic
-        ├── ui/
-        │   ├── theme/
-        │   │   └── Theme.kt             # Dark palette, brand colors, typography
-        │   ├── components/
-        │   │   ├── TopAppBarWithRoleSwitcher.kt # Top app bar with brand, currency dropdown, and user profile pill
-        │   │   ├── BookCard.kt          # Grid and List book cards with accessibility IDs
-        │   │   ├── NavigationComponent.kt # Bottom navigation bar with cart badge count
-        │   │   └── ProfileDialog.kt     # User profile details and manual login form
-        │   └── screens/
-        │       ├── CatalogScreen.kt     # Search, category chips, dual price slider, rating slider, sort
-        │       ├── BookDetailDialog.kt  # Details modal, stepper, add to cart, borrow, reviews, write review
-        │       ├── CartCheckoutScreen.kt # Cart list, promo codes, VIP discount, 4-step checkout flow
-        │       ├── OrdersScreen.kt      # Orders list, tracking number prompt dialog, status transitions
-        │       ├── RentalsScreen.kt     # Academic rentals, overdue penalty, lost fee replacement
-        │       ├── ManagementScreen.kt  # Inventory sliders, user editor, review moderation queue
-        │       └── PlaygroundScreen.kt  # QA sandbox (gestures, dialogs, forms, chaos, hybrid WebView)
-```
-
-> **Note on Test Suites**: As per project specification, test automation suites (Appium, Robot, Maestro) are intentionally excluded from this application codebase and hosted in a separate test repository. The app provides standardized semantic accessibility IDs (`contentDescription`) across all components.
-
-## 🛠️ Build & Verification Commands
-
-### Build Google Play Release App Bundle (.aab):
-```bash
-JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=/home/virus/Android/Sdk ./gradlew bundleRelease
-```
-Output:
-`app/build/outputs/bundle/release/app-release.aab` *(9.2 MB, Signed and ready for Google Play Console)*
-
-### Build Signed Release APK (.apk):
-```bash
-JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=/home/virus/Android/Sdk ./gradlew assembleRelease
-```
-Output:
-`app/build/outputs/apk/release/app-release.apk` *(9.3 MB, Signed for direct sideloading)*
-
-### Build Debug APK:
-```bash
-JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=/home/virus/Android/Sdk ./gradlew assembleDebug
-```
-Output:
-`app/build/outputs/apk/debug/app-debug.apk`
-
-### Verify Manifest & Badging:
-```bash
-/home/virus/Android/Sdk/build-tools/34.0.0/aapt dump badging app/build/outputs/apk/release/app-release.apk | grep -E "(package:|launchable-activity:)"
-```
-
-### Install onto Running Device / Emulator:
-```bash
-/home/virus/Android/Sdk/platform-tools/adb install -r app/build/outputs/apk/release/app-release.apk
+        │   ├── SeedData.kt              # Seed records matching server/src/data/seedData.ts
+        │   └── BookStoreRepository.kt   # Singleton reactive state engine (see details below)
+        └── ui/
+            ├── theme/
+            │   └── Theme.kt             # Dark palette, brand colors (indigo/violet), typography
+            ├── components/
+            │   ├── TopAppBarWithRoleSwitcher.kt  # Top app bar: brand title + currency picker + profile pill
+            │   ├── AddToCartControl.kt            # ★ Shared cart control composable (button ↔ stepper)
+            │   ├── BookCard.kt                    # Grid/list book cards using AddToCartControl
+            │   ├── NavigationComponent.kt         # Bottom nav bar with cart badge count
+            │   ├── ProfileDialog.kt               # User profile details & manual login
+            │   └── ServerConnectionDialog.kt      # (exists but NOT shown — dev-only artifact)
+            └── screens/
+                ├── CatalogScreen.kt     # Search, category chips, price/rating sliders, sort
+                ├── BookDetailDialog.kt  # Book details modal with AddToCartControl + borrow + reviews
+                ├── CartCheckoutScreen.kt # Cart, promo codes, VIP discount, 4-step checkout
+                ├── OrdersScreen.kt      # Order list with Refresh (IconButton), tracking dialog
+                ├── RentalsScreen.kt     # Academic rentals, overdue/lost fees, Refresh button
+                ├── ManagementScreen.kt  # Inventory management, user editor, review moderation
+                └── PlaygroundScreen.kt  # ⚠️ QA/dev sandbox — intentionally contains debug refs
 ```
 
 ---
 
-## 📌 Handoff Status for Future Agents
+## 🔑 Key Components & Their Contracts
 
-- **Latest Build**: Successfully compiled on `2026-09-16`. APK size is 14 MB with valid launcher intent.
-- **State Management**: `BookStoreRepository.kt` handles all application state locally out-of-the-box, allowing tests to run offline or in isolated CI pipelines without backend dependency.
-- **Backend API Integration**: Can be linked to the live Express server (`http://10.0.2.2:5000/api/v1` for emulator or host IP for real devices).
+### `BookStoreRepository.kt`
+- **Singleton object** — instantiated once, lives for app lifetime.
+- `cartItems: SnapshotStateList<CartItem>` — use index-based mutation only (`cartItems[i] = item.copy(...)`) to trigger Compose recomposition. Direct property assignment (`item.quantity = x`) does NOT recompose.
+- Key cart methods:
+  - `addToCart(book, qty)` — adds or increments; index-based update
+  - `updateCartQuantity(bookId, newQty)` — index-based update, logs if qty=0
+  - `removeFromCart(bookId)` — removes item, logs action
+  - `getCartQuantity(bookId): Int` — returns current qty or 0 if not in cart
+
+### `AddToCartControl.kt` (shared cart UI service)
+```kotlin
+@Composable
+fun AddToCartControl(
+    book: Book,
+    size: CartControlSize = CartControlSize.COMPACT,
+    modifier: Modifier = Modifier
+)
+```
+- **`CartControlSize.COMPACT`** — used in `BookCard`; small button/stepper
+- **`CartControlSize.LARGE`** — used in `BookDetailDialog`; full-width
+- Renders `"Add to Cart"` when `getCartQuantity == 0`; renders `[−] qty [+]` stepper when `> 0`
+- Respects `book.stock` as ceiling on `+`
+
+### `TopAppBarWithRoleSwitcher.kt`
+- **Does NOT show** ONLINE/LOCAL badge (removed)
+- **Does NOT show** role-switcher chip row (removed)
+- **Does NOT invoke** `ServerConnectionDialog` (removed)
+- Shows: brand title "📚 BookStore" | currency dropdown | user profile pill
+
+### `OrdersScreen.kt` / `RentalsScreen.kt`
+- Refresh is a plain `IconButton(Icons.Default.Refresh)` — no web-sync text or dots
+
+### `PlaygroundScreen.kt`
+- ⚠️ **Intentionally contains `isBackendConnected` references** — QA/dev sandbox. Do NOT clean.
+
+---
+
+## 🎨 App Logo & Assets
+
+| Layer | File | Description |
+|---|---|---|
+| Background | `res/drawable/ic_launcher_background.xml` | Indigo gradient `#3730A3 → #4F46E5` at 135° |
+| Foreground | `res/drawable/ic_launcher_foreground.xml` | Open book (white/tinted) + gold sparkle star |
+| Adaptive (API 26+) | `res/mipmap-anydpi-v26/ic_launcher.xml` | Combines background + foreground layers |
+| PNG — mdpi | `res/mipmap-mdpi/ic_launcher.png` | 48×48 |
+| PNG — hdpi | `res/mipmap-hdpi/ic_launcher.png` | 72×72 |
+| PNG — xhdpi | `res/mipmap-xhdpi/ic_launcher.png` | 96×96 |
+| PNG — xxhdpi | `res/mipmap-xxhdpi/ic_launcher.png` | 144×144 |
+| PNG — xxxhdpi | `res/mipmap-xxxhdpi/ic_launcher.png` | 192×192 |
+| High-res asset | `assets/ic_logo.png` | 512×512 |
+
+App label in `AndroidManifest.xml` is `"BookStore"`.
+
+---
+
+## 🛠️ Build & Verification Commands
+
+```bash
+export JAVA_HOME=/opt/android-studio/jbr
+export ANDROID_HOME=/home/virus/Android/Sdk
+export PATH=$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH
+cd /home/virus/.gemini/antigravity-cli/scratch/book-store-repo/android
+```
+
+### Signed Release APK:
+```bash
+./gradlew assembleRelease
+cp app/build/outputs/apk/release/app-release.apk \
+   /home/virus/.gemini/antigravity-cli/scratch/apk-server/app-release.apk
+```
+APK served at: `http://192.168.0.6:8080/app-release.apk`
+
+### Google Play AAB:
+```bash
+./gradlew bundleRelease
+```
+
+### Debug APK:
+```bash
+./gradlew assembleDebug
+```
+
+### ADB Install:
+```bash
+adb install -r app/build/outputs/apk/release/app-release.apk
+```
+
+---
+
+## 🌐 Backend & Web
+
+| Service | URL |
+|---|---|
+| Backend (emulator) | `http://10.0.2.2:5000/api/v1` |
+| Backend (real device) | `http://192.168.0.6:5000/api/v1` |
+| Web frontend | `https://bookstore.itfreesource.workers.dev` |
+| APK download | `http://192.168.0.6:8080/app-release.apk` |
+
+> The app is fully functional offline — all state lives in `BookStoreRepository`. Orders placed on the app won't appear on the web without backend round-trip (not yet wired).
+
+---
+
+## 📋 Change Log
+
+| Date | Commit | Change | Reason |
+|---|---|---|---|
+| 2026-09-16 | `708cd12`→`06879aa` | Removed role-switcher chip row from `TopAppBarWithRoleSwitcher.kt` | User removed it from web UI |
+| 2026-09-16 | `48c5a1a` | Created `AddToCartControl.kt`; refactored `BookCard.kt`, `BookDetailDialog.kt`, `BookStoreRepository.kt` (index-based mutations + `getCartQuantity`) | Unified cart UI service across web + Android |
+| 2026-09-16 | `0c5e33d` | Removed all debug/connection UI: ONLINE/LOCAL badge, ServerConnectionDialog, sync banners in Cart/Orders/Rentals/Management | User: "don't want to show … api integration, wifi etc" |
+| 2026-09-16 | *(current)* | Brand logo: generated PNG logo; added `assets/ic_logo.png`; mipmap PNGs (all densities); updated vector drawables; changed app label to "BookStore" | User: "standards android assets folder … prepare a good logo" |
+
+---
+
+## 📌 Handoff Status
+
+- **App Label**: `"BookStore"` in `AndroidManifest.xml`
+- **Icon**: Adaptive (API 26+) + PNG fallbacks for mdpi→xxxhdpi
+- **No debug UI**: ONLINE/LOCAL badge, role-switcher, ServerConnectionDialog, sync banners all removed
+- **Cart**: `AddToCartControl` composable used consistently everywhere
+- **State**: Fully offline/in-memory; no backend required to run
+- **⚠️ REMINDER**: Update this AGENTS.md after every change. See rule at top of file.
