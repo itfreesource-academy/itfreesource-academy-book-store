@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,34 +83,17 @@ fun OrdersScreen() {
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.semantics { contentDescription = repo.getTestId("orders_screen_title") }
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .background(
-                                        if (repo.isBackendConnected) SuccessGreen else Color.Gray,
-                                        shape = androidx.compose.foundation.shape.CircleShape
-                                    )
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = if (repo.isSyncingBackend) "Syncing with Web..." else if (repo.isBackendConnected) "Web Synced (${repo.lastSyncTime})" else "Local Store",
-                                color = if (repo.isBackendConnected) SuccessGreen else TextSecondary,
-                                fontSize = 11.sp
-                            )
-                        }
                     }
-                    Button(
+                    IconButton(
                         onClick = { repo.syncWithBackend() },
                         enabled = !repo.isSyncingBackend,
-                        colors = ButtonDefaults.buttonColors(backgroundColor = SlateCard),
-                        elevation = ButtonDefaults.elevation(0.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.semantics { contentDescription = repo.getTestId("btn_sync_orders") }
                     ) {
-                        Text(text = if (repo.isSyncingBackend) "⏳" else "🔄 Sync Web", color = TextPrimary, fontSize = 12.sp)
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh orders",
+                            tint = if (repo.isSyncingBackend) IndigoPrimary else TextSecondary
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(4.dp))

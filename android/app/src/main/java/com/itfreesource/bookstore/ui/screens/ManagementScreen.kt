@@ -94,8 +94,8 @@ fun ManagementScreen() {
                         .semantics { contentDescription = repo.getTestId("btn_sync_management") }
                 ) {
                     Text(
-                        text = if (repo.isSyncingBackend) "⏳ Syncing" else "🔄 Sync Web",
-                        color = if (repo.isBackendConnected) SuccessGreen else TextSecondary,
+                        text = if (repo.isSyncingBackend) "⏳ Refreshing..." else "🔄 Refresh",
+                        color = IndigoPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 11.sp,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)

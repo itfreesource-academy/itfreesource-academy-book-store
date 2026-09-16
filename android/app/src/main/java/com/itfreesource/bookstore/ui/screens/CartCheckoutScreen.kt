@@ -157,27 +157,6 @@ fun CartCheckoutScreen(
                         modifier = Modifier.semantics { contentDescription = repo.getTestId("tracking_number_label") }
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Surface(
-                        color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.15f) else AmberWarning.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics { contentDescription = repo.getTestId("order_sync_status_badge") }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = if (repo.isBackendConnected) "🟢 Synced to Web Store (Live Database)" else "🟡 Saved Locally (Server at ${com.itfreesource.bookstore.data.ApiClient.baseUrl} unreachable)",
-                                color = if (repo.isBackendConnected) EmeraldAccent else AmberWarning,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Summary Card
@@ -209,19 +188,6 @@ fun CartCheckoutScreen(
                             }
                             Spacer(modifier = Modifier.height(6.dp))
                             Text("Estimated Delivery: ${ord.deliveryDate}", color = TextSecondary, fontSize = 12.sp)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Surface(
-                                color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.15f) else AmberWarning.copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(6.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = if (repo.isBackendConnected) "🌐 Web API Synced (${ord.orderNumber})" else "📱 Stored locally: ${repo.backendStatusText}",
-                                    color = if (repo.isBackendConnected) EmeraldAccent else AmberWarning,
-                                    fontSize = 11.sp,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
-                                )
-                            }
                         }
                     }
 

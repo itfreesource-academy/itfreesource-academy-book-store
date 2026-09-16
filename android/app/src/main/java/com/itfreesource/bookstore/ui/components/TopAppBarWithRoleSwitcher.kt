@@ -36,7 +36,6 @@ fun TopAppBarWithRoleSwitcher(
     val currentUser = BookStoreRepository.currentUser
     val repo = BookStoreRepository
     var currencyMenuExpanded by remember { mutableStateOf(false) }
-    var showServerDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -51,50 +50,15 @@ fun TopAppBarWithRoleSwitcher(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Brand Title & Status
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f, fill = false)
-            ) {
-                Text(
-                    text = "📚 BookStore",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    modifier = Modifier.semantics { contentDescription = repo.getTestId("app_brand_title") }
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Surface(
-                    color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.2f) else RoseError.copy(alpha = 0.2f),
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier
-                        .clickable { showServerDialog = true }
-                        .semantics { contentDescription = repo.getTestId("btn_server_connection_dialog") }
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .background(
-                                    if (repo.isBackendConnected) EmeraldAccent else RoseError,
-                                    shape = CircleShape
-                                )
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = if (repo.isBackendConnected) "ONLINE" else "LOCAL",
-                            color = if (repo.isBackendConnected) EmeraldAccent else RoseError,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1
-                        )
-                    }
-                }
-            }
+            // Brand Title
+            Text(
+                text = "📚 BookStore",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                modifier = Modifier.semantics { contentDescription = repo.getTestId("app_brand_title") }
+            )
 
             Spacer(modifier = Modifier.width(6.dp))
 
@@ -205,9 +169,5 @@ fun TopAppBarWithRoleSwitcher(
 
 
         Divider(color = SlateBorder, thickness = 0.5.dp)
-    }
-
-    if (showServerDialog) {
-        ServerConnectionDialog(onDismiss = { showServerDialog = false })
     }
 }
