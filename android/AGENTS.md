@@ -206,17 +206,23 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 | 2026-09-16 | `708cd12`→`06879aa` | Removed role-switcher chip row from `TopAppBarWithRoleSwitcher.kt` | User removed it from web UI |
 | 2026-09-16 | `48c5a1a` | Created `AddToCartControl.kt`; refactored `BookCard.kt`, `BookDetailDialog.kt`, `BookStoreRepository.kt` (index-based mutations + `getCartQuantity`) | Unified cart UI service across web + Android |
 | 2026-09-16 | `0c5e33d` | Removed all debug/connection UI: ONLINE/LOCAL badge, ServerConnectionDialog, sync banners in Cart/Orders/Rentals/Management | User: "don't want to show … api integration, wifi etc" |
-| 2026-09-16 | *(current)* | Brand logo: generated PNG logo; added `assets/ic_logo.png`; mipmap PNGs (all densities); updated vector drawables; changed app label to "BookStore" | User: "standards android assets folder … prepare a good logo" |
+| 2026-09-16 | `c7bbf5b` | Brand logo: generated PNG logo; added `assets/ic_logo.png`; mipmap PNGs (all densities); updated vector drawables | User: "standards android assets folder … prepare a good logo" |
 | 2026-09-16 | `bd200de` | Reverted app label to `"ITFreeSource BookStore"` | User confirmed testing platform identity |
-| 2026-09-16 | *(current)* | Created `AttributionFooter.kt` composable; added to `MainActivity` `bottomBar` below `BottomNavigationBar`; tapping "Vishal Prajapati" opens LinkedIn profile | "add the label at last saying Open Source Contribution by Vishal Prajapati…pointing to my LinkedIn profile" |
+| 2026-09-16 | `e13bb8c` | Created `AttributionFooter.kt` composable; added to `MainActivity` `bottomBar`; tapping "Vishal Prajapati" opens LinkedIn profile | "add the label at last saying Open Source Contribution by Vishal Prajapati…" |
+| 2026-09-16 | *(current)* | **Play Store readiness:** App renamed to `"ITFS BookStore"`; removed `android:usesCleartextTraffic`; upgraded `compileSdk`/`targetSdk` 34→35; enabled `minifyEnabled true` + `shrinkResources true`; moved signing creds from hardcoded `build.gradle` to `local.properties` (gitignored); refreshed icon to ITFreeSource brand (dark navy `#1a1a2e` bg, white book + green arrow); all mipmap densities regenerated | Play Store submission preparation |
 
 ---
 
 ## 📌 Handoff Status
 
-- **App Label**: `"ITFreeSource BookStore"` in `AndroidManifest.xml` — kept as-is since the app is a testing platform
-- **Icon**: Adaptive (API 26+) + PNG fallbacks for mdpi→xxxhdpi
+- **App Label**: `"ITFS BookStore"` in `AndroidManifest.xml` (Play Store name under publisher "ITFreeSource Academy")
+- **App Name Convention**: `ITFS <AppName>` — branch naming pattern for all ITFreeSource testing apps
+- **Icon**: ITFreeSource branded (dark navy `#1a1a2e` bg, white open book, green upward arrow). Adaptive (API 26+) + PNG fallbacks mdpi→xxxhdpi
+- **Play Store**: targetSdk 35, minifyEnabled, shrinkResources, no cleartext traffic, signing via local.properties
+- **Signing**: Credentials in `android/local.properties` (gitignored — never committed). File has `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`
 - **No debug UI**: ONLINE/LOCAL badge, role-switcher, ServerConnectionDialog, sync banners all removed
 - **Cart**: `AddToCartControl` composable used consistently everywhere
-- **State**: Fully offline/in-memory; no backend required to run
+- **State**: Fully offline/in-memory; no local backend required (API on Cloudflare Workers)
+- **Backend**: `https://bookstore.itfreesource.workers.dev/api/v1` — Cloudflare Worker, always on
+- **APK download**: `http://192.168.0.6:8080/app-release.apk` (local Wi-Fi, Python http.server)
 - **⚠️ REMINDER**: Update this AGENTS.md after every change. See rule at top of file.

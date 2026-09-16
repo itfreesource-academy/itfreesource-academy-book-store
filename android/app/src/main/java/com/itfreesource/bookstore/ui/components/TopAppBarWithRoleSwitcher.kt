@@ -36,13 +36,19 @@ fun TopAppBarWithRoleSwitcher(
     val currentUser = BookStoreRepository.currentUser
     val repo = BookStoreRepository
     var currencyMenuExpanded by remember { mutableStateOf(false) }
+    val isDark = ThemeState.isDark
+
+    val headerBg     = if (isDark) SlateSurface   else LightSurface
+    val headerBorder = if (isDark) SlateBorder     else LightBorder
+    val brandColor   = if (isDark) Color.White     else LightTextPrimary
+    val pillBg       = if (isDark) SlateBackground else LightBackground
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(SlateSurface)
+            .background(headerBg)
     ) {
-        // Top row: Brand + Currency Selector + Profile
+        // Top row: Brand + Currency Selector + Theme Toggle + Profile
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -53,7 +59,7 @@ fun TopAppBarWithRoleSwitcher(
             // Brand Title
             Text(
                 text = "📚 BookStore",
-                color = Color.White,
+                color = brandColor,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -62,7 +68,7 @@ fun TopAppBarWithRoleSwitcher(
 
             Spacer(modifier = Modifier.width(6.dp))
 
-            // Right side: Currency Selector & Active User Pill
+            // Right side: Currency Selector + Theme Toggle + Active User Pill
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
@@ -72,7 +78,9 @@ fun TopAppBarWithRoleSwitcher(
                     OutlinedButton(
                         onClick = { currencyMenuExpanded = true },
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            backgroundColor = if (isDark) SlateBackground else LightBackground
+                        ),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
                             .height(30.dp)
@@ -80,7 +88,7 @@ fun TopAppBarWithRoleSwitcher(
                     ) {
                         Text(
                             text = "${repo.activeCurrency.flag} ${repo.activeCurrency.code}",
-                            color = TextPrimary,
+                            color = if (isDark) TextPrimary else LightTextPrimary,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1
@@ -88,7 +96,7 @@ fun TopAppBarWithRoleSwitcher(
                         Icon(
                             Icons.Default.ArrowDropDown,
                             contentDescription = null,
-                            tint = TextSecondary,
+                            tint = if (isDark) TextSecondary else LightTextSecondary,
                             modifier = Modifier.size(14.dp)
                         )
                     }
@@ -96,7 +104,7 @@ fun TopAppBarWithRoleSwitcher(
                     DropdownMenu(
                         expanded = currencyMenuExpanded,
                         onDismissRequest = { currencyMenuExpanded = false },
-                        modifier = Modifier.background(SlateSurface)
+                        modifier = Modifier.background(if (isDark) SlateSurface else LightSurface)
                     ) {
                         Currency.values().forEach { curr ->
                             DropdownMenuItem(
@@ -106,17 +114,37 @@ fun TopAppBarWithRoleSwitcher(
                                 },
                                 modifier = Modifier.semantics { contentDescription = repo.getTestId("currency_option_${curr.code}") }
                             ) {
-                                Text("${curr.flag} ${curr.name} (${curr.symbol})", color = TextPrimary)
+                                Text(
+                                    "${curr.flag} ${curr.name} (${curr.symbol})",
+                                    color = if (isDark) TextPrimary else LightTextPrimary
+                                )
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+
+                // ── Theme Toggle Button (Sun / Moon) ──────────────────────
+                IconButton(
+                    onClick = { ThemeState.toggle() },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .semantics { contentDescription = repo.getTestId("theme_toggle_button") }
+                ) {
+                    Icon(
+                        imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
+                        contentDescription = if (isDark) "Switch to Light Mode" else "Switch to Dark Mode",
+                        tint = if (isDark) AmberWarning else IndigoPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
 
                 // Active User Pill with Avatar Thumbnail
                 Surface(
-                    color = SlateBackground,
+                    color = if (isDark) SlateBackground else LightBackground,
                     shape = RoundedCornerShape(16.dp),
                     border = ButtonDefaults.outlinedBorder,
                     modifier = Modifier
@@ -156,7 +184,7 @@ fun TopAppBarWithRoleSwitcher(
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
                             text = currentUser?.username ?: "Guest",
-                            color = TextPrimary,
+                            color = if (isDark) TextPrimary else LightTextPrimary,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                             maxLines = 1,
@@ -167,7 +195,6 @@ fun TopAppBarWithRoleSwitcher(
             }
         }
 
-
-        Divider(color = SlateBorder, thickness = 0.5.dp)
+        Divider(color = if (isDark) SlateBorder else LightBorder, thickness = 0.5.dp)
     }
 }
