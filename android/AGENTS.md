@@ -211,6 +211,7 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 | 2026-09-16 | `e13bb8c` | Created `AttributionFooter.kt` composable; added to `MainActivity` `bottomBar`; tapping "Vishal Prajapati" opens LinkedIn profile | "add the label at last saying Open Source Contribution by Vishal Prajapati…" |
 | 2026-09-16 | `3b6aa55` | Theme toggle: Added light/dark mode switch to TopAppBar with reactive `ThemeState` | User requested theme toggle |
 | 2026-09-16 | `38629dc` | Generated authentic ITFreeSource Academy Developer Icon (512x512) and Header Banner (4096x2304) matching website brand (green growth arrow + bar chart + clock gauge); saved to `store-assets/` and pushed to GitHub | Aligning developer profile with official ITFreeSource Academy logo |
+| 2026-09-16 | `d4b83f1` | Redesigned developer icon & header to match the cutting-edge cyber infinity brand from `academy.itfreesource.com` (neon magenta graduation cap + neon cyan security padlock + 'BY VISHAL PRAJAPATI • POWERED BY ITFREESOURCE' header) | Re-aligning developer profile with elite AppSec/QA Academy branding |
 
 ---
 
