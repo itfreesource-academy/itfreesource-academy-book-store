@@ -107,15 +107,22 @@ object BookStoreRepository {
             // Sync Orders
             val remoteOrders = ApiClient.fetchOrders()
             if (remoteOrders != null) {
+                val remoteIds = remoteOrders.map { it.id }.toSet()
+                val remoteOrderNums = remoteOrders.map { it.orderNumber }.toSet()
+                val localPendingOrders = orders.filter { it.id !in remoteIds && it.orderNumber !in remoteOrderNums }
                 orders.clear()
                 orders.addAll(remoteOrders)
+                orders.addAll(0, localPendingOrders)
             }
 
             // Sync Borrow Records
             val remoteBorrows = ApiClient.fetchBorrowRecords()
             if (remoteBorrows != null) {
+                val remoteIds = remoteBorrows.map { it.id }.toSet()
+                val localPendingBorrows = borrowRecords.filter { it.id !in remoteIds }
                 borrowRecords.clear()
                 borrowRecords.addAll(remoteBorrows)
+                borrowRecords.addAll(0, localPendingBorrows)
             }
 
             // Sync Reviews

@@ -209,6 +209,19 @@ fun CartCheckoutScreen(
                             }
                             Spacer(modifier = Modifier.height(6.dp))
                             Text("Estimated Delivery: ${ord.deliveryDate}", color = TextSecondary, fontSize = 12.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Surface(
+                                color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.15f) else AmberWarning.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(6.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = if (repo.isBackendConnected) "🌐 Web API Synced (${ord.orderNumber})" else "📱 Stored locally: ${repo.backendStatusText}",
+                                    color = if (repo.isBackendConnected) EmeraldAccent else AmberWarning,
+                                    fontSize = 11.sp,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                                )
+                            }
                         }
                     }
 
