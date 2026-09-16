@@ -152,7 +152,28 @@ fun CartCheckoutScreen(
                         modifier = Modifier.semantics { contentDescription = repo.getTestId("tracking_number_label") }
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Surface(
+                        color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.15f) else AmberWarning.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics { contentDescription = repo.getTestId("order_sync_status_badge") }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (repo.isBackendConnected) "🟢 Synced to Web Store (Live Database)" else "🟡 Saved Locally (Server at ${com.itfreesource.bookstore.data.ApiClient.baseUrl} unreachable)",
+                                color = if (repo.isBackendConnected) EmeraldAccent else AmberWarning,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Summary Card
                     Card(

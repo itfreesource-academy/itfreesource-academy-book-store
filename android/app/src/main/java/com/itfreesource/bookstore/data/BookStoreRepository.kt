@@ -398,6 +398,9 @@ object BookStoreRepository {
                 }
                 isBackendConnected = true
                 backendStatusText = "Order synced to Web API (${remoteOrder.orderNumber})"
+            } else {
+                isBackendConnected = false
+                backendStatusText = "Order saved locally: ${ApiClient.lastOrderError ?: "Web API unreachable"}"
             }
         }
 

@@ -26,6 +26,7 @@ import com.itfreesource.bookstore.ui.theme.BookStoreTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.itfreesource.bookstore.data.ApiClient.init(this.applicationContext)
         setContent {
             BookStoreTheme {
                 val repo = BookStoreRepository

@@ -15,12 +15,60 @@ import java.util.Date
 import java.util.Locale
 
 object ApiClient {
-    // 10.0.2.2 is the Android Emulator alias to the host machine's localhost:5000
-    var baseUrl: String = "http://10.0.2.2:5000/api/v1"
+    private const val PREFS_NAME = "bookstore_api_prefs"
+    private const val PREF_KEY_BASE_URL = "custom_base_url"
+
+    // Default to physical phone Wi-Fi host IP where backend runs; fallback to 10.0.2.2 for emulator
+    val DEFAULT_WIFI_HOST_URL = "http://192.168.0.6:5000/api/v1"
+    val DEFAULT_EMULATOR_URL = "http://10.0.2.2:5000/api/v1"
+
+    var baseUrl: String = DEFAULT_WIFI_HOST_URL
     var authToken: String? = null
     var isLiveConnected: Boolean = false
     var lastSyncStatus: String = "Not connected (Using local mock data)"
     var lastSyncTimestamp: String = "Never"
+    var lastOrderError: String? = null
+
+    fun init(context: android.content.Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
+        val saved = prefs.getString(PREF_KEY_BASE_URL, null)
+        if (!saved.isNullOrBlank()) {
+            baseUrl = saved
+        } else {
+            baseUrl = DEFAULT_WIFI_HOST_URL
+        }
+    }
+
+    fun setCustomBaseUrl(context: android.content.Context?, newUrl: String) {
+        baseUrl = newUrl.trimEnd('/')
+        context?.let {
+            val prefs = it.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
+            prefs.edit().putString(PREF_KEY_BASE_URL, baseUrl).apply()
+        }
+    }
+
+    suspend fun testConnection(): Pair<Boolean, String> = withContext(Dispatchers.IO) {
+        val start = System.currentTimeMillis()
+        try {
+            val conn = openConnection("/books?limit=1", "GET")
+            conn.connectTimeout = 3000
+            conn.readTimeout = 3000
+            val code = conn.responseCode
+            val latency = System.currentTimeMillis() - start
+            if (code in 200..299) {
+                isLiveConnected = true
+                lastSyncStatus = "Connected (${latency}ms)"
+                lastSyncTimestamp = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
+                Pair(true, "Connected successfully (${latency}ms) to $baseUrl")
+            } else {
+                isLiveConnected = false
+                Pair(false, "Server returned HTTP $code from $baseUrl")
+            }
+        } catch (e: Exception) {
+            isLiveConnected = false
+            Pair(false, "Connection failed to $baseUrl: ${e.localizedMessage ?: e.message}")
+        }
+    }
 
     private fun readStream(conn: HttpURLConnection): String {
         val stream = if (conn.responseCode in 200..299) conn.inputStream else conn.errorStream
@@ -298,12 +346,18 @@ object ApiClient {
             if (conn.responseCode in 200..201) {
                 val json = JSONObject(readStream(conn))
                 if (json.optBoolean("success")) {
+                    lastOrderError = null
                     markSyncSuccess("Order placed on Web API")
                     return@withContext parseOrder(json.getJSONObject("order"))
+                } else {
+                    lastOrderError = json.optString("error", "API reported order failure")
                 }
+            } else {
+                lastOrderError = "Server returned HTTP ${conn.responseCode}"
             }
         } catch (e: Exception) {
             isLiveConnected = false
+            lastOrderError = e.localizedMessage ?: e.message ?: "Network error"
         }
         null
     }

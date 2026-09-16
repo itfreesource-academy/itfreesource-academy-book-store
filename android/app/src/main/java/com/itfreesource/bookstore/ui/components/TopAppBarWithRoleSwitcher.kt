@@ -33,6 +33,7 @@ fun TopAppBarWithRoleSwitcher(
     val currentUser = BookStoreRepository.currentUser
     val repo = BookStoreRepository
     var currencyMenuExpanded by remember { mutableStateOf(false) }
+    var showServerDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -68,6 +69,35 @@ fun TopAppBarWithRoleSwitcher(
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                     )
+                }
+                Surface(
+                    color = if (repo.isBackendConnected) EmeraldAccent.copy(alpha = 0.2f) else RoseError.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .clickable { showServerDialog = true }
+                        .semantics { contentDescription = repo.getTestId("btn_server_connection_dialog") }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .background(
+                                    if (repo.isBackendConnected) EmeraldAccent else RoseError,
+                                    shape = CircleShape
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (repo.isBackendConnected) "ONLINE" else "LOCAL",
+                            color = if (repo.isBackendConnected) EmeraldAccent else RoseError,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
 
@@ -208,5 +238,9 @@ fun TopAppBarWithRoleSwitcher(
                 }
             }
         }
+    }
+
+    if (showServerDialog) {
+        ServerConnectionDialog(onDismiss = { showServerDialog = false })
     }
 }
