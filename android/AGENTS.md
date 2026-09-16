@@ -147,7 +147,7 @@ fun AddToCartControl(
 | PNG — xxxhdpi | `res/mipmap-xxxhdpi/ic_launcher.png` | 192×192 |
 | High-res asset | `assets/ic_logo.png` | 512×512 |
 
-App label in `AndroidManifest.xml` is `"BookStore"`.
+App label in `AndroidManifest.xml` is `"ITFreeSource BookStore"`.
 
 ---
 
@@ -211,7 +211,7 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 
 ## 📌 Handoff Status
 
-- **App Label**: `"BookStore"` in `AndroidManifest.xml`
+- **App Label**: `"ITFreeSource BookStore"` in `AndroidManifest.xml` — kept as-is since the app is a testing platform
 - **Icon**: Adaptive (API 26+) + PNG fallbacks for mdpi→xxxhdpi
 - **No debug UI**: ONLINE/LOCAL badge, role-switcher, ServerConnectionDialog, sync banners all removed
 - **Cart**: `AddToCartControl` composable used consistently everywhere
