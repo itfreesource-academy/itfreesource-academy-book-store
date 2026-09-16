@@ -643,13 +643,16 @@ object ApiClient {
         val items = mutableListOf<OrderItem>()
         for (j in 0 until itemsArr.length()) {
             val itmObj = itemsArr.getJSONObject(j)
+            val bId = itmObj.optString("bookId")
+            val rawCover = itmObj.optString("coverImage", "")
+            val fallbackCover = if (rawCover.isNotBlank()) rawCover else (SeedData.getInitialBooks().find { it.id == bId }?.coverImage ?: "")
             items.add(
                 OrderItem(
-                    bookId = itmObj.optString("bookId"),
+                    bookId = bId,
                     title = itmObj.optString("title"),
                     price = itmObj.optDouble("price", 0.0),
                     quantity = itmObj.optInt("quantity", 1),
-                    coverImage = itmObj.optString("coverImage", "")
+                    coverImage = fallbackCover
                 )
             )
         }

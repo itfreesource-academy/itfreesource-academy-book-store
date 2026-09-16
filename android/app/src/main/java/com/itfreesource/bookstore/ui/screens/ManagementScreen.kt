@@ -15,12 +15,18 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.*
 import com.itfreesource.bookstore.ui.theme.*
@@ -162,19 +168,58 @@ fun ManagementScreen() {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(book.title, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                                            Text(repo.formatPrice(book.price), color = IndigoPrimary, fontSize = 12.sp)
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .clip(RoundedCornerShape(4.dp))
+                                                .background(SlateBackground)
+                                                .border(0.5.dp, SlateBorder, RoundedCornerShape(4.dp)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (book.coverImage.isNotBlank()) {
+                                                AsyncImage(
+                                                    model = ImageRequest.Builder(LocalContext.current)
+                                                        .data(book.coverImage)
+                                                        .crossfade(true)
+                                                        .build(),
+                                                    contentDescription = book.title,
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.fillMaxSize()
+                                                )
+                                            } else {
+                                                Text("📖", fontSize = 16.sp)
+                                            }
                                         }
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = book.title,
+                                                color = TextPrimary,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                            Text(
+                                                text = repo.formatPrice(book.price),
+                                                color = IndigoPrimary,
+                                                fontSize = 12.sp,
+                                                maxLines = 1
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(8.dp))
 
                                         Text(
                                             text = "Stock: ${book.stock}",
                                             color = if (book.stock < 5) RoseError else EmeraldAccent,
                                             fontWeight = FontWeight.ExtraBold,
                                             fontSize = 14.sp,
+                                            maxLines = 1,
                                             modifier = Modifier.semantics { contentDescription = repo.getTestId("inv_stock_label_${book.id}") }
                                         )
                                     }
@@ -233,13 +278,48 @@ fun ManagementScreen() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(androidx.compose.foundation.shape.CircleShape)
+                                        .background(IndigoPrimary),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (u.avatar.isNotBlank()) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(u.avatar)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = u.username,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        Text(
+                                            text = (u.username.take(1)).uppercase(),
+                                            color = Color.White,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
                                 Column(modifier = Modifier.weight(1f)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(u.fullName, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = u.fullName,
+                                            color = TextPrimary,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
                                         Surface(
                                             color = IndigoPrimary.copy(alpha = 0.2f),
                                             shape = RoundedCornerShape(4.dp)
@@ -247,15 +327,29 @@ fun ManagementScreen() {
                                             Text(
                                                 text = u.role.label,
                                                 color = IndigoPrimary,
-                                                fontSize = 10.sp,
+                                                fontSize = 9.sp,
                                                 fontWeight = FontWeight.Bold,
+                                                maxLines = 1,
                                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                                             )
                                         }
                                     }
-                                    Text("@${u.username} • ${u.email}", color = TextSecondary, fontSize = 11.sp)
-                                    Text("FX: ${u.currency.code} | TZ: ${u.timezone.takeLast(10)}", color = TextSecondary, fontSize = 10.sp)
+                                    Text(
+                                        text = "@${u.username} • ${u.email}",
+                                        color = TextSecondary,
+                                        fontSize = 11.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = "FX: ${u.currency.code} | TZ: ${u.timezone.takeLast(10)}",
+                                        color = TextSecondary,
+                                        fontSize = 10.sp,
+                                        maxLines = 1
+                                    )
                                 }
+
+                                Spacer(modifier = Modifier.width(6.dp))
 
                                 Button(
                                     onClick = { userEditDialogTarget = u },
@@ -263,10 +357,10 @@ fun ManagementScreen() {
                                     shape = RoundedCornerShape(6.dp),
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                     modifier = Modifier
-                                        .height(32.dp)
+                                        .height(30.dp)
                                         .semantics { contentDescription = repo.getTestId("btn_edit_user_${u.username}") }
                                 ) {
-                                    Text("Edit", color = Color.White, fontSize = 11.sp)
+                                    Text("Edit", color = Color.White, fontSize = 11.sp, maxLines = 1)
                                 }
                             }
                         }

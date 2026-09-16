@@ -14,13 +14,18 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.Order
 import com.itfreesource.bookstore.model.ShippingAddress
@@ -313,14 +318,28 @@ fun CartCheckoutScreen(
                                     .padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Thumbnail icon
+                                // Thumbnail image
                                 Box(
                                     modifier = Modifier
                                         .size(50.dp)
-                                        .background(SlateBackground, RoundedCornerShape(6.dp)),
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(SlateBackground)
+                                        .border(0.5.dp, SlateBorder, RoundedCornerShape(6.dp)),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("📖", fontSize = 24.sp)
+                                    if (item.book.coverImage.isNotBlank()) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(item.book.coverImage)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = item.book.title,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        Text("📖", fontSize = 24.sp)
+                                    }
                                 }
 
                                 Spacer(modifier = Modifier.width(12.dp))
@@ -333,6 +352,7 @@ fun CartCheckoutScreen(
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.semantics { contentDescription = repo.getTestId("cart_item_title_${item.book.id}") }
                                     )
                                     Text(

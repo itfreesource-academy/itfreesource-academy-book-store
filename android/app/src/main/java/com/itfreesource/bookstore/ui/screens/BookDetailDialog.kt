@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.Book
 import com.itfreesource.bookstore.model.Review
@@ -91,22 +95,36 @@ fun BookDetailDialog(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(160.dp)
+                                .height(200.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(SlateBackground)
                                 .border(1.dp, SlateBorder, RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("📚", fontSize = 48.sp)
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = book.title,
-                                    color = TextPrimary,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
+                            if (book.coverImage.isNotBlank()) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(book.coverImage)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = book.title,
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp)
                                 )
+                            } else {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("📚", fontSize = 48.sp)
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = book.title,
+                                        color = TextPrimary,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    )
+                                }
                             }
                         }
 
@@ -372,7 +390,10 @@ fun BookDetailDialog(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Action Buttons
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Button(
                             onClick = {
                                 onAddToCart(book, quantity)
@@ -381,17 +402,16 @@ fun BookDetailDialog(
                             enabled = book.stock > 0,
                             colors = ButtonDefaults.buttonColors(backgroundColor = IndigoPrimary),
                             shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                             modifier = Modifier
-                                .weight(1.2f)
+                                .weight(1.1f)
                                 .height(44.dp)
                                 .semantics { contentDescription = repo.getTestId("detail_btn_add_to_cart") }
                         ) {
                             Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Add to Cart", color = Color.White, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Add to Cart", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1)
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         OutlinedButton(
                             onClick = {
@@ -401,6 +421,7 @@ fun BookDetailDialog(
                             enabled = book.stock > 0,
                             shape = RoundedCornerShape(8.dp),
                             colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(44.dp)
@@ -408,7 +429,7 @@ fun BookDetailDialog(
                         ) {
                             Icon(Icons.Default.Bookmark, contentDescription = null, tint = TextPrimary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Borrow (${repo.formatPrice(book.rentalPrice)})", color = TextPrimary, fontSize = 11.sp)
+                            Text("Borrow (${repo.formatPrice(book.rentalPrice)})", color = TextPrimary, fontSize = 11.sp, maxLines = 1)
                         }
                     }
                 }

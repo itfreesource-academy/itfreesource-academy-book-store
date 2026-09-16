@@ -10,12 +10,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.BorrowStatus
 import com.itfreesource.bookstore.ui.theme.*
@@ -131,21 +137,58 @@ fun RentalsScreen() {
                             .semantics { contentDescription = repo.getTestId("rental_card_${record.id}") }
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
-                            // Header: Title and Status Badge
+                            // Header: Cover + Title and Status Badge
+                            val matchingBook = repo.books.find { it.id == record.bookId }
+                            val coverUrl = record.bookCover.ifBlank { matchingBook?.coverImage ?: "" }
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = record.bookTitle,
-                                    color = TextPrimary,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
+                                Box(
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .semantics { contentDescription = repo.getTestId("rental_title_${record.id}") }
-                                )
+                                        .size(42.dp)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(SlateBackground)
+                                        .border(0.5.dp, SlateBorder, RoundedCornerShape(6.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (coverUrl.isNotBlank()) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(coverUrl)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = record.bookTitle,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        Text("📖", fontSize = 20.sp)
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = record.bookTitle,
+                                        color = TextPrimary,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.semantics { contentDescription = repo.getTestId("rental_title_${record.id}") }
+                                    )
+                                    Text(
+                                        text = "User: @${record.username}",
+                                        color = TextSecondary,
+                                        fontSize = 11.sp,
+                                        maxLines = 1
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(6.dp))
 
                                 val (statusBg, statusColor) = when (record.status) {
                                     BorrowStatus.active -> Pair(IndigoPrimary.copy(alpha = 0.2f), IndigoPrimary)
@@ -161,74 +204,78 @@ fun RentalsScreen() {
                                     Text(
                                         text = record.status.name.uppercase(),
                                         color = statusColor,
-                                        fontSize = 11.sp,
+                                        fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
                                         modifier = Modifier
-                                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                                            .padding(horizontal = 7.dp, vertical = 3.dp)
                                             .semantics { contentDescription = repo.getTestId("rental_status_${record.id}") }
                                     )
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                            // Dates
+                            // Dates (Weighted 1f columns to prevent single-character squishing!)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Column {
-                                    Text("Borrowed Date", color = TextSecondary, fontSize = 10.sp)
-                                    Text(record.borrowDate, color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Borrowed", color = TextSecondary, fontSize = 10.sp, maxLines = 1)
+                                    Text(record.borrowDate, color = TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
                                 }
-                                Column {
-                                    Text("Due Date (10 Days)", color = TextSecondary, fontSize = 10.sp)
-                                    Text(record.dueDate, color = IndigoPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Due (10 Days)", color = TextSecondary, fontSize = 10.sp, maxLines = 1)
+                                    Text(record.dueDate, color = IndigoPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                                 }
-                                Column {
-                                    Text("Return Date", color = TextSecondary, fontSize = 10.sp)
-                                    Text(record.returnDate ?: "Pending", color = TextPrimary, fontSize = 12.sp)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Returned", color = TextSecondary, fontSize = 10.sp, maxLines = 1)
+                                    Text(record.returnDate ?: "Pending", color = TextPrimary, fontSize = 11.sp, maxLines = 1)
                                 }
                             }
 
                             Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 10.dp))
 
-                            // Fees breakdown
+                            // Fees breakdown & Actions
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column {
+                                Column(modifier = Modifier.weight(1f, fill = false)) {
                                     Text(
                                         text = "Base: ${repo.formatPrice(record.standardFee)}" +
                                                 (if (record.lateFee > 0) " + Late: ${repo.formatPrice(record.lateFee)}" else "") +
                                                 (if (record.lostFee > 0) " + Lost: ${repo.formatPrice(record.lostFee)}" else ""),
                                         color = TextSecondary,
-                                        fontSize = 11.sp
+                                        fontSize = 10.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         text = "Total Fee: ${repo.formatPrice(record.totalFee)}",
                                         color = EmeraldAccent,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.ExtraBold,
+                                        maxLines = 1,
                                         modifier = Modifier.semantics { contentDescription = repo.getTestId("rental_fee_${record.id}") }
                                     )
                                 }
 
                                 // Actions if active
                                 if (record.status == BorrowStatus.active) {
-                                    Row {
+                                    Row(horizontalArrangement = Arrangement.End) {
                                         Button(
                                             onClick = { repo.returnBook(record.id, 0) },
                                             colors = ButtonDefaults.buttonColors(backgroundColor = EmeraldAccent),
                                             shape = RoundedCornerShape(6.dp),
                                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                             modifier = Modifier
-                                                .height(32.dp)
+                                                .height(30.dp)
                                                 .semantics { contentDescription = repo.getTestId("btn_return_book_${record.id}") }
                                         ) {
-                                            Text("Return Book", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                            Text("Return", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                                         }
 
                                         Spacer(modifier = Modifier.width(6.dp))
@@ -238,16 +285,17 @@ fun RentalsScreen() {
                                             shape = RoundedCornerShape(6.dp),
                                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                                             modifier = Modifier
-                                                .height(32.dp)
+                                                .height(30.dp)
                                                 .semantics { contentDescription = repo.getTestId("btn_mark_lost_${record.id}") }
                                         ) {
-                                            Text("Mark Lost", color = RoseError, fontSize = 11.sp)
+                                            Text("Lost", color = RoseError, fontSize = 11.sp, maxLines = 1)
                                         }
                                     }
                                 }
                             }
                         }
                     }
+
                 }
             }
         }

@@ -15,12 +15,18 @@ import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.OrderStatus
 import com.itfreesource.bookstore.model.UserRole
@@ -233,23 +239,52 @@ fun OrdersScreen() {
 
                             // Order Items
                             ord.items.forEach { itm ->
+                                val matchingBook = repo.books.find { it.id == itm.bookId }
+                                val coverUrl = itm.coverImage.ifBlank { matchingBook?.coverImage ?: "" }
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 3.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(34.dp)
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(SlateBackground)
+                                            .border(0.5.dp, SlateBorder, RoundedCornerShape(4.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (coverUrl.isNotBlank()) {
+                                            AsyncImage(
+                                                model = ImageRequest.Builder(LocalContext.current)
+                                                    .data(coverUrl)
+                                                    .crossfade(true)
+                                                    .build(),
+                                                contentDescription = itm.title,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                        } else {
+                                            Text("📖", fontSize = 16.sp)
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = "${itm.title} (x${itm.quantity})",
                                         color = TextSecondary,
                                         fontSize = 12.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.weight(1f)
                                     )
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = repo.formatPrice(itm.price * itm.quantity),
                                         color = TextPrimary,
                                         fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1
                                     )
                                 }
                             }
@@ -271,6 +306,8 @@ fun OrdersScreen() {
                                         color = TextPrimary,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Medium,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.semantics { contentDescription = repo.getTestId("tracking_label_${ord.id}") }
                                     )
                                 }
@@ -283,13 +320,14 @@ fun OrdersScreen() {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column {
-                                    Text("Total Amount", color = TextSecondary, fontSize = 10.sp)
+                                Column(modifier = Modifier.weight(1f, fill = false)) {
+                                    Text("Total Amount", color = TextSecondary, fontSize = 10.sp, maxLines = 1)
                                     Text(
                                         text = repo.formatPrice(ord.total),
                                         color = EmeraldAccent,
-                                        fontSize = 16.sp,
+                                        fontSize = 15.sp,
                                         fontWeight = FontWeight.ExtraBold,
+                                        maxLines = 1,
                                         modifier = Modifier.semantics { contentDescription = repo.getTestId("order_total_${ord.id}") }
                                     )
                                 }

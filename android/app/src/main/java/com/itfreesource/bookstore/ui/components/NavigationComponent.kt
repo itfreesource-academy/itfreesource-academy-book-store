@@ -29,7 +29,7 @@ enum class AppScreen(val title: String, val icon: ImageVector, val testId: Strin
     ORDERS("Orders", Icons.Default.Receipt, "nav_orders"),
     RENTALS("Rentals", Icons.Default.Bookmark, "nav_rentals"),
     SANDBOX("QA Lab", Icons.Default.Build, "nav_sandbox"),
-    MANAGEMENT("Admin / Ops", Icons.Default.AdminPanelSettings, "nav_management")
+    MANAGEMENT("Admin", Icons.Default.AdminPanelSettings, "nav_management")
 }
 
 @Composable
@@ -89,9 +89,11 @@ fun BottomNavigationBar(
                 label = {
                     Text(
                         text = screen.title,
-                        fontSize = 10.sp,
+                        fontSize = 9.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) IndigoPrimary else TextSecondary
+                        color = if (isSelected) IndigoPrimary else TextSecondary,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 },
                 selected = isSelected,
