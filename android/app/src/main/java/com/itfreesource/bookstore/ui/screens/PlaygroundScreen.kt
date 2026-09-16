@@ -952,7 +952,7 @@ fun PlaygroundScreen() {
                                         customBaseUrl = it
                                         com.itfreesource.bookstore.data.ApiClient.baseUrl = it
                                     },
-                                    label = { Text("Base API URL (Default 10.0.2.2:5000/api/v1 for Emulator)") },
+                                    label = { Text("Base API URL (Default https://bookstore.itfreesource.workers.dev/api/v1)") },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .semantics { contentDescription = repo.getTestId("input_backend_api_url") },

@@ -18,11 +18,12 @@ object ApiClient {
     private const val PREFS_NAME = "bookstore_api_prefs"
     private const val PREF_KEY_BASE_URL = "custom_base_url"
 
-    // Default to physical phone Wi-Fi host IP where backend runs; fallback to 10.0.2.2 for emulator
+    // Live Cloudflare Workers production endpoint
+    val LIVE_CLOUDFLARE_URL = "https://bookstore.itfreesource.workers.dev/api/v1"
     val DEFAULT_WIFI_HOST_URL = "http://192.168.0.6:5000/api/v1"
     val DEFAULT_EMULATOR_URL = "http://10.0.2.2:5000/api/v1"
 
-    var baseUrl: String = DEFAULT_WIFI_HOST_URL
+    var baseUrl: String = LIVE_CLOUDFLARE_URL
     var authToken: String? = null
     var isLiveConnected: Boolean = false
     var lastSyncStatus: String = "Not connected (Using local mock data)"
@@ -35,7 +36,7 @@ object ApiClient {
         if (!saved.isNullOrBlank()) {
             baseUrl = saved
         } else {
-            baseUrl = DEFAULT_WIFI_HOST_URL
+            baseUrl = LIVE_CLOUDFLARE_URL
         }
     }
 
@@ -80,13 +81,14 @@ object ApiClient {
         return (url.openConnection() as HttpURLConnection).apply {
             requestMethod = method
             setRequestProperty("Accept", "application/json")
+            setRequestProperty("User-Agent", "ITFreeSource-BookStore-Android/1.0 (Linux; Android 14; Mobile)")
             if (method in listOf("POST", "PUT", "PATCH")) {
                 setRequestProperty("Content-Type", "application/json")
                 doOutput = true
             }
             authToken?.let { setRequestProperty("Authorization", "Bearer $it") }
-            connectTimeout = 4000
-            readTimeout = 4000
+            connectTimeout = 5000
+            readTimeout = 6000
         }
     }
 

@@ -134,15 +134,23 @@ fun ServerConnectionDialog(
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    OutlinedButton(
+                        onClick = { inputUrl = ApiClient.LIVE_CLOUDFLARE_URL; testResult = null },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = IndigoPrimary.copy(alpha = 0.2f)),
+                        modifier = Modifier.weight(1.1f).height(34.dp)
+                    ) {
+                        Text("☁️ Live Cloud", color = TextPrimary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
                     OutlinedButton(
                         onClick = { inputUrl = ApiClient.DEFAULT_WIFI_HOST_URL; testResult = null },
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
                         modifier = Modifier.weight(1f).height(34.dp)
                     ) {
-                        Text("🏠 Wi-Fi PC", color = TextPrimary, fontSize = 11.sp)
+                        Text("🏠 Wi-Fi PC", color = TextPrimary, fontSize = 10.sp)
                     }
                     OutlinedButton(
                         onClick = { inputUrl = ApiClient.DEFAULT_EMULATOR_URL; testResult = null },
@@ -150,7 +158,7 @@ fun ServerConnectionDialog(
                         colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
                         modifier = Modifier.weight(1f).height(34.dp)
                     ) {
-                        Text("📱 Emulator", color = TextPrimary, fontSize = 11.sp)
+                        Text("📱 Emulator", color = TextPrimary, fontSize = 10.sp)
                     }
                 }
 
