@@ -209,20 +209,22 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 | 2026-09-16 | `c7bbf5b` | Brand logo: generated PNG logo; added `assets/ic_logo.png`; mipmap PNGs (all densities); updated vector drawables | User: "standards android assets folder … prepare a good logo" |
 | 2026-09-16 | `bd200de` | Reverted app label to `"ITFreeSource BookStore"` | User confirmed testing platform identity |
 | 2026-09-16 | `e13bb8c` | Created `AttributionFooter.kt` composable; added to `MainActivity` `bottomBar`; tapping "Vishal Prajapati" opens LinkedIn profile | "add the label at last saying Open Source Contribution by Vishal Prajapati…" |
-| 2026-09-16 | *(current)* | **Play Store readiness:** App renamed to `"ITFS BookStore"`; removed `android:usesCleartextTraffic`; upgraded `compileSdk`/`targetSdk` 34→35; enabled `minifyEnabled true` + `shrinkResources true`; moved signing creds from hardcoded `build.gradle` to `local.properties` (gitignored); refreshed icon to ITFreeSource brand (dark navy `#1a1a2e` bg, white book + green arrow); all mipmap densities regenerated | Play Store submission preparation |
+| 2026-09-16 | `3b6aa55` | Theme toggle: Added light/dark mode switch to TopAppBar with reactive `ThemeState` | User requested theme toggle |
+| 2026-09-16 | `38629dc` | Generated authentic ITFreeSource Academy Developer Icon (512x512) and Header Banner (4096x2304) matching website brand (green growth arrow + bar chart + clock gauge); saved to `store-assets/` and pushed to GitHub | Aligning developer profile with official ITFreeSource Academy logo |
 
 ---
 
 ## 📌 Handoff Status
 
-- **App Label**: `"ITFS BookStore"` in `AndroidManifest.xml` (Play Store name under publisher "ITFreeSource Academy")
+- **App Label**: `"ITFS BookStore"` in `AndroidManifest.xml` (Play Store name under publisher "ITFreeSource Academy by Vishal Prajapati")
 - **App Name Convention**: `ITFS <AppName>` — branch naming pattern for all ITFreeSource testing apps
 - **Icon**: ITFreeSource branded (dark navy `#1a1a2e` bg, white open book, green upward arrow). Adaptive (API 26+) + PNG fallbacks mdpi→xxxhdpi
+- **Developer Assets**: Saved in `store-assets/` (`developer_icon_512.png` and `developer_header_4096x2304.jpg`)
 - **Play Store**: targetSdk 35, minifyEnabled, shrinkResources, no cleartext traffic, signing via local.properties
 - **Signing**: Credentials in `android/local.properties` (gitignored — never committed). File has `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`
 - **No debug UI**: ONLINE/LOCAL badge, role-switcher, ServerConnectionDialog, sync banners all removed
 - **Cart**: `AddToCartControl` composable used consistently everywhere
 - **State**: Fully offline/in-memory; no local backend required (API on Cloudflare Workers)
 - **Backend**: `https://bookstore.itfreesource.workers.dev/api/v1` — Cloudflare Worker, always on
-- **APK download**: `http://192.168.0.6:8080/app-release.apk` (local Wi-Fi, Python http.server)
+- **APK download**: `http://192.168.0.8:8080/app-release.apk` (local Wi-Fi, Python http.server)
 - **⚠️ REMINDER**: Update this AGENTS.md after every change. See rule at top of file.
