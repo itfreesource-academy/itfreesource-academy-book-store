@@ -25,6 +25,10 @@ fun RentalsScreen() {
     val repo = BookStoreRepository
     var simulateOverdueDays by remember { mutableStateOf(3) }
 
+    LaunchedEffect(Unit) {
+        repo.syncWithBackend()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,13 +41,49 @@ fun RentalsScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "📖 Academic Book Borrowing",
-                    color = TextPrimary,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.semantics { contentDescription = repo.getTestId("rentals_screen_title") }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "📖 Academic Book Borrowing",
+                            color = TextPrimary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.semantics { contentDescription = repo.getTestId("rentals_screen_title") }
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(
+                                        if (repo.isBackendConnected) SuccessGreen else Color.Gray,
+                                        shape = androidx.compose.foundation.shape.CircleShape
+                                    )
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (repo.isSyncingBackend) "Syncing with Web..." else if (repo.isBackendConnected) "Web Synced (${repo.lastSyncTime})" else "Local Store",
+                                color = if (repo.isBackendConnected) SuccessGreen else TextSecondary,
+                                fontSize = 11.sp
+                            )
+                        }
+                    }
+                    Button(
+                        onClick = { repo.syncWithBackend() },
+                        enabled = !repo.isSyncingBackend,
+                        colors = ButtonDefaults.buttonColors(backgroundColor = SlateCard),
+                        elevation = ButtonDefaults.elevation(0.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.semantics { contentDescription = repo.getTestId("btn_sync_rentals") }
+                    ) {
+                        Text(text = if (repo.isSyncingBackend) "⏳" else "🔄 Sync Web", color = TextPrimary, fontSize = 12.sp)
+                    }
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "10-day academic rental (${repo.formatPrice(2.00)} base fee). Overdue penalty: ${repo.formatPrice(0.10)}/day.",

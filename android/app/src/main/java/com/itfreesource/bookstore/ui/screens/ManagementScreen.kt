@@ -38,6 +38,9 @@ fun ManagementScreen() {
     var selectedTab by remember { mutableStateOf(ManagementTab.INVENTORY) }
     var userEditDialogTarget by remember { mutableStateOf<User?>(null) }
     var inventorySavedToast by remember { mutableStateOf(false) }
+    LaunchedEffect(selectedTab) {
+        repo.syncWithBackend()
+    }
 
     Column(
         modifier = Modifier
@@ -75,6 +78,22 @@ fun ManagementScreen() {
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                         )
                     }
+                }
+
+                Surface(
+                    color = SlateCard,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .clickable { repo.syncWithBackend() }
+                        .semantics { contentDescription = repo.getTestId("btn_sync_management") }
+                ) {
+                    Text(
+                        text = if (repo.isSyncingBackend) "⏳ Syncing" else "🔄 Sync Web",
+                        color = if (repo.isBackendConnected) SuccessGreen else TextSecondary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 11.sp,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)
+                    )
                 }
             }
         }

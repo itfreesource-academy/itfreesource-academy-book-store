@@ -83,18 +83,64 @@ object BookStoreRepository {
                 ApiClient.login(user.username, user.password)
             }
 
-            // Sync Books from Web
+            // Sync Books
             val remoteBooks = ApiClient.fetchBooks()
             if (remoteBooks != null && remoteBooks.isNotEmpty()) {
                 books.clear()
                 books.addAll(remoteBooks)
             }
 
-            // Sync Orders from Web (Web to Mobile parity)
+            // Sync Categories
+            val remoteCategories = ApiClient.fetchCategories()
+            if (remoteCategories != null && remoteCategories.isNotEmpty()) {
+                categories.clear()
+                categories.addAll(remoteCategories)
+            }
+
+            // Sync Authors
+            val remoteAuthors = ApiClient.fetchAuthors()
+            if (remoteAuthors != null && remoteAuthors.isNotEmpty()) {
+                authors.clear()
+                authors.addAll(remoteAuthors)
+            }
+
+            // Sync Orders
             val remoteOrders = ApiClient.fetchOrders()
             if (remoteOrders != null) {
                 orders.clear()
                 orders.addAll(remoteOrders)
+            }
+
+            // Sync Borrow Records
+            val remoteBorrows = ApiClient.fetchBorrowRecords()
+            if (remoteBorrows != null) {
+                borrowRecords.clear()
+                borrowRecords.addAll(remoteBorrows)
+            }
+
+            // Sync Reviews
+            val remoteReviews = ApiClient.fetchReviews()
+            if (remoteReviews != null) {
+                reviews.clear()
+                reviews.addAll(remoteReviews)
+            }
+
+            // Sync Users
+            val remoteUsers = ApiClient.fetchUsers()
+            if (remoteUsers != null && remoteUsers.isNotEmpty()) {
+                users.clear()
+                users.addAll(remoteUsers)
+                val matchingCurrent = users.firstOrNull { it.id == user?.id }
+                if (matchingCurrent != null) {
+                    currentUser = matchingCurrent
+                }
+            }
+
+            // Sync Audit Logs
+            val remoteLogs = ApiClient.fetchAuditLogs()
+            if (remoteLogs != null) {
+                auditLogs.clear()
+                auditLogs.addAll(remoteLogs)
             }
 
             isBackendConnected = ApiClient.isLiveConnected
@@ -109,7 +155,6 @@ object BookStoreRepository {
         users.clear()
         users.addAll(SeedData.getInitialUsers())
 
-        // Default login as Super Admin
         currentUser = users.firstOrNull { it.username == "admin" } ?: users.firstOrNull()
         activeCurrency = currentUser?.currency ?: Currency.USD
         activeTimezone = currentUser?.timezone ?: "America/New_York"
@@ -159,13 +204,17 @@ object BookStoreRepository {
         activeTimezone = user.timezone
         logAudit("LOGIN_SWITCH", "user", user.id, "Switched role to ${user.role.name} (${user.username})")
 
-        // Re-authenticate and fetch user-scoped orders from backend
         repositoryScope.launch {
             ApiClient.login(user.username, user.password)
             val remoteOrders = ApiClient.fetchOrders()
             if (remoteOrders != null) {
                 orders.clear()
                 orders.addAll(remoteOrders)
+            }
+            val remoteBorrows = ApiClient.fetchBorrowRecords()
+            if (remoteBorrows != null) {
+                borrowRecords.clear()
+                borrowRecords.addAll(remoteBorrows)
             }
             isBackendConnected = ApiClient.isLiveConnected
             backendStatusText = ApiClient.lastSyncStatus
@@ -279,7 +328,7 @@ object BookStoreRepository {
     fun getCartDiscountUsd(): Double {
         var disc = promoDiscountAmount
         if (currentUser?.role == UserRole.vip_customer) {
-            disc += getCartSubtotalUsd() * 0.20 // VIP 20% automatic discount
+            disc += getCartSubtotalUsd() * 0.20
         }
         return disc.coerceAtMost(getCartSubtotalUsd())
     }
@@ -328,7 +377,6 @@ object BookStoreRepository {
         )
         orders.add(0, order)
 
-        // Deduct local inventory
         for (item in cartItems) {
             val book = books.firstOrNull { it.id == item.book.id }
             book?.let { it.stock = (it.stock - item.quantity).coerceAtLeast(0) }
@@ -340,7 +388,7 @@ object BookStoreRepository {
 
         logAudit("ORDER_PLACED", "order", order.id, "Placed order ${order.orderNumber} for total ${formatPrice(order.total)}")
 
-        // Real-time synchronization to Web API: POST to /api/v1/orders
+        // Post to Web API
         repositoryScope.launch {
             val remoteOrder = ApiClient.postOrder(orderItems, shippingAddress, deliveryDate, paymentMethod)
             if (remoteOrder != null) {
@@ -354,6 +402,38 @@ object BookStoreRepository {
         }
 
         return order
+    }
+
+    // Order status transitions & cancellations
+    fun updateOrderStatus(orderId: String, newStatus: OrderStatus, trackingNo: String? = null) {
+        val ord = orders.firstOrNull { it.id == orderId } ?: return
+        ord.status = newStatus
+        if (trackingNo != null) ord.trackingNumber = trackingNo
+        logAudit("ORDER_STATUS_CHANGED", "order", orderId, "Status changed to ${newStatus.name}")
+
+        repositoryScope.launch {
+            ApiClient.updateOrderStatus(orderId, newStatus.name, trackingNo)
+        }
+    }
+
+    fun cancelOrder(orderId: String) {
+        val ord = orders.firstOrNull { it.id == orderId } ?: return
+        ord.status = OrderStatus.cancelled
+        logAudit("ORDER_CANCELLED", "order", orderId, "Order cancelled")
+
+        repositoryScope.launch {
+            ApiClient.cancelOrder(orderId)
+        }
+    }
+
+    fun refundOrder(orderId: String) {
+        val ord = orders.firstOrNull { it.id == orderId } ?: return
+        ord.status = OrderStatus.refunded
+        logAudit("ORDER_REFUNDED", "order", orderId, "Order refunded")
+
+        repositoryScope.launch {
+            ApiClient.refundOrder(orderId)
+        }
     }
 
     // Borrow / Rental
@@ -385,7 +465,18 @@ object BookStoreRepository {
             timezone = activeTimezone
         )
         borrowRecords.add(0, record)
+        book.stock = (book.stock - 1).coerceAtLeast(0)
         logAudit("BOOK_BORROWED", "borrow", record.id, "User ${user.username} borrowed ${book.title}")
+
+        repositoryScope.launch {
+            val remoteRecord = ApiClient.borrowBook(book.id, activeTimezone, activeCurrency.code)
+            if (remoteRecord != null) {
+                val idx = borrowRecords.indexOfFirst { it.id == record.id }
+                if (idx >= 0) {
+                    borrowRecords[idx] = remoteRecord
+                }
+            }
+        }
         return record
     }
 
@@ -396,27 +487,38 @@ object BookStoreRepository {
         record.lateFee = daysOverdue * 0.10
         record.totalFee = record.standardFee + record.lateFee
         record.status = if (daysOverdue > 0) BorrowStatus.overdue else BorrowStatus.returned
+        
+        val book = books.firstOrNull { it.id == record.bookId }
+        book?.let { it.stock = it.stock + 1 }
+
         logAudit("BOOK_RETURNED", "borrow", record.id, "Returned ${record.bookTitle} with late fee $${record.lateFee}")
+
+        repositoryScope.launch {
+            val remoteRecord = ApiClient.returnBook(recordId, record.returnDate)
+            if (remoteRecord != null) {
+                val idx = borrowRecords.indexOfFirst { it.id == recordId }
+                if (idx >= 0) {
+                    borrowRecords[idx] = remoteRecord
+                }
+            }
+        }
     }
 
     fun markBookLost(recordId: String) {
         val record = borrowRecords.firstOrNull { it.id == recordId } ?: return
         record.status = BorrowStatus.lost
-        record.lostFee = record.bookPrice * 2.0 // 2x book price penalty
+        record.lostFee = record.bookPrice * 2.0
         record.totalFee = record.standardFee + record.lateFee + record.lostFee
         logAudit("BOOK_LOST", "borrow", record.id, "Book ${record.bookTitle} marked lost. Penalty: $${record.lostFee}")
-    }
 
-    // Order status transitions
-    fun updateOrderStatus(orderId: String, newStatus: OrderStatus, trackingNo: String? = null) {
-        val ord = orders.firstOrNull { it.id == orderId } ?: return
-        ord.status = newStatus
-        if (trackingNo != null) ord.trackingNumber = trackingNo
-        logAudit("ORDER_STATUS_CHANGED", "order", orderId, "Status changed to ${newStatus.name}")
-
-        // Propagate status change to Web API
         repositoryScope.launch {
-            ApiClient.updateOrderStatus(orderId, newStatus.name, trackingNo)
+            val remoteRecord = ApiClient.reportBookLost(recordId)
+            if (remoteRecord != null) {
+                val idx = borrowRecords.indexOfFirst { it.id == recordId }
+                if (idx >= 0) {
+                    borrowRecords[idx] = remoteRecord
+                }
+            }
         }
     }
 
@@ -436,12 +538,26 @@ object BookStoreRepository {
         )
         reviews.add(0, r)
         logAudit("REVIEW_SUBMITTED", "review", r.id, "Review for book $bookId submitted by ${user.username}")
+
+        repositoryScope.launch {
+            val remoteReview = ApiClient.submitReview(bookId, rating, title, comment)
+            if (remoteReview != null) {
+                val idx = reviews.indexOfFirst { it.id == r.id }
+                if (idx >= 0) {
+                    reviews[idx] = remoteReview
+                }
+            }
+        }
     }
 
     fun moderateReview(reviewId: String, approved: Boolean) {
         val rev = reviews.firstOrNull { it.id == reviewId } ?: return
         rev.status = if (approved) ReviewStatus.approved else ReviewStatus.rejected
         logAudit("REVIEW_MODERATED", "review", reviewId, "Review was ${rev.status.name}")
+
+        repositoryScope.launch {
+            ApiClient.moderateReview(reviewId, approved)
+        }
     }
 
     // Inventory
@@ -449,6 +565,10 @@ object BookStoreRepository {
         val book = books.firstOrNull { it.id == bookId } ?: return
         book.stock = newStock.coerceAtLeast(0)
         logAudit("STOCK_UPDATED", "inventory", bookId, "Stock for ${book.title} updated to $newStock")
+
+        repositoryScope.launch {
+            ApiClient.updateStock(bookId, newStock)
+        }
     }
 
     // User Management
@@ -469,6 +589,10 @@ object BookStoreRepository {
                 activeTimezone = tz
             }
             logAudit("USER_UPDATED", "user", userId, "Updated user $name with role ${role.name}")
+
+            repositoryScope.launch {
+                ApiClient.updateUser(userId, name, role.name, status, curr.code, tz)
+            }
         }
     }
 

@@ -39,13 +39,35 @@ All AI agents and developers working on this repository **MUST ALWAYS FOLLOW** t
   - Academic rentals (10-day loan, overdue fines, lost replacement) $\rightarrow$ update `client/src/pages/BorrowedBooksPage.tsx` and `android/.../ui/screens/RentalsScreen.kt`.
   - Admin/Store Manager management tools $\rightarrow$ update `client/src/pages/ManagementPage.tsx` and `android/.../ui/screens/ManagementScreen.kt`.
 
-### Rule 3: Real-Time Transactional Synchronization
-- **Orders created on Web MUST appear on Android:**
-  - The Web client sends `POST /api/v1/orders`.
-  - When the Android app opens, switches persona, or triggers sync (`ApiClient.fetchOrders()`), it fetches orders via `GET /api/v1/orders` using the active user's Bearer token. All Web orders immediately appear on Android!
-- **Orders created on Android MUST appear on Web:**
-  - When an order is placed on Android (`BookStoreRepository.placeOrder`), `ApiClient.postOrder` dispatches the order to `POST /api/v1/orders`.
-  - The backend creates the order, triggers Kafka events, dispatches webhooks, and stores it in `store.ts`, making it immediately visible on the Web.
+### Rule 3: Real-Time Transactional Synchronization & Full API Consumption
+- **Both Web and Mobile consume the EXACT same Express REST APIs:**
+  | Resource | Method & Endpoint | Web Page | Android Compose Equivalent |
+  | :--- | :--- | :--- | :--- |
+  | **Auth / Login** | `POST /api/v1/auth/login` | `AuthContext.tsx` | `ApiClient.login(...)` |
+  | **Current User Profile** | `GET /api/v1/auth/me` | `AuthContext.tsx` | `ApiClient.fetchCurrentUser()` |
+  | **User Management** | `GET /api/v1/auth/users` | `UsersPage.tsx` | `ApiClient.fetchUsers()` |
+  | **Update User Profile** | `PUT /api/v1/auth/users/:id` | `UsersPage.tsx` | `ApiClient.updateUser(...)` |
+  | **User Status (Suspend)** | `PATCH /api/v1/auth/users/:id/status` | `UsersPage.tsx` | `ApiClient.updateUserStatus(...)` |
+  | **Books Catalog** | `GET /api/v1/books` | `BooksCatalogPage.tsx` | `ApiClient.fetchBooks()` |
+  | **Categories** | `GET /api/v1/categories` | `BooksCatalogPage.tsx` | `ApiClient.fetchCategories()` |
+  | **Authors** | `GET /api/v1/authors` | `BooksCatalogPage.tsx` | `ApiClient.fetchAuthors()` |
+  | **Orders List** | `GET /api/v1/orders` | `OrdersPage.tsx` | `ApiClient.fetchOrders()` |
+  | **Place Order (Checkout)** | `POST /api/v1/orders` | `CartCheckoutPage.tsx`| `ApiClient.postOrder(...)` |
+  | **Order Status & Tracking** | `PATCH /api/v1/orders/:id/status` | `OrdersPage.tsx` | `ApiClient.updateOrderStatus(...)` |
+  | **Cancel Order** | `POST /api/v1/orders/:id/cancel` | `OrdersPage.tsx` | `ApiClient.cancelOrder(...)` |
+  | **Refund Order** | `POST /api/v1/orders/:id/refund` | `OrdersPage.tsx` | `ApiClient.refundOrder(...)` |
+  | **Academic Borrow List** | `GET /api/v1/borrow` | `BorrowedBooksPage.tsx` | `ApiClient.fetchBorrowRecords()` |
+  | **Borrow Book (Loan)** | `POST /api/v1/borrow` | `BorrowedBooksPage.tsx` | `ApiClient.borrowBook(...)` |
+  | **Return Book** | `POST /api/v1/borrow/:id/return` | `BorrowedBooksPage.tsx` | `ApiClient.returnBook(...)` |
+  | **Report Lost Book** | `POST /api/v1/borrow/:id/lost` | `BorrowedBooksPage.tsx` | `ApiClient.reportBookLost(...)` |
+  | **Reviews List** | `GET /api/v1/reviews` | `ReviewsPage.tsx` | `ApiClient.fetchReviews(...)` |
+  | **Submit Review** | `POST /api/v1/reviews` | `BookDetailPage.tsx` | `ApiClient.submitReview(...)` |
+  | **Moderate Review** | `PATCH /api/v1/reviews/:id/status` | `ReviewsPage.tsx` | `ApiClient.moderateReview(...)` |
+  | **Stock Adjustment** | `PATCH /api/v1/inventory/:id/stock` | `InventoryPage.tsx` | `ApiClient.updateStock(...)` |
+  | **Audit Logs** | `GET /api/v1/audit-logs` | `AuditLogsPage.tsx` | `ApiClient.fetchAuditLogs()` |
+  | **System DB Reset** | `POST /api/v1/system/reset` | `Navbar.tsx` / `Playground` | `ApiClient.resetSystem()` |
+  | **Latency Simulation** | `POST /api/v1/system/latency` | `PlaygroundPage.tsx` | `ApiClient.setSimulatedLatency(...)` |
+
 - **Fallback / Standalone Mode:**
   - If the backend is offline or unreachable, the Android app gracefully falls back to local reactive mock state seeded by `SeedData.kt`. It must never crash.
 
