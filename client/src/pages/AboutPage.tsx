@@ -16,7 +16,10 @@ import {
   Code2,
   Lock,
   ArrowRightLeft,
-  KeyRound
+  KeyRound,
+  Radio,
+  BellRing,
+  Compass
 } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
@@ -188,6 +191,145 @@ export const AboutPage: React.FC = () => {
               <strong>Coding with Manual & AI Agents</strong>: You can develop tests manually or collaborate with our companion AI agents repository. Conduct real peer code reviews among students or with AI reviewers before merging!
             </li>
           </ol>
+        </div>
+      </div>
+
+      {/* Practical QE Testing Guide: What & Where to Test */}
+      <div className="bg-slate-900/90 rounded-3xl border border-slate-800 p-8 shadow-2xl space-y-6 backdrop-blur-xl" data-testid="practical-testing-guide">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-950 text-indigo-400 border border-indigo-800/60 flex items-center justify-center font-bold">
+            <Compass className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-white">
+              🎯 Practical QE Testing Guide: What to Test &amp; Where to Test It
+            </h3>
+            <p className="text-xs text-slate-400">
+              Essential QA workflows for distributed event streams, webhooks, currency conversion, and microservices resilience.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Kafka Topic Lag Guide */}
+          <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2">
+              <Radio className="w-5 h-5 text-indigo-400" />
+              <h4 className="text-sm font-bold text-white">1. Checking Kafka Topics: Up-to-Date vs. Pending</h4>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              <strong>Where to go:</strong> Navigate to <a href="/playground" className="text-indigo-400 underline font-bold">Playground &rarr; Kafka Event Streams</a>.
+            </p>
+            <div className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-300">
+              <div className="font-bold text-indigo-300 font-mono text-[11px] uppercase">
+                How Consumer Lag Works:
+              </div>
+              <div className="font-mono text-[11px] bg-slate-950 p-2 rounded text-slate-300 border border-slate-850">
+                Lag = (Latest Partition Offset) - (Committed Consumer Offset)
+              </div>
+              <ul className="space-y-1.5 list-disc list-inside text-slate-400 text-[11px]">
+                <li><strong className="text-emerald-400">Lag = 0 (UP TO DATE)</strong>: All produced messages have been processed and committed by downstream consumers.</li>
+                <li><strong className="text-amber-400">Lag &gt; 0 (PENDING)</strong>: Unprocessed records waiting in the partition buffer.</li>
+              </ul>
+            </div>
+            <div className="text-xs text-slate-400 space-y-1">
+              <strong className="text-slate-200">How to Test Practically:</strong>
+              <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-300">
+                <li>Place an order in <a href="/cart" className="text-indigo-400 underline">Cart</a> &rarr; Note Latest Offset advances to <strong>N+1</strong>.</li>
+                <li>Check <a href="/playground" className="text-indigo-400 underline">Kafka Console</a> &rarr; Status turns to <strong>PENDING (Lag: 1)</strong>.</li>
+                <li>Click <strong>&quot;Commit Offset&quot;</strong> &rarr; Lag resets to <strong>0</strong> and turns green <strong>UP TO DATE</strong>!</li>
+                <li>Test Dead-Letter Queue: Click <strong>&quot;Inject Corrupted Payload&quot;</strong> &rarr; Observe poison pill routing to DLQ.</li>
+              </ol>
+            </div>
+          </div>
+
+          {/* Webhook HMAC & Retries Guide */}
+          <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2">
+              <BellRing className="w-5 h-5 text-purple-400" />
+              <h4 className="text-sm font-bold text-white">2. Testing Webhooks, Signatures &amp; Retries</h4>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              <strong>Where to go:</strong> Navigate to <a href="/playground" className="text-purple-400 underline font-bold">Playground &rarr; Enterprise Webhooks</a>.
+            </p>
+            <div className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-300">
+              <div className="font-bold text-purple-300 font-mono text-[11px] uppercase">
+                Built-in Zero-Config Sandbox Receiver:
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Use the in-app mock receiver <code className="bg-slate-950 px-1 py-0.5 rounded text-purple-300 font-mono text-[10px]">/api/v1/webhooks/mock-receiver</code>. No external tunnels or public ports needed!
+              </p>
+              <div className="font-mono text-[11px] bg-slate-950 p-2 rounded text-slate-300 border border-slate-850 truncate">
+                Header: x-bookstore-signature: sha256=&lt;hex&gt;
+              </div>
+            </div>
+            <div className="text-xs text-slate-400 space-y-1">
+              <strong className="text-slate-200">How to Test Practically:</strong>
+              <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-300">
+                <li>Register a subscription with secret <code className="text-purple-300 font-mono">whsec_test_123</code>.</li>
+                <li>Click <strong>&quot;Send Test Ping&quot;</strong> &rarr; Inspect delivery log with <strong>200 OK</strong> and latency in ms.</li>
+                <li>Verify payload cryptographic HMAC signature matches the calculated SHA256 digest.</li>
+                <li>Test Outage Resilience: Click <strong>&quot;Simulate 503 Outage&quot;</strong> &rarr; Trigger webhook &rarr; Assert delivery failure and click <strong>&quot;Redeliver / Retry&quot;</strong> to test backoff.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        {/* Master Platform Testing Blueprint Table */}
+        <div className="pt-2">
+          <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3">
+            🗺️ Platform-Wide Practical Testing Matrix
+          </h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="bg-slate-950 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-800">
+                <tr>
+                  <th className="py-2.5 px-3">Module / Page</th>
+                  <th className="py-2.5 px-3">Target URL</th>
+                  <th className="py-2.5 px-3">Key Features to Test</th>
+                  <th className="py-2.5 px-3">Persona Role</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/80 text-[11px]">
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Books Catalog</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/books</td>
+                  <td className="py-2 px-3">Live currency switcher (7 currencies), inline quantity stepper <code className="text-slate-200">[-] 1 [+]</code>, stock bounds</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">standard_customer</td>
+                </tr>
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Academic Lending</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/borrowed</td>
+                  <td className="py-2 px-3">Borrow fee ($2.00), VIP 20% discount ($1.60), overdue penalties ($0.10/day formula), lost book charges</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">student_reader / vip_customer</td>
+                </tr>
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Cart &amp; Checkout</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/cart</td>
+                  <td className="py-2 px-3">Idempotency key duplicate debit prevention, coupon validation (<code className="text-slate-200">ITFREE10</code>)</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">standard_customer</td>
+                </tr>
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Warehouse Inventory</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/inventory</td>
+                  <td className="py-2 px-3">Stock management, low-stock threshold alerts, inline price updates in active currency</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">store_manager / admin</td>
+                </tr>
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Code Coverage</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/coverage</td>
+                  <td className="py-2 px-3">Real-time in-app Istanbul / v8 code coverage breakdown across all 56 backend tests</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">auditor / admin</td>
+                </tr>
+                <tr className="hover:bg-slate-800/40">
+                  <td className="py-2 px-3 font-bold text-white">Swagger API Docs</td>
+                  <td className="py-2 px-3 font-mono text-indigo-400">/swagger</td>
+                  <td className="py-2 px-3">Interactive OpenAPI 3.0 documentation with &quot;Try it out&quot; request console</td>
+                  <td className="py-2 px-3 font-mono text-slate-400">All Personas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
