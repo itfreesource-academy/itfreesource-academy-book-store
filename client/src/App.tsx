@@ -23,20 +23,22 @@ import { PlaygroundPage } from './pages/PlaygroundPage.js';
 import { CoverageDashboardPage } from './pages/CoverageDashboardPage.js';
 import { AboutPage } from './pages/AboutPage.js';
 import { SwaggerPage } from './pages/SwaggerPage.js';
+import { ThemeProvider } from './context/ThemeContext.js';
 
 export const App: React.FC = () => {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <CurrencyProvider>
-          <CartProvider>
-            <BrowserRouter>
-              <div className="flex flex-col min-h-screen bg-[#0B0F17] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(11,15,23,0))] text-slate-100 selection:bg-brand-500 selection:text-white">
-                {/* Main App Navbar */}
-                <Navbar />
+    <ThemeProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0B0F17] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(11,15,23,0))] dark:text-slate-100 selection:bg-brand-500 selection:text-white transition-colors duration-200">
+                  {/* Main App Navbar */}
+                  <Navbar />
 
-                {/* Global Slide-Over Shopping Cart */}
-                <CartDrawer />
+                  {/* Global Slide-Over Shopping Cart */}
+                  <CartDrawer />
 
                 {/* Main Content Area */}
                 <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -71,6 +73,7 @@ export const App: React.FC = () => {
         </CurrencyProvider>
       </AuthProvider>
     </ToastProvider>
+  </ThemeProvider>
   );
 };
 

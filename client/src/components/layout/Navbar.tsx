@@ -21,9 +21,12 @@ import {
   ChevronDown,
   RotateCcw,
   Sparkles,
-  PlusCircle
+  PlusCircle,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useCurrency, SUPPORTED_CURRENCIES } from '../../context/CurrencyContext.js';
+import { useTheme } from '../../context/ThemeContext.js';
 import { Currency } from '../../types/index.js';
 import { SellerListingModal } from '../books/SellerListingModal.js';
 import { apiClient } from '../../api/client.js';
@@ -33,6 +36,7 @@ export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout, hasPermission, permissions } = useAuth();
   const { totalItems, openCart } = useCart();
   const { currency, setCurrency } = useCurrency();
+  const { toggleTheme, isDark } = useTheme();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -338,6 +342,21 @@ export const Navbar: React.FC = () => {
                 )}
               </button>
 
+              {/* Theme Switcher Toggle (Light vs Dark) */}
+              <button
+                onClick={toggleTheme}
+                data-testid="navbar-theme-toggle-btn"
+                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
+                title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                aria-label="Toggle Theme"
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-amber-400 animate-fade-in" />
+                ) : (
+                  <Moon className="w-5 h-5 text-indigo-600 animate-fade-in" />
+                )}
+              </button>
+
               {/* Authenticated User Menu or Sign In */}
               {isAuthenticated && user ? (
                 <div className="relative" ref={userMenuRef}>
@@ -561,6 +580,24 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="pt-2 border-t border-slate-800 flex items-center justify-between px-3">
+              <button
+                onClick={toggleTheme}
+                data-testid="mobile-theme-toggle-btn"
+                className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 py-1"
+              >
+                {isDark ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Light Theme</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Dark Theme</span>
+                  </>
+                )}
+              </button>
+
               {isAuthenticated && (
                 <button
                   onClick={handleLogout}

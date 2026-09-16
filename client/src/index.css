@@ -8,11 +8,11 @@
     max-width: 100vw;
   }
   body {
-    @apply bg-[#0B0F17] text-slate-100 selection:bg-brand-500 selection:text-white antialiased;
+    @apply bg-slate-50 text-slate-900 dark:bg-[#0B0F17] dark:text-slate-100 selection:bg-brand-500 selection:text-white antialiased transition-colors duration-200;
   }
 }
 
-/* Custom dark scrollbar for modern feel */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -28,17 +28,185 @@
   background: #475569;
 }
 
-/* Glassmorphic & Modern Dark Utilities */
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Glassmorphic & Modern Theme Utilities */
 .dark-glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .dark-glass-card {
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(51, 65, 85, 0.6);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
 .dark-glass-nav {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.dark .dark-glass-nav {
   background: rgba(11, 15, 23, 0.85);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+}
+
+/* Light Theme Overrides for High-Contrast, Clean Reading */
+html.light .bg-slate-900,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-950,
+html.light .bg-slate-950\/95,
+html.light .bg-slate-950\/90,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/60 {
+  background-color: #ffffff !important;
+  color: #0f172a;
+}
+
+html.light .bg-slate-950\/30,
+html.light .bg-slate-900\/40,
+html.light .bg-slate-900\/50 {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/50,
+html.light .border-slate-800\/40,
+html.light .border-slate-700,
+html.light .border-slate-850 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .border-slate-600 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Headings and labels in light mode */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light h5.text-white,
+html.light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+html.light p.text-slate-400,
+html.light span.text-slate-400,
+html.light div.text-slate-400,
+html.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-200 {
+  color: #1e293b !important;
+}
+
+/* Solid Colored Action Buttons Maintain White Text */
+html.light .bg-indigo-600,
+html.light .bg-brand-600,
+html.light .bg-blue-600,
+html.light .bg-rose-600,
+html.light .bg-emerald-600,
+html.light .bg-purple-600,
+html.light .bg-amber-600 {
+  color: #ffffff !important;
+}
+
+html.light .bg-indigo-600 *,
+html.light .bg-brand-600 *,
+html.light .bg-blue-600 *,
+html.light .bg-rose-600 *,
+html.light .bg-emerald-600 *,
+html.light .bg-purple-600 *,
+html.light .bg-amber-600 * {
+  color: #ffffff !important;
+}
+
+/* Subtle Badge Backgrounds in Light Mode */
+html.light .bg-indigo-950\/60,
+html.light .bg-indigo-950\/80,
+html.light .bg-indigo-950\/40,
+html.light .bg-indigo-950\/30 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+html.light .bg-emerald-950\/60,
+html.light .bg-emerald-950\/40,
+html.light .bg-emerald-950\/30 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+html.light .bg-amber-950\/60,
+html.light .bg-amber-950\/40,
+html.light .bg-amber-950\/30 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+
+html.light .bg-rose-950\/60,
+html.light .bg-rose-950\/40,
+html.light .bg-rose-950\/30 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+html.light .bg-purple-950\/60,
+html.light .bg-purple-950\/40,
+html.light .bg-purple-950\/30 {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+  color: #7e22ce !important;
+}
+
+/* Inputs and Dropdowns in Light Mode */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Modals Backdrops */
+html.light .bg-black\/85,
+html.light .bg-black\/80,
+html.light .bg-black\/70 {
+  background-color: rgba(15, 23, 42, 0.5) !important;
 }
 
 /* Animation utilities */
