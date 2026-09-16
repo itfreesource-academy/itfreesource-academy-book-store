@@ -30,6 +30,8 @@ import com.itfreesource.bookstore.data.BookStoreRepository
 import com.itfreesource.bookstore.model.Book
 import com.itfreesource.bookstore.model.Review
 import com.itfreesource.bookstore.model.ReviewStatus
+import com.itfreesource.bookstore.ui.components.AddToCartControl
+import com.itfreesource.bookstore.ui.components.CartControlSize
 import com.itfreesource.bookstore.ui.theme.*
 
 @Composable
@@ -329,6 +331,7 @@ fun BookDetailDialog(
                 Divider(color = SlateBorder, thickness = 0.5.dp)
 
                 // Sticky Bottom Action Bar
+                val inCartQty = repo.getCartQuantity(book.id)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -342,9 +345,9 @@ fun BookDetailDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("Total Price", color = TextSecondary, fontSize = 10.sp)
+                            Text(if (inCartQty > 0) "In Cart Total" else "Total Price", color = TextSecondary, fontSize = 10.sp)
                             Text(
-                                text = repo.formatPrice(book.price * quantity),
+                                text = repo.formatPrice(book.price * (if (inCartQty > 0) inCartQty else quantity)),
                                 color = Color.White,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.ExtraBold,
@@ -352,37 +355,52 @@ fun BookDetailDialog(
                             )
                         }
 
-                        // Stepper (- / +)
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .background(SlateBackground, RoundedCornerShape(8.dp))
-                                .border(1.dp, SlateBorder, RoundedCornerShape(8.dp))
-                        ) {
-                            IconButton(
-                                onClick = { if (quantity > 1) quantity-- },
+                        // Stepper (- / +) (only when not in cart yet, allowing selection of initial batch)
+                        if (inCartQty == 0) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .semantics { contentDescription = repo.getTestId("detail_qty_minus") }
+                                    .background(SlateBackground, RoundedCornerShape(8.dp))
+                                    .border(1.dp, SlateBorder, RoundedCornerShape(8.dp))
                             ) {
-                                Text("-", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                IconButton(
+                                    onClick = { if (quantity > 1) quantity-- },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .semantics { contentDescription = repo.getTestId("detail_qty_minus") }
+                                ) {
+                                    Text("-", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Text(
+                                    text = "$quantity",
+                                    color = TextPrimary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(horizontal = 8.dp)
+                                        .semantics { contentDescription = repo.getTestId("detail_qty_label") }
+                                )
+                                IconButton(
+                                    onClick = { if (quantity < book.stock) quantity++ },
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .semantics { contentDescription = repo.getTestId("detail_qty_plus") }
+                                ) {
+                                    Text("+", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                }
                             }
-                            Text(
-                                text = "$quantity",
-                                color = TextPrimary,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .semantics { contentDescription = repo.getTestId("detail_qty_label") }
-                            )
-                            IconButton(
-                                onClick = { if (quantity < book.stock) quantity++ },
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .semantics { contentDescription = repo.getTestId("detail_qty_plus") }
+                        } else {
+                            Surface(
+                                color = IndigoPrimary.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("+", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = "Item in Cart",
+                                    color = IndigoPrimary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
                             }
                         }
                     }
@@ -394,24 +412,14 @@ fun BookDetailDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Button(
-                            onClick = {
-                                onAddToCart(book, quantity)
-                                onDismiss()
-                            },
-                            enabled = book.stock > 0,
-                            colors = ButtonDefaults.buttonColors(backgroundColor = IndigoPrimary),
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
-                            modifier = Modifier
-                                .weight(1.1f)
-                                .height(44.dp)
-                                .semantics { contentDescription = repo.getTestId("detail_btn_add_to_cart") }
-                        ) {
-                            Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Add to Cart", color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1)
-                        }
+                        AddToCartControl(
+                            book = book,
+                            size = CartControlSize.LARGE,
+                            showInCartLabel = true,
+                            initialQuantity = quantity,
+                            modifier = Modifier.weight(1.1f),
+                            onAddToCartCallback = { b -> onAddToCart(b, quantity) }
+                        )
 
                         OutlinedButton(
                             onClick = {

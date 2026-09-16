@@ -203,28 +203,13 @@ fun BookCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Button(
-                    onClick = { onAddToCart(book) },
-                    enabled = book.stock > 0,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = IndigoPrimary,
-                        disabledBackgroundColor = SlateBorder
-                    ),
-                    shape = RoundedCornerShape(6.dp),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .semantics { contentDescription = repo.getTestId("btn_add_to_cart_${book.id}") }
-                ) {
-                    Text(
-                        text = if (book.stock > 0) "Add to Cart" else "Out of Stock",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        maxLines = 1
-                    )
-                }
+                AddToCartControl(
+                    book = book,
+                    modifier = Modifier.fillMaxWidth(),
+                    size = CartControlSize.COMPACT,
+                    showInCartLabel = true,
+                    onAddToCartCallback = onAddToCart
+                )
 
                 OutlinedButton(
                     onClick = { onBorrow(book) },

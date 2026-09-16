@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext.js';
 import { useToast } from '../context/ToastContext.js';
 import { useCurrency } from '../context/CurrencyContext.js';
 import { BorrowModal } from '../components/borrow/BorrowModal.js';
+import { AddToCartControl } from '../components/books/AddToCartControl.js';
 import {
   ShoppingCart,
   Plus,
@@ -333,54 +334,14 @@ export const BookDetailPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Cart stepper or Add to Cart button */}
-              {(() => {
-                const cartItem = items.find(i => i.book.id === book.id);
-                const cartQty = cartItem ? cartItem.quantity : 0;
-                return cartQty > 0 ? (
-                  <div
-                    className="flex items-center border border-indigo-500/80 rounded-xl bg-slate-950 overflow-hidden shadow-sm"
-                    data-testid={`cart-qty-stepper-${book.id}`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(book.id, cartQty - 1)}
-                      data-testid={`cart-qty-minus-${book.id}`}
-                      className="px-4 py-3 hover:bg-rose-950/60 text-rose-400 transition-colors font-bold"
-                      aria-label="Remove one from cart"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span
-                      data-testid={`cart-qty-val-${book.id}`}
-                      className="px-4 text-sm font-black text-indigo-400 min-w-[2.5rem] text-center"
-                    >
-                      {cartQty} in cart
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(book.id, cartQty + 1)}
-                      disabled={cartQty >= book.stock}
-                      data-testid={`cart-qty-plus-${book.id}`}
-                      className="px-4 py-3 hover:bg-emerald-950/60 text-emerald-400 transition-colors font-bold disabled:opacity-40 disabled:pointer-events-none"
-                      aria-label="Add one more to cart"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => addToCart(book, quantity)}
-                    disabled={book.stock <= 0}
-                    data-testid="detail-add-to-cart-btn"
-                    className="flex-1 min-w-[140px] flex items-center justify-center gap-2 py-3 px-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:pointer-events-none"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>Add to Cart</span>
-                  </button>
-                );
-              })()}
+              {/* Unified Add to Cart / Quantity Stepper Control */}
+              <AddToCartControl
+                book={book}
+                size="lg"
+                showInCartLabel
+                initialQuantity={quantity}
+                className="flex-1 min-w-[140px]"
+              />
 
               <button
                 type="button"

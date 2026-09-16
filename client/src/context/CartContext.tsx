@@ -18,6 +18,7 @@ interface CartContextType {
   removeFromCart: (bookId: string) => void;
   updateQuantity: (bookId: string, quantity: number) => void;
   clearCart: () => void;
+  getItemQuantity: (bookId: string) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -92,6 +93,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setItems([]);
   };
 
+  const getItemQuantity = (bookId: string): number => {
+    const item = items.find((i) => i.book.id === bookId);
+    return item ? item.quantity : 0;
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -109,6 +115,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         removeFromCart,
         updateQuantity,
         clearCart,
+        getItemQuantity,
       }}
     >
       {children}

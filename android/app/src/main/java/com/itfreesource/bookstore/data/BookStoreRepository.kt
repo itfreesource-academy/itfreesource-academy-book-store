@@ -282,27 +282,45 @@ object BookStoreRepository {
     }
 
     // Cart operations
+    fun getCartQuantity(bookId: String): Int {
+        return cartItems.firstOrNull { it.book.id == bookId }?.quantity ?: 0
+    }
+
     fun addToCart(book: Book, qty: Int = 1) {
-        val existing = cartItems.firstOrNull { it.book.id == book.id }
-        if (existing != null) {
-            existing.quantity += qty
+        val index = cartItems.indexOfFirst { it.book.id == book.id }
+        if (index != -1) {
+            val existing = cartItems[index]
+            val newQty = (existing.quantity + qty).coerceAtMost(book.stock)
+            cartItems[index] = existing.copy(quantity = newQty)
         } else {
-            cartItems.add(CartItem(book, qty))
+            val initial = qty.coerceAtMost(book.stock).coerceAtLeast(1)
+            cartItems.add(CartItem(book, initial))
         }
         logAudit("CART_ADD", "book", book.id, "Added ${book.title} (x$qty) to cart")
     }
 
     fun updateCartQuantity(bookId: String, qty: Int) {
-        if (qty <= 0) {
-            cartItems.removeAll { it.book.id == bookId }
-        } else {
-            val item = cartItems.firstOrNull { it.book.id == bookId }
-            item?.quantity = qty
+        val index = cartItems.indexOfFirst { it.book.id == bookId }
+        if (index != -1) {
+            if (qty <= 0) {
+                cartItems.removeAt(index)
+                logAudit("CART_REMOVE", "book", bookId, "Removed item from cart")
+            } else {
+                val item = cartItems[index]
+                val clamped = qty.coerceAtMost(item.book.stock)
+                cartItems[index] = item.copy(quantity = clamped)
+            }
+        } else if (qty > 0) {
+            val b = books.firstOrNull { it.id == bookId }
+            if (b != null) {
+                addToCart(b, qty)
+            }
         }
     }
 
     fun removeFromCart(bookId: String) {
         cartItems.removeAll { it.book.id == bookId }
+        logAudit("CART_REMOVE", "book", bookId, "Removed item from cart")
     }
 
     fun applyPromoCode(code: String): Pair<Boolean, String> {

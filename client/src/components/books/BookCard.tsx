@@ -5,16 +5,14 @@ import { StarRating } from '../common/StarRating.js';
 import { useCart } from '../../context/CartContext.js';
 import { useCurrency } from '../../context/CurrencyContext.js';
 import { BorrowModal } from '../borrow/BorrowModal.js';
-import { ShoppingCart, Crown, AlertCircle, Bookmark, Store, Building2, Info, Plus, Minus } from 'lucide-react';
+import { AddToCartControl } from './AddToCartControl.js';
+import { ShoppingCart, Crown, AlertCircle, Bookmark, Store, Building2, Info } from 'lucide-react';
 
 interface BookCardProps {
   book: Book;
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ book }) => {
-  const { addToCart, items, updateQuantity } = useCart();
-  const cartItem = items.find(i => i.book.id === book.id);
-  const cartQty = cartItem ? cartItem.quantity : 0;
   const { formatPrice } = useCurrency();
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
 
@@ -194,50 +192,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
               </button>
 
               {/* Add to Cart / Quantity Stepper (Buy to Own) */}
-              {cartQty > 0 ? (
-                <div
-                  className="flex items-center border border-slate-700 rounded-xl bg-slate-800/90 overflow-hidden"
-                  data-testid={`cart-qty-stepper-${book.id}`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => updateQuantity(book.id, cartQty - 1)}
-                    data-testid={`cart-qty-minus-${book.id}`}
-                    className="px-2 py-1.5 hover:bg-rose-950/40 text-rose-400 transition-colors"
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <span
-                    data-testid={`cart-qty-val-${book.id}`}
-                    className="px-2.5 text-xs font-black text-indigo-300 min-w-[1.5rem] text-center"
-                  >
-                    {cartQty}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => updateQuantity(book.id, cartQty + 1)}
-                    disabled={cartQty >= book.stock}
-                    data-testid={`cart-qty-plus-${book.id}`}
-                    className="px-2 py-1.5 hover:bg-emerald-950/40 text-emerald-400 transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                    aria-label="Increase quantity"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => addToCart(book)}
-                  disabled={book.stock <= 0}
-                  data-testid={`add-to-cart-btn-${book.id}`}
-                  className="px-2.5 py-1.5 rounded-xl bg-indigo-950/50 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-800/50 transition-colors disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1 text-xs font-bold"
-                  title={`Buy to own for ${formatPrice(book.price)}`}
-                  aria-label={`Buy ${book.title} to own`}
-                >
-                  <ShoppingCart className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Buy</span>
-                </button>
-              )}
+              <AddToCartControl book={book} size="sm" />
             </div>
           </div>
         </div>

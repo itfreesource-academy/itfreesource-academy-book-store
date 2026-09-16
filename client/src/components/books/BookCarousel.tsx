@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Play, Pause, ShoppingCart, Star } from 'luci
 import { useCart } from '../../context/CartContext.js';
 import { useCurrency } from '../../context/CurrencyContext.js';
 import { Link } from 'react-router-dom';
+import { AddToCartControl } from './AddToCartControl.js';
 
 interface BookCarouselProps {
   books: Book[];
@@ -100,14 +101,11 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              onClick={() => addToCart(currentBook)}
-              data-testid="carousel-add-to-cart-btn"
-              className="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-xl shadow-lg shadow-brand-500/30 transition-all"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span>Add to Cart</span>
-            </button>
+            <AddToCartControl
+              book={currentBook}
+              size="md"
+              testIdPrefix="carousel-add-to-cart-btn"
+            />
             <Link
               to={`/books/${currentBook.id}`}
               data-testid="carousel-view-details-btn"
