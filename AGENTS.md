@@ -1,95 +1,83 @@
 # AGENTS.md: ITFreeSource Academy Book Store Context Guide
 
-This repository contains the **ITFreeSource Academy Book Store**, an enterprise-grade fullstack TypeScript & Android platform engineered as a realistic e-commerce application and a rich test automation workbench for QA engineers, SDETs, and automated testing frameworks (Playwright, Cypress, Vitest, Appium).
+This repository contains the **ITFreeSource Academy Book Store**, an enterprise-grade fullstack TypeScript & Android platform engineered as a realistic e-commerce application and a rich test automation workbench for QA engineers, SDETs, and automated testing frameworks (Playwright, Cypress, Vitest, Appium, REST Assured).
 
 ---
 
 ## 🏛️ System Architecture & Tech Stack
 
-- **Frontend (Web)**: React 19 Single Page Application (SPA), Vite 6, Tailwind CSS 3.4, Lucide React icons, React Router v7.
-- **Backend (API)**: Node.js (v20+ / v22+), Express.js 4.21, TypeScript 5.8 (`server/src/index.ts`).
-- **Companion Mobile App**: Native Android companion app in `android/` (Kotlin 2.2, Jetpack Compose, Material Design, AGP 9.3, Gradle 9.5, API 34).
-- **Database & State**: In-memory state store (`server/src/data/store.ts`) seeded with 25+ books, 11 personas, reviews, orders, rentals, and audit logs.
-- **API Documentation**: OpenAPI 3.0 via `swagger-ui-express` served at `/api/swagger` (raw JSON at `/api/swagger.json`).
-- **Event Streaming & Webhooks**: In-memory Kafka broker (`server/src/services/kafkaBroker.ts`) and HMAC webhook dispatcher (`server/src/services/webhookService.ts`).
-- **Test Engine**: Vitest 5 with v8 coverage provider (`@vitest/coverage-v8`), Supertest for HTTP integration tests.
-- **CI/CD & Deployment**: 
+- **Frontend (Web)**: React 19 Single Page Application (SPA), Vite 6, Tailwind CSS 3.4, Lucide React icons, React Router v7. Features a high-contrast **Light vs. Dark Theme System** (defaulting to Light Mode).
+- **Backend (API)**: Node.js (v20+ / v22+ LTS), Express.js 4.21, TypeScript 5.8 (`server/src/index.ts`).
+- **Companion Mobile App**: Native Android companion app in `android/` (Kotlin 2.2, Jetpack Compose, Material Design, Coil image loading, AGP 9.3, Gradle 9.5, Target SDK 34).
+- **Database & State**: In-memory state store (`server/src/data/store.ts`) seeded with 25+ books, 11 protected personas, reviews, orders, rentals, and audit logs.
+- **API Documentation**: OpenAPI 3.0 via `swagger-ui-express` served at `/api/swagger` (raw JSON at `/api/swagger.json`, interactive in-app viewer at `/swagger`).
+- **Event Streaming & Kafka Broker**: In-memory Apache Kafka broker simulation (`server/src/services/kafkaBroker.ts`) tracking 6 partitions, real-time consumer lag calculation, offset commits, and Dead-Letter Queue (DLQ) poison pill quarantine.
+- **Enterprise Webhooks**: Cryptographic HMAC-SHA256 dispatcher (`server/src/services/webhookService.ts`) with in-app zero-config mock receiver (`/api/v1/webhooks/mock-receiver`), latency telemetry, and 503 outage retry simulations.
+- **Test Engine**: Vitest 5 with v8 coverage provider (`@vitest/coverage-v8`), Supertest for HTTP integration tests (56 tests across 6 suites).
+- **CI/CD & Deployment**:
   - GitHub Actions workflow at `.github/workflows/ci.yml`.
-  - Cloudflare Pages / Workers deployment via `wrangler.jsonc` (project name `bookstore`) deploying static SPA assets from `./dist` with SPA routing fallback.
+  - Cloudflare Pages / Workers deployment via `wrangler.toml` (project `bookstore`) serving SPA assets from `./dist` with edge SSR/routing fallback.
+  - Live Canonical Production URL: `https://bookstore.itfreesource.workers.dev`
+  - Ephemeral Branch Previews: `https://<branch>-bookstore.itfreesource.workers.dev`
 
 ---
 
-## 📜 CRITICAL AGENT RULES: Web-to-Mobile Feature Parity Protocol
+## 📜 CRITICAL AGENT RULES: Non-Negotiable Engineering Standards
 
-All AI agents and developers working on this repository **MUST ALWAYS FOLLOW** these rules to maintain strict parity between the Web application and the Native Android companion app:
+All AI agents and engineers contributing to this repository **MUST STRICTLY FOLLOW** these rules:
 
-### Rule 1: Single Source of Truth (The REST API)
+### Rule 1: Web-to-Mobile Feature Parity Protocol
 - The Express backend (`server/src/routes/`) is the central source of truth for both Web and Mobile.
 - Whenever a new endpoint, query parameter, or JSON response field is created or modified in `server/`, you **MUST** update:
   1. The TypeScript schemas in `server/src/types/index.ts` and `client/src/types/`.
   2. The Kotlin data models in `android/app/src/main/java/com/itfreesource/bookstore/model/Models.kt`.
   3. The Android REST client in `android/app/src/main/java/com/itfreesource/bookstore/data/ApiClient.kt`.
+- **Never implement a customer-facing feature on Web without its equivalent on Android Compose.**
 
-### Rule 2: Web Feature = Mobile Feature Parity
-- **Never implement a customer-facing feature on the Web without implementing its equivalent on Android.**
-- When you add or change:
-  - Catalog filters, search logic, or category browsing $\rightarrow$ update `client/src/pages/HomePage.tsx` and `android/.../ui/screens/CatalogScreen.kt`.
-  - Cart, promotion codes (`SAVE10`, `SAVE20`, `FREESHIP`), VIP discounts, or multi-step checkout $\rightarrow$ update `client/src/pages/CartPage.tsx` and `android/.../ui/screens/CartCheckoutScreen.kt`.
-  - Order status transitions, tracking numbers, or refunds $\rightarrow$ update `client/src/pages/OrdersPage.tsx` and `android/.../ui/screens/OrdersScreen.kt`.
-  - Academic rentals (10-day loan, overdue fines, lost replacement) $\rightarrow$ update `client/src/pages/BorrowedBooksPage.tsx` and `android/.../ui/screens/RentalsScreen.kt`.
-  - Admin/Store Manager management tools $\rightarrow$ update `client/src/pages/ManagementPage.tsx` and `android/.../ui/screens/ManagementScreen.kt`.
+### Rule 2: Theme System & High-Contrast Light Mode Default
+- The platform uses `ThemeProvider` (`client/src/context/ThemeContext.tsx`) with dynamic `light` and `dark` classes toggled on `document.documentElement`.
+- **Default Theme is Light Mode** (`localStorage.getItem('itfreesource_theme') || 'light'`).
+- `client/src/index.css` contains high-contrast light mode rules (`html.light .bg-slate-900`, `html.light .border-slate-800`, text contrasts).
+- Ensure all new components support both themes using Tailwind classes:
+  - Cards: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800`
+  - Text: `text-slate-900 dark:text-white`, secondary `text-slate-600 dark:text-slate-400`
+  - Actions: `bg-indigo-600 text-white hover:bg-indigo-700`
 
-### Rule 3: Real-Time Transactional Synchronization & Full API Consumption
-- **Both Web and Mobile consume the EXACT same Express REST APIs:**
-  | Resource | Method & Endpoint | Web Page | Android Compose Equivalent |
-  | :--- | :--- | :--- | :--- |
-  | **Auth / Login** | `POST /api/v1/auth/login` | `AuthContext.tsx` | `ApiClient.login(...)` |
-  | **Current User Profile** | `GET /api/v1/auth/me` | `AuthContext.tsx` | `ApiClient.fetchCurrentUser()` |
-  | **User Management** | `GET /api/v1/auth/users` | `UsersPage.tsx` | `ApiClient.fetchUsers()` |
-  | **Update User Profile** | `PUT /api/v1/auth/users/:id` | `UsersPage.tsx` | `ApiClient.updateUser(...)` |
-  | **User Status (Suspend)** | `PATCH /api/v1/auth/users/:id/status` | `UsersPage.tsx` | `ApiClient.updateUserStatus(...)` |
-  | **Books Catalog** | `GET /api/v1/books` | `BooksCatalogPage.tsx` | `ApiClient.fetchBooks()` |
-  | **Categories** | `GET /api/v1/categories` | `BooksCatalogPage.tsx` | `ApiClient.fetchCategories()` |
-  | **Authors** | `GET /api/v1/authors` | `BooksCatalogPage.tsx` | `ApiClient.fetchAuthors()` |
-  | **Orders List** | `GET /api/v1/orders` | `OrdersPage.tsx` | `ApiClient.fetchOrders()` |
-  | **Place Order (Checkout)** | `POST /api/v1/orders` | `CartCheckoutPage.tsx`| `ApiClient.postOrder(...)` |
-  | **Order Status & Tracking** | `PATCH /api/v1/orders/:id/status` | `OrdersPage.tsx` | `ApiClient.updateOrderStatus(...)` |
-  | **Cancel Order** | `POST /api/v1/orders/:id/cancel` | `OrdersPage.tsx` | `ApiClient.cancelOrder(...)` |
-  | **Refund Order** | `POST /api/v1/orders/:id/refund` | `OrdersPage.tsx` | `ApiClient.refundOrder(...)` |
-  | **Academic Borrow List** | `GET /api/v1/borrow` | `BorrowedBooksPage.tsx` | `ApiClient.fetchBorrowRecords()` |
-  | **Borrow Book (Loan)** | `POST /api/v1/borrow` | `BorrowedBooksPage.tsx` | `ApiClient.borrowBook(...)` |
-  | **Return Book** | `POST /api/v1/borrow/:id/return` | `BorrowedBooksPage.tsx` | `ApiClient.returnBook(...)` |
-  | **Report Lost Book** | `POST /api/v1/borrow/:id/lost` | `BorrowedBooksPage.tsx` | `ApiClient.reportBookLost(...)` |
-  | **Reviews List** | `GET /api/v1/reviews` | `ReviewsPage.tsx` | `ApiClient.fetchReviews(...)` |
-  | **Submit Review** | `POST /api/v1/reviews` | `BookDetailPage.tsx` | `ApiClient.submitReview(...)` |
-  | **Moderate Review** | `PATCH /api/v1/reviews/:id/status` | `ReviewsPage.tsx` | `ApiClient.moderateReview(...)` |
-  | **Stock Adjustment** | `PATCH /api/v1/inventory/:id/stock` | `InventoryPage.tsx` | `ApiClient.updateStock(...)` |
-  | **Audit Logs** | `GET /api/v1/audit-logs` | `AuditLogsPage.tsx` | `ApiClient.fetchAuditLogs()` |
-  | **System DB Reset** | `POST /api/v1/system/reset` | `Navbar.tsx` / `Playground` | `ApiClient.resetSystem()` |
-  | **Latency Simulation** | `POST /api/v1/system/latency` | `PlaygroundPage.tsx` | `ApiClient.setSimulatedLatency(...)` |
+### Rule 3: Kafka Consumer Lag & DLQ Compliance
+- Consumer lag is calculated as:
+  $$\text{Consumer Lag} = \text{Latest Partition Offset} - \text{Committed Consumer Offset}$$
+- When Lag = 0, status must display green **`UP TO DATE`**.
+- When Lag > 0, status must display amber **`PENDING (Lag: N)`**.
+- Placing an order in `/cart` advances `bookstore.orders.created` partition offset ($N \to N+1$), placing downstream groups into `PENDING`.
+- Committing the offset (`POST /api/v1/kafka/consumer-groups/:id/commit`) resets lag to `0` (`UP TO DATE`).
+- Malformed payloads must route to Dead-Letter Queue (`bookstore.dlq.poison-pills`) without dropping normal partition consumption.
 
-- **Fallback / Standalone Mode:**
-  - If the backend is offline or unreachable, the Android app gracefully falls back to local reactive mock state seeded by `SeedData.kt`. It must never crash.
+### Rule 4: Webhook Cryptographic Integrity (HMAC-SHA256)
+- Outbound webhooks must always include `x-bookstore-signature: sha256=<hex_digest>`.
+- Testing signature verification:
+  ```typescript
+  import crypto from 'crypto';
+  const computedHash = crypto.createHmac('sha256', secret).update(rawPayload).digest('hex');
+  const isValid = `sha256=${computedHash}` === signatureHeader;
+  ```
+- Use the built-in zero-config mock receiver at `/api/v1/webhooks/mock-receiver` for tests; do NOT require external ngrok tunnels.
+- Test 503 outage resilience and exponential backoff retries via `/api/v1/webhooks/mock-receiver/chaos` and `/api/v1/webhooks/deliveries/:id/redeliver`.
 
-### Rule 4: Appium Automation Standards (Separate Test Repo)
-- **Do NOT add test suites into `android/`**: The user maintains end-to-end Appium automated test suites in a separate repository.
-- **Semantic Locators**: Every interactive Android component must provide a semantic accessibility locator via `Modifier.semantics { contentDescription = repo.getTestId("<locator_id>") }`.
+### Rule 5: 11 Core Protected Personas Rule
+- The 11 baseline test personas (`usr_001` through `usr_011`) are **permanently protected against deletion**.
+- Any `DELETE /api/v1/auth/users/:id` on a core persona must return `400 Bad Request` with an explanatory error.
+
+### Rule 6: Appium Automation Standards (Companion Android App)
+- **Semantic Locators**: Every interactive Android component must provide a semantic accessibility locator via `Modifier.semantics { contentDescription = "..." }`.
 - Follow consistent naming conventions matching web `data-testid` attributes:
   - Buttons: `btn_place_order`, `btn_sync_orders`, `btn_reset_database_seed`, `btn_borrow_book`
   - Inputs: `input_search_books`, `input_shipping_fullname`, `input_backend_api_url`
   - Cards & Rows: `book_card_<id>`, `order_card_<orderNumber>`
   - Navigation: `nav_catalog`, `nav_cart`, `nav_orders`, `nav_rentals`, `nav_sandbox`, `nav_management`
 
-### Rule 5: Cloudflare Deployment Integrity
-- The root `package.json` workspaces list **MUST ONLY** contain `["server", "client"]`. Never add `android` to npm workspaces.
-- Cloudflare Pages / Workers builds run `npm run build` which outputs to `./dist`. The `android/` directory must have zero impact on this process.
-- `android/.gitignore` must strictly ignore all build caches (`.gradle/`, `build/`, `app/build/`, `*.apk`, `*.aab`, `local.properties`).
-
 ---
 
 ## 👥 11 User Personas & Test Matrix
-
-Both Web and Android feature a sticky 1-click persona switcher across all 11 roles:
 
 | Username | Password | Role | Currency | Timezone | Permissions / Test Focus |
 | :--- | :--- | :--- | :---: | :--- | :--- |
@@ -97,7 +85,7 @@ Both Web and Android feature a sticky 1-click persona switcher across all 11 rol
 | `store_manager` | `Manager@Pass123` | `store_manager` | USD ($) | `America/New_York` | Catalog management, pricing updates, order status management |
 | `dubai_shopper` | `Dubai@Pass123` | `standard_customer` | AED (AED) | `Asia/Dubai` | Regional currency/timezone conversions, book borrowing & penalties |
 | `tokyo_reader` | `Tokyo@Pass123` | `standard_customer` | JPY (¥) | `Asia/Tokyo` | Zero-decimal currency exchange (JPY 155), timezone calculations |
-| `mumbai_borrower`| `Mumbai@Pass123` | `standard_customer` | INR (₹) | `Asia/Kolkata` | High-frequency book borrowing, rental fee simulation |
+| `mumbai_borrower`| `Mumbai@Pass123` | `standard_customer` | INR (₹) | `Asia/Kolkata` | High-frequency book borrowing, rental fee simulation ($2.00, $0.10/day overdue) |
 | `sydney_collector`| `Sydney@Pass123`| `standard_customer` | AUD (A$) | `Australia/Sydney` | Australian dollar pricing, international order placement |
 | `standard_customer`| `User@Pass123` | `standard_customer` | USD ($) | `America/New_York` | Standard purchasing, cart checkout, reviews submission |
 | `vip_customer` | `Vip@Pass123` | `vip_customer` | USD ($) | `America/New_York` | Automatic 20% discount on cart subtotal, VIP exclusive catalog |
@@ -107,77 +95,61 @@ Both Web and Android feature a sticky 1-click persona switcher across all 11 rol
 
 ---
 
-## 🚀 How to Run & Build
+## 🚀 How to Run, Test & Build (Cross-Device)
 
-### Web & API (Concurrent Development)
+### Web & API (Windows / macOS / Linux)
 ```bash
-npm run dev              # Frontend on http://localhost:5173, Backend on http://localhost:5000
-npm run build            # Production build: compiles server & client to ./dist (Cloudflare target)
-npm start                # Unified server on http://localhost:5000
-npm test                 # Vitest test suites (auth, borrow, api, store)
+# 1. Install dependencies
+npm install
+
+# 2. Run local development (Client on :5173, Server on :5000)
+npm run dev
+
+# 3. Run all 56 Vitest unit & integration tests
+npm test
+
+# 4. Generate Istanbul/v8 Code Coverage
+npm run test:coverage
+
+# 5. Full Production Build (Client + Server + dist export)
+npm run build
+
+# 6. Start Unified Production Server
+npm start
 ```
 
-### Native Android Companion App
-The native Android project is located directly in `android/`:
+### Native Android Companion App (`android/`)
 ```bash
 cd android
-# Build Debug APK (ideal for local testing and Appium automation)
-JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=/home/virus/Android/Sdk ./gradlew assembleDebug
 
-# Build Production Google Play Signed Bundle & Release APK
-JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=/home/virus/Android/Sdk ./gradlew assembleRelease bundleRelease
+# Linux/macOS with Android SDK:
+JAVA_HOME=/opt/android-studio/jbr ANDROID_HOME=$HOME/Android/Sdk ./gradlew assembleDebug
+
+# Windows PowerShell:
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+.\gradlew.bat assembleDebug
+
+# Build Release APK & Signed Google Play Bundle:
+.\gradlew.bat assembleRelease bundleRelease
 ```
-
 - **Debug APK**: `android/app/build/outputs/apk/debug/app-debug.apk`
 - **Release APK**: `android/app/build/outputs/apk/release/app-release.apk`
-- **Google Play Bundle**: `android/app/build/outputs/bundle/release/app-release.aab`
 - **Application ID**: `com.itfreesource.bookstore`
 - **Main Activity**: `com.itfreesource.bookstore.MainActivity`
-- **Target SDK**: Android API 34 (Android 14) | **Min SDK**: 24 (Android 7.0+)
-- **Signing Keystore**: `android/app/release.jks` (alias `bookstore_release`, pass `StorePass2026!`)
 
 ---
 
-## 🔄 Live Data Synchronization Flow
+## 🗺️ Master Platform Practical Testing Matrix
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Web as Web Client (React)
-    participant API as Express Server (:5000)
-    participant Android as Android App (Compose)
-
-    Note over Web,Android: Real-Time Order Sync
-    Web->>API: POST /api/v1/orders (Checkout)
-    API-->>Web: 201 Created (Order stored in store.ts)
-    Android->>API: GET /api/v1/orders (Bearer JWT)
-    API-->>Android: 200 OK (Returns orders including Web order)
-    Note over Android: Web order instantly appears in Android Orders Screen!
-
-    Android->>API: POST /api/v1/orders (Mobile Checkout)
-    API-->>Android: 201 Created (Order stored in store.ts)
-    Web->>API: GET /api/v1/orders (Bearer JWT)
-    API-->>Web: 200 OK (Returns orders including Mobile order)
-    Note over Web: Mobile order instantly appears in Web Orders Screen!
-```
-
----
-
-## 🛠️ Appium Capabilities Reference
-
-For the external Appium test repository, use the following configuration:
-
-```python
-from appium import webdriver
-from appium.options.android import UiAutomator2Options
-
-options = UiAutomator2Options()
-options.platform_name = "Android"
-options.automation_name = "UiAutomator2"
-options.device_name = "Android Emulator"
-options.app_package = "com.itfreesource.bookstore"
-options.app_activity = "com.itfreesource.bookstore.MainActivity"
-options.app = "/path/to/itfreesource-academy-book-store/android/app/build/outputs/apk/debug/app-debug.apk"
-options.no_reset = False
-options.auto_grant_permissions = True
-```
+| Feature / Page | URL Path | Key Testing Focus | Persona |
+| :--- | :--- | :--- | :--- |
+| **Theme Switcher** | Global Header | Light vs. Dark theme toggle, `localStorage` persistence | Any |
+| **Books Catalog** | `/books` | Live currency switcher (7 currencies), quantity stepper `[-] 1 [+]`, stock bounds | `standard_customer` |
+| **Academic Lending** | `/borrowed` | $2.00 borrow fee, VIP 20% discount ($1.60), $0.10/day overdue penalty formula | `student_reader` / `vip_customer` |
+| **Cart & Checkout** | `/cart` | Idempotency key duplicate debit protection, coupon validation (`ITFREE10`) | `standard_customer` |
+| **Kafka Console** | `/playground` | Consumer Lag ($\text{Lag} = \text{Latest} - \text{Committed}$), `UP TO DATE` vs `PENDING`, DLQ replay | `qa_engineer` / `admin` |
+| **Webhooks Console** | `/playground` | HMAC-SHA256 signatures, mock receiver, 503 outage retry resilience | `qa_engineer` / `admin` |
+| **Warehouse Inventory**| `/inventory` | Stock management, low-stock alerts, inline active-currency price edits | `store_manager` |
+| **Code Coverage** | `/coverage` | Real-time Istanbul / v8 code coverage across all 56 backend tests | `auditor` / `admin` |
+| **OpenAPI Docs** | `/swagger` | OpenAPI 3.0 specification with interactive "Try it out" request console | All Personas |
