@@ -26,10 +26,14 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(localProps.getProperty('KEYSTORE_FILE', 'release.jks'))
-            storePassword localProps.getProperty('KEYSTORE_PASSWORD', System.getenv('KEYSTORE_PASSWORD') ?: '')
-            keyAlias localProps.getProperty('KEY_ALIAS', 'bookstore_release')
-            keyPassword localProps.getProperty('KEY_PASSWORD', System.getenv('KEY_PASSWORD') ?: '')
+            def keystorePath = localProps.getProperty('KEYSTORE_FILE', 'release.jks')
+            def kFile = file(keystorePath)
+            if (kFile.exists()) {
+                storeFile kFile
+                storePassword localProps.getProperty('KEYSTORE_PASSWORD', System.getenv('KEYSTORE_PASSWORD') ?: '')
+                keyAlias localProps.getProperty('KEY_ALIAS', 'bookstore_release')
+                keyPassword localProps.getProperty('KEY_PASSWORD', System.getenv('KEY_PASSWORD') ?: '')
+            }
         }
     }
 
@@ -40,7 +44,9 @@ android {
             debuggable true
         }
         release {
-            signingConfig signingConfigs.release
+            if (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

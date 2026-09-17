@@ -118,7 +118,13 @@ npm run build
 npm start
 ```
 
-### Native Android Companion App (`android/`)
+### Native Android Companion App (`android/` & Standalone Repo)
+
+> [!NOTE]
+> **Standalone Repository**: The native Android application is maintained as an independent repository at:  
+> 👉 **[vishalprajapati2k25/itfs-bookstore-android-app](https://github.com/vishalprajapati2k25/itfs-bookstore-android-app)**  
+> Communicates with live Cloudflare Workers API: [`https://bookstore.itfreesource.workers.dev/api/v1`](https://bookstore.itfreesource.workers.dev/api/v1)
+
 ```bash
 cd android
 
@@ -133,6 +139,7 @@ $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 # Build Release APK & Signed Google Play Bundle:
 .\gradlew.bat assembleRelease bundleRelease
 ```
+- **Standalone Repo**: `https://github.com/vishalprajapati2k25/itfs-bookstore-android-app`
 - **Debug APK**: `android/app/build/outputs/apk/debug/app-debug.apk`
 - **Release APK**: `android/app/build/outputs/apk/release/app-release.apk`
 - **Application ID**: `com.itfreesource.bookstore`

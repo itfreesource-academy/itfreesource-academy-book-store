@@ -12,7 +12,11 @@
 
 A fullstack **TypeScript Book Store platform**, single-page React SPA, and automated testing workbench designed for public demonstration on LinkedIn and real-world QA test engineering (Playwright, Cypress, Selenium, Appium, RestAssured, Postman/Newman).
 
-Repository: [github.com/itfreesource-academy/itfreesource-academy-book-store](https://github.com/itfreesource-academy/itfreesource-academy-book-store)
+* **Backend & Web Store Repository**: [itfreesource-academy-book-store](https://github.com/itfreesource-academy/itfreesource-academy-book-store)
+* **📱 Dedicated Native Android Client**: [vishalprajapati2k25/itfs-bookstore-android-app](https://github.com/vishalprajapati2k25/itfs-bookstore-android-app)
+* **Live Cloudflare Workers API**: [`https://bookstore.itfreesource.workers.dev/api/v1`](https://bookstore.itfreesource.workers.dev/api/v1)
+* **OpenAPI 3.0 Interactive Swagger**: [`https://bookstore.itfreesource.workers.dev/api/swagger`](https://bookstore.itfreesource.workers.dev/api/swagger)
+* **ITFreeSource Academy**: [academy.itfreesource.com](https://academy.itfreesource.com)
 
 ---
 

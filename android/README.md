@@ -1,6 +1,12 @@
 # 📱 ITFreeSource Academy - Book Store Android Application
 ### Complete Native Mobile App & QA Appium Test Automation Benchmark
 
+> [!IMPORTANT]
+> **Dedicated Standalone Repository**: Active standalone development, CI workflows, and releases for this native Android app are hosted at:  
+> 👉 **[vishalprajapati2k25/itfs-bookstore-android-app](https://github.com/vishalprajapati2k25/itfs-bookstore-android-app)**  
+> Live Backend API: [`https://bookstore.itfreesource.workers.dev/api/v1`](https://bookstore.itfreesource.workers.dev/api/v1)  
+> Interactive Swagger Specs: [`https://bookstore.itfreesource.workers.dev/api/swagger`](https://bookstore.itfreesource.workers.dev/api/swagger)
+
 This is the Android native companion app for [itfreesource-academy-book-store](https://github.com/itfreesource-academy/itfreesource-academy-book-store), custom-engineered specifically for building, scaling, and validating an **Appium Mobile App Testing Platform**.
 
 Every single component, form element, dialog, gesture target, and business workflow is instrumented with deterministic **Appium Accessibility IDs (`contentDescription`)** and native system dialog integration.
