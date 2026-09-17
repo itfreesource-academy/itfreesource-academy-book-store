@@ -498,8 +498,8 @@ export const BorrowedBooksPage: React.FC = () => {
       {/* Interactive Time-Travel Return Simulator Modal */}
       {simulatingRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="bg-slate-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-800 animate-in fade-in zoom-in duration-150">
-            <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 p-6 text-white border-b border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-150 text-slate-900 dark:text-slate-100">
+            <div className="bg-slate-50 dark:bg-slate-950 p-6 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl">⏳</span>
@@ -507,22 +507,22 @@ export const BorrowedBooksPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSimulatingRecord(null)}
-                  className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-full w-8 h-8 flex items-center justify-center transition"
+                  className="text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full w-8 h-8 flex items-center justify-center transition"
                 >
                   ✕
                 </button>
               </div>
-              <p className="text-slate-400 text-xs mt-1">
+              <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
                 Simulate returning at any date to test on-time and overdue fee calculations.
               </p>
             </div>
 
             <div className="p-6 space-y-5">
               {/* Record Summary */}
-              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs space-y-1">
-                <div className="font-bold text-white text-sm">{simulatingRecord.bookTitle}</div>
-                <div className="text-slate-400">
-                  Borrowed: <strong className="text-slate-200">{formatDateOnly(simulatingRecord.borrowDate)}</strong> | Due: <strong className="text-slate-200">{formatDateOnly(simulatingRecord.dueDate)}</strong>
+              <div className="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+                <div className="font-bold text-slate-900 dark:text-white text-sm">{simulatingRecord.bookTitle}</div>
+                <div className="text-slate-500 dark:text-slate-400">
+                  Borrowed: <strong className="text-slate-800 dark:text-slate-200">{formatDateOnly(simulatingRecord.borrowDate)}</strong> | Due: <strong className="text-slate-200">{formatDateOnly(simulatingRecord.dueDate)}</strong>
                 </div>
               </div>
 
@@ -608,15 +608,15 @@ export const BorrowedBooksPage: React.FC = () => {
       {/* Mark As Lost Confirmation Modal */}
       {lostTargetRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-          <div className="bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
             <div className="text-3xl mb-2">⚠️</div>
-            <h3 className="text-lg font-bold text-white">Mark Book as Lost?</h3>
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              Per bookstore policy, declaring &ldquo;<strong className="text-white">{lostTargetRecord.bookTitle}</strong>&rdquo; as lost 
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Mark Book as Lost?</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+              Per bookstore policy, declaring &ldquo;<strong className="text-slate-900 dark:text-white">{lostTargetRecord.bookTitle}</strong>&rdquo; as lost 
               charges a replacement penalty of <strong>2x Book Retail Price</strong>.
             </p>
 
-            <div className="bg-rose-950/40 border border-rose-900/60 rounded-xl p-3 my-4 text-xs text-rose-300">
+            <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl p-3 my-4 text-xs text-rose-700 dark:text-rose-300">
               <div className="flex justify-between">
                 <span>Standard Rental Fee:</span>
                 <span className="font-semibold">{formatPrice(lostTargetRecord.standardFee)}</span>
@@ -630,7 +630,7 @@ export const BorrowedBooksPage: React.FC = () => {
             <div className="flex items-center justify-end space-x-3 mt-6">
               <button
                 onClick={() => setLostTargetRecord(null)}
-                className="px-4 py-2 text-xs font-medium text-slate-300 bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-lg transition"
+                className="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition"
               >
                 Cancel
               </button>

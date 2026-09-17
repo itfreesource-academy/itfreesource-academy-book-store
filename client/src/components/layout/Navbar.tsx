@@ -7,8 +7,6 @@ import {
   ShoppingCart,
   Menu,
   X,
-  FileCode2,
-  FlaskConical,
   LogOut,
   LogIn,
   Package,
@@ -17,7 +15,6 @@ import {
   Users,
   ScrollText,
   Clock,
-  ShieldCheck,
   ChevronDown,
   RotateCcw,
   Sparkles,
@@ -43,13 +40,11 @@ export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isManageMenuOpen, setIsManageMenuOpen] = useState(false);
-  const [isQaMenuOpen, setIsQaMenuOpen] = useState(false);
   const [isSellerModalOpen, setIsSellerModalOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const manageMenuRef = useRef<HTMLDivElement>(null);
-  const qaMenuRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -59,9 +54,6 @@ export const Navbar: React.FC = () => {
       }
       if (manageMenuRef.current && !manageMenuRef.current.contains(event.target as Node)) {
         setIsManageMenuOpen(false);
-      }
-      if (qaMenuRef.current && !qaMenuRef.current.contains(event.target as Node)) {
-        setIsQaMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -160,7 +152,6 @@ export const Navbar: React.FC = () => {
                   <button
                     onClick={() => {
                       setIsManageMenuOpen(!isManageMenuOpen);
-                      setIsQaMenuOpen(false);
                     }}
                     className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1"
                     data-testid="nav-manage-dropdown-btn"
@@ -226,60 +217,6 @@ export const Navbar: React.FC = () => {
                 </div>
               )}
 
-              {/* QA & Docs Dropdown */}
-              <div className="relative" ref={qaMenuRef}>
-                <button
-                  onClick={() => {
-                    setIsQaMenuOpen(!isQaMenuOpen);
-                    setIsManageMenuOpen(false);
-                  }}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1"
-                  data-testid="nav-qa-dropdown-btn"
-                >
-                  <FlaskConical className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
-                  <span>QA & Docs</span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 dark:text-slate-500 transition-transform ${isQaMenuOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                {isQaMenuOpen && (
-                  <div className="absolute left-0 mt-1.5 w-56 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl dark:shadow-2xl py-1.5 z-50 animate-fade-in text-xs font-medium">
-                    <Link
-                      to="/playground"
-                      onClick={() => setIsQaMenuOpen(false)}
-                      className="flex items-center gap-2 px-3.5 py-2 text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-950/40 hover:text-purple-700 dark:hover:text-purple-300"
-                    >
-                      <FlaskConical className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-                      <div>
-                        <div className="font-bold text-slate-800 dark:text-slate-100">QA Testing Sandbox</div>
-                        <div className="text-[10px] text-slate-400 dark:text-slate-500">Chaos testing & latency</div>
-                      </div>
-                    </Link>
-                    <Link
-                      to="/coverage"
-                      onClick={() => setIsQaMenuOpen(false)}
-                      className="flex items-center gap-2 px-3.5 py-2 text-slate-600 dark:text-slate-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-700 dark:hover:text-amber-300"
-                    >
-                      <ShieldCheck className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                      <div>
-                        <div className="font-bold text-slate-800 dark:text-slate-100">Test Coverage Dashboard</div>
-                        <div className="text-[10px] text-slate-400 dark:text-slate-500">Live Istanbul & Newman stats</div>
-                      </div>
-                    </Link>
-                    <Link
-                      to="/swagger"
-                      onClick={() => setIsQaMenuOpen(false)}
-                      className="flex items-center gap-2 px-3.5 py-2 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 dark:hover:text-emerald-300"
-                      data-testid="navbar-swagger-link"
-                    >
-                      <FileCode2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-                      <div>
-                        <div className="font-bold text-slate-800 dark:text-slate-100">Swagger API Docs</div>
-                        <div className="text-[10px] text-slate-400 dark:text-slate-500">Interactive OpenAPI 3.0</div>
-                      </div>
-                    </Link>
-                  </div>
-                )}
-              </div>
 
               {/* About Project Page Link */}
               <Link
@@ -532,38 +469,13 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
 
-            <div className="pt-2 border-t border-slate-200 dark:border-slate-800 my-2">
-              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 mb-1">
-                Developer & QA Lab
-              </div>
-              <Link
-                to="/playground"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-xl text-xs font-bold text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900/30"
-              >
-                QA Testing Playground
-              </Link>
-              <Link
-                to="/coverage"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-xl text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/30 mt-1"
-              >
-                Test Coverage & Automation Reports
-              </Link>
-              <Link
-                to="/swagger"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/30 mt-1"
-                data-testid="mobile-swagger-link"
-              >
-                Swagger API Documentation
-              </Link>
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800 my-2 space-y-1">
               <Link
                 to="/about"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/30 mt-1"
+                className="block px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900"
               >
-                About & Creator
+                About Platform
               </Link>
               {isSellerOrAdmin && (
                 <button

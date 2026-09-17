@@ -18,8 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.itfreesource.bookstore.ui.theme.IndigoPrimary
-import com.itfreesource.bookstore.ui.theme.SlateSurface
+import com.itfreesource.bookstore.ui.theme.*
 
 private const val LINKEDIN_URL = "https://www.linkedin.com/in/vishalprajapati2k25/"
 
@@ -31,9 +30,10 @@ private const val LINKEDIN_URL = "https://www.linkedin.com/in/vishalprajapati2k2
 @Composable
 fun AttributionFooter(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val isDark = ThemeState.isDark
 
     val text = buildAnnotatedString {
-        withStyle(style = SpanStyle(color = Color(0xFF94A3B8), fontSize = 10.sp)) {
+        withStyle(style = SpanStyle(color = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B), fontSize = 10.sp)) {
             append("Open Source Contribution by ")
         }
         withStyle(
@@ -50,7 +50,7 @@ fun AttributionFooter(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(SlateSurface)
+            .background(if (isDark) SlateSurface else LightSurface)
             .padding(vertical = 6.dp, horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {

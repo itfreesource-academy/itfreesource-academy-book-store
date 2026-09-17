@@ -79,14 +79,16 @@ fun CartCheckoutScreen(
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
+    val isDark = ThemeState.isDark
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SlateBackground)
+            .background(if (isDark) SlateBackground else LightBackground)
     ) {
         // Top Header
         Surface(
-            color = SlateSurface,
+            color = if (isDark) SlateSurface else LightSurface,
             elevation = 4.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -161,11 +163,11 @@ fun CartCheckoutScreen(
 
                     // Summary Card
                     Card(
-                        backgroundColor = SlateSurface,
+                        backgroundColor = if (isDark) SlateSurface else LightSurface,
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, SlateBorder, RoundedCornerShape(12.dp))
+                            .border(1.dp, if (isDark) SlateBorder else LightBorder, RoundedCornerShape(12.dp))
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text("Order Summary", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -181,7 +183,7 @@ fun CartCheckoutScreen(
                                     Text(repo.formatPrice(itm.price * itm.quantity), color = TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                                 }
                             }
-                            Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 8.dp))
+                            Divider(color = if (isDark) SlateBorder else LightBorder, modifier = Modifier.padding(vertical = 8.dp))
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text("Total Paid:", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                 Text(repo.formatPrice(ord.total), color = EmeraldAccent, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
@@ -283,7 +285,7 @@ fun CartCheckoutScreen(
                     // Cart Items List
                     items(repo.cartItems, key = { it.book.id }) { item ->
                         Card(
-                            backgroundColor = SlateSurface,
+                            backgroundColor = if (isDark) SlateSurface else LightSurface,
                             shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -405,7 +407,7 @@ fun CartCheckoutScreen(
                                 singleLine = true,
                                 colors = TextFieldDefaults.outlinedTextFieldColors(
                                     textColor = TextPrimary,
-                                    backgroundColor = SlateSurface,
+                                    backgroundColor = if (isDark) SlateSurface else LightSurface,
                                     focusedBorderColor = IndigoPrimary,
                                     unfocusedBorderColor = SlateBorder
                                 ),
@@ -449,7 +451,7 @@ fun CartCheckoutScreen(
 
                 // Bottom Checkout Summary
                 Surface(
-                    color = SlateSurface,
+                    color = if (isDark) SlateSurface else LightSurface,
                     elevation = 8.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -476,7 +478,7 @@ fun CartCheckoutScreen(
                             Text("Shipping", color = TextSecondary, fontSize = 12.sp)
                             Text(if (repo.getCartShippingUsd() == 0.0) "FREE" else repo.formatPrice(repo.getCartShippingUsd()), color = TextPrimary, fontSize = 12.sp)
                         }
-                        Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 8.dp))
+                        Divider(color = if (isDark) SlateBorder else LightBorder, modifier = Modifier.padding(vertical = 8.dp))
                         // Total
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text("Total", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -520,7 +522,7 @@ fun CartCheckoutScreen(
                         value = shippingName,
                         onValueChange = { shippingName = it },
                         label = { Text("Full Recipient Name", color = TextSecondary) },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { contentDescription = repo.getTestId("input_shipping_name") }
@@ -532,7 +534,7 @@ fun CartCheckoutScreen(
                         value = shippingStreet,
                         onValueChange = { shippingStreet = it },
                         label = { Text("Street Address", color = TextSecondary) },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { contentDescription = repo.getTestId("input_shipping_street") }
@@ -545,7 +547,7 @@ fun CartCheckoutScreen(
                             value = shippingCity,
                             onValueChange = { shippingCity = it },
                             label = { Text("City", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .weight(1.2f)
                                 .semantics { contentDescription = repo.getTestId("input_shipping_city") }
@@ -555,7 +557,7 @@ fun CartCheckoutScreen(
                             value = shippingState,
                             onValueChange = { shippingState = it },
                             label = { Text("State", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .weight(0.8f)
                                 .semantics { contentDescription = repo.getTestId("input_shipping_state") }
@@ -569,7 +571,7 @@ fun CartCheckoutScreen(
                             value = shippingZip,
                             onValueChange = { shippingZip = it },
                             label = { Text("Zip / Postal Code", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .weight(1f)
                                 .semantics { contentDescription = repo.getTestId("input_shipping_zip") }
@@ -579,7 +581,7 @@ fun CartCheckoutScreen(
                             value = shippingCountry,
                             onValueChange = { shippingCountry = it },
                             label = { Text("Country", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .weight(1f)
                                 .semantics { contentDescription = repo.getTestId("input_shipping_country") }
@@ -592,7 +594,7 @@ fun CartCheckoutScreen(
                     Text("Expected Delivery Date", color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(6.dp))
                     Surface(
-                        color = SlateSurface,
+                        color = if (isDark) SlateSurface else LightSurface,
                         shape = RoundedCornerShape(8.dp),
                         border = ButtonDefaults.outlinedBorder,
                         modifier = Modifier
@@ -645,7 +647,7 @@ fun CartCheckoutScreen(
                         listOf("Credit Card", "Digital Wallet / UPI", "Cash on Delivery").forEach { method ->
                             val isSel = paymentMethod == method
                             Surface(
-                                color = if (isSel) IndigoPrimary.copy(alpha = 0.2f) else SlateSurface,
+                                color = if (isSel) IndigoPrimary.copy(alpha = 0.2f) else (if (isDark) SlateSurface else LightSurface),
                                 border = if (isSel) ButtonDefaults.outlinedBorder else null,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
@@ -671,7 +673,7 @@ fun CartCheckoutScreen(
                             value = cardNumber,
                             onValueChange = { cardNumber = it },
                             label = { Text("Card Number", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .semantics { contentDescription = repo.getTestId("input_card_number") }
@@ -682,7 +684,7 @@ fun CartCheckoutScreen(
                                 value = cardExpiry,
                                 onValueChange = { cardExpiry = it },
                                 label = { Text("Expiry (MM/YY)", color = TextSecondary) },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                                 modifier = Modifier
                                     .weight(1f)
                                     .semantics { contentDescription = repo.getTestId("input_card_expiry") }
@@ -692,7 +694,7 @@ fun CartCheckoutScreen(
                                 value = cardCvv,
                                 onValueChange = { cardCvv = it },
                                 label = { Text("CVV", color = TextSecondary) },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                                 modifier = Modifier
                                     .weight(1f)
                                     .semantics { contentDescription = repo.getTestId("input_card_cvv") }
@@ -703,7 +705,7 @@ fun CartCheckoutScreen(
                             value = cardHolder,
                             onValueChange = { cardHolder = it },
                             label = { Text("Cardholder Name", color = TextSecondary) },
-                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateSurface),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateSurface else LightSurface, focusedBorderColor = IndigoPrimary, unfocusedBorderColor = if (isDark) SlateBorder else LightBorder),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .semantics { contentDescription = repo.getTestId("input_card_holder") }
@@ -714,7 +716,7 @@ fun CartCheckoutScreen(
 
                     // Final Price Confirmation Card
                     Card(
-                        backgroundColor = SlateSurface,
+                        backgroundColor = if (isDark) SlateSurface else LightSurface,
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier
                             .fillMaxWidth()

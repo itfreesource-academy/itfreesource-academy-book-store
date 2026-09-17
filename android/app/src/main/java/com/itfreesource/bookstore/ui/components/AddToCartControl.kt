@@ -50,7 +50,7 @@ fun AddToCartControl(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
                 .height(height)
-                .background(SlateSurface, RoundedCornerShape(8.dp))
+                .background(if (ThemeState.isDark) SlateSurface else LightSurface, RoundedCornerShape(8.dp))
                 .border(1.dp, IndigoPrimary.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
                 .semantics { contentDescription = repo.getTestId("cart_qty_stepper_${book.id}") }
         ) {

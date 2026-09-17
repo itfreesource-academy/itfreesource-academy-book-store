@@ -37,14 +37,16 @@ fun RentalsScreen() {
         repo.syncWithBackend()
     }
 
+    val isDark = ThemeState.isDark
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SlateBackground)
+            .background(if (isDark) SlateBackground else LightBackground)
     ) {
         // Header
         Surface(
-            color = SlateSurface,
+            color = if (isDark) SlateSurface else LightSurface,
             elevation = 4.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -114,7 +116,7 @@ fun RentalsScreen() {
             ) {
                 items(repo.borrowRecords, key = { it.id }) { record ->
                     Card(
-                        backgroundColor = SlateSurface,
+                        backgroundColor = if (isDark) SlateSurface else LightSurface,
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -220,7 +222,7 @@ fun RentalsScreen() {
                                 }
                             }
 
-                            Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 10.dp))
+                            Divider(color = if (isDark) SlateBorder else LightBorder, modifier = Modifier.padding(vertical = 10.dp))
 
                             // Fees breakdown & Actions
                             Row(

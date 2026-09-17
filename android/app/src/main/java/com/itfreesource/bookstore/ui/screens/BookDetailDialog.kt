@@ -46,13 +46,14 @@ fun BookDetailDialog(
     var showReviewModal by remember { mutableStateOf(false) }
 
     val bookReviews = repo.reviews.filter { it.bookId == book.id && it.status == ReviewStatus.approved }
+    val isDark = ThemeState.isDark
 
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            color = SlateSurface,
+            color = if (isDark) SlateSurface else LightSurface,
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth(0.94f)
@@ -82,7 +83,7 @@ fun BookDetailDialog(
                     }
                 }
 
-                Divider(color = SlateBorder, thickness = 0.5.dp)
+                Divider(color = if (isDark) SlateBorder else LightBorder, thickness = 0.5.dp)
 
                 // Scrollable Content
                 LazyColumn(
@@ -99,8 +100,8 @@ fun BookDetailDialog(
                                 .fillMaxWidth()
                                 .height(200.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(SlateBackground)
-                                .border(1.dp, SlateBorder, RoundedCornerShape(12.dp)),
+                                .background(if (isDark) SlateBackground else LightBackground)
+                                .border(1.dp, if (isDark) SlateBorder else LightBorder, RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (book.coverImage.isNotBlank()) {
@@ -177,7 +178,7 @@ fun BookDetailDialog(
                         // Title
                         Text(
                             text = book.title,
-                            color = TextPrimary,
+                            color = if (isDark) TextPrimary else LightTextPrimary,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.ExtraBold,
                             modifier = Modifier.semantics { contentDescription = repo.getTestId("detail_book_title") }
@@ -200,7 +201,7 @@ fun BookDetailDialog(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(SlateBackground, RoundedCornerShape(8.dp))
+                                .background(if (isDark) SlateBackground else LightBackground, RoundedCornerShape(8.dp))
                                 .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
@@ -297,7 +298,7 @@ fun BookDetailDialog(
                     } else {
                         items(bookReviews) { rev ->
                             Surface(
-                                color = SlateBackground,
+                                color = if (isDark) SlateBackground else LightBackground,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -328,14 +329,14 @@ fun BookDetailDialog(
                     }
                 }
 
-                Divider(color = SlateBorder, thickness = 0.5.dp)
+                Divider(color = if (isDark) SlateBorder else LightBorder, thickness = 0.5.dp)
 
                 // Sticky Bottom Action Bar
                 val inCartQty = repo.getCartQuantity(book.id)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(SlateSurface)
+                        .background(if (isDark) SlateSurface else LightSurface)
                         .padding(16.dp)
                 ) {
                     // Price and Quantity Stepper
@@ -360,8 +361,8 @@ fun BookDetailDialog(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .background(SlateBackground, RoundedCornerShape(8.dp))
-                                    .border(1.dp, SlateBorder, RoundedCornerShape(8.dp))
+                                    .background(if (isDark) SlateBackground else LightBackground, RoundedCornerShape(8.dp))
+                                    .border(1.dp, if (isDark) SlateBorder else LightBorder, RoundedCornerShape(8.dp))
                             ) {
                                 IconButton(
                                     onClick = { if (quantity > 1) quantity-- },
@@ -428,7 +429,7 @@ fun BookDetailDialog(
                             },
                             enabled = book.stock > 0,
                             shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
+                            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = if (isDark) SlateBackground else LightBackground),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                             modifier = Modifier
                                 .weight(1f)
@@ -478,7 +479,7 @@ fun BookDetailDialog(
                         value = revTitle,
                         onValueChange = { revTitle = it },
                         label = { Text("Headline / Summary", color = TextSecondary) },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateBackground),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateBackground else LightBackground),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { contentDescription = repo.getTestId("input_review_title") }
@@ -489,7 +490,7 @@ fun BookDetailDialog(
                         onValueChange = { revComment = it },
                         label = { Text("Your detailed review", color = TextSecondary) },
                         maxLines = 4,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateBackground),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (isDark) TextPrimary else LightTextPrimary, backgroundColor = if (isDark) SlateBackground else LightBackground),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)

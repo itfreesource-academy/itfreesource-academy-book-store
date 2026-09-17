@@ -110,25 +110,25 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       {isOpen && (
         <div
           data-testid={`${testId}-popover`}
-          className="absolute left-0 mt-2 z-40 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-4 w-72 animate-fade-in text-slate-100"
+          className="absolute left-0 mt-2 z-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl p-4 w-72 animate-fade-in text-slate-900 dark:text-slate-100"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
             <button
               type="button"
               onClick={prevMonth}
-              className="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white"
+              className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               data-testid={`${testId}-prev-month`}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="font-semibold text-slate-200 text-sm">
+            <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
               {monthNames[month]} {year}
             </span>
             <button
               type="button"
               onClick={nextMonth}
-              className="p-1 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white"
+              className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               data-testid={`${testId}-next-month`}
             >
               <ChevronRight className="w-4 h-4" />
@@ -138,7 +138,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           {/* Days of week */}
           <div className="grid grid-cols-7 gap-1 text-center mb-1">
             {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
-              <span key={d} className="text-xs font-semibold text-slate-500">
+              <span key={d} className="text-xs font-semibold text-slate-400 dark:text-slate-500">
                 {d}
               </span>
             ))}
@@ -172,10 +172,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     isSelected
                       ? 'bg-indigo-600 text-white font-bold'
                       : isToday
-                      ? 'bg-indigo-950/60 text-indigo-300 font-semibold border border-indigo-700'
+                      ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-700'
                       : isDisabled
-                      ? 'text-slate-600 cursor-not-allowed'
-                      : 'hover:bg-slate-800 text-slate-300'
+                      ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   {day}
@@ -185,7 +185,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           </div>
 
           {/* Quick preset buttons */}
-          <div className="mt-3 pt-3 border-t border-slate-800 flex justify-between">
+          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between">
             <button
               type="button"
               onClick={() => {
@@ -193,7 +193,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onChange(today);
                 setIsOpen(false);
               }}
-              className="text-xs font-semibold text-indigo-400 hover:text-indigo-300"
+              className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
               data-testid={`${testId}-btn-today`}
             >
               Today
@@ -205,7 +205,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onChange(tomorrow);
                 setIsOpen(false);
               }}
-              className="text-xs font-semibold text-slate-400 hover:text-slate-200"
+              className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
               data-testid={`${testId}-btn-tomorrow`}
             >
               Tomorrow

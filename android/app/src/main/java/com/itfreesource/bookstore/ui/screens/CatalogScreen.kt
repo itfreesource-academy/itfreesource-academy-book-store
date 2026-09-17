@@ -76,16 +76,18 @@ fun CatalogScreen(
         }
     }
 
+    val isDark = ThemeState.isDark
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SlateBackground)
+            .background(if (isDark) SlateBackground else LightBackground)
     ) {
         // Search & Filter Action Bar
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(SlateSurface)
+                .background(if (isDark) SlateSurface else LightSurface)
                 .padding(12.dp)
         ) {
             // Search Input Row
@@ -96,9 +98,9 @@ fun CatalogScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search by title, author, tag...", color = TextSecondary, fontSize = 13.sp) },
+                    placeholder = { Text("Search by title, author, tag...", color = if (isDark) TextSecondary else LightTextSecondary, fontSize = 13.sp) },
                     leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = null, tint = TextSecondary)
+                        Icon(Icons.Default.Search, contentDescription = null, tint = if (isDark) TextSecondary else LightTextSecondary)
                     },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
@@ -106,16 +108,16 @@ fun CatalogScreen(
                                 onClick = { searchQuery = "" },
                                 modifier = Modifier.semantics { contentDescription = repo.getTestId("search_clear_button") }
                             ) {
-                                Icon(Icons.Default.Close, contentDescription = "Clear search", tint = TextSecondary)
+                                Icon(Icons.Default.Close, contentDescription = "Clear search", tint = if (isDark) TextSecondary else LightTextSecondary)
                             }
                         }
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = TextPrimary,
-                        backgroundColor = SlateBackground,
+                        textColor = if (isDark) TextPrimary else LightTextPrimary,
+                        backgroundColor = if (isDark) SlateBackground else LightBackground,
                         focusedBorderColor = IndigoPrimary,
-                        unfocusedBorderColor = SlateBorder
+                        unfocusedBorderColor = if (isDark) SlateBorder else LightBorder
                     ),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -131,13 +133,13 @@ fun CatalogScreen(
                     onClick = { showFilterSheet = !showFilterSheet },
                     modifier = Modifier
                         .size(46.dp)
-                        .background(if (showFilterSheet) IndigoPrimary else SlateBackground, RoundedCornerShape(8.dp))
+                        .background(if (showFilterSheet) IndigoPrimary else (if (isDark) SlateBackground else LightBackground), RoundedCornerShape(8.dp))
                         .semantics { contentDescription = repo.getTestId("btn_toggle_filters") }
                 ) {
                     Icon(
                         Icons.Default.FilterList,
                         contentDescription = "Filters",
-                        tint = if (showFilterSheet) Color.White else TextPrimary
+                        tint = if (showFilterSheet) Color.White else (if (isDark) TextPrimary else LightTextPrimary)
                     )
                 }
 
@@ -148,13 +150,13 @@ fun CatalogScreen(
                     onClick = { isGridView = !isGridView },
                     modifier = Modifier
                         .size(46.dp)
-                        .background(SlateBackground, RoundedCornerShape(8.dp))
+                        .background(if (isDark) SlateBackground else LightBackground, RoundedCornerShape(8.dp))
                         .semantics { contentDescription = repo.getTestId("btn_view_mode_toggle") }
                 ) {
                     Icon(
                         if (isGridView) Icons.Default.ViewList else Icons.Default.GridView,
                         contentDescription = "Toggle view mode",
-                        tint = TextPrimary
+                        tint = if (isDark) TextPrimary else LightTextPrimary
                     )
                 }
             }
@@ -165,7 +167,7 @@ fun CatalogScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp)
-                        .background(SlateBackground, RoundedCornerShape(8.dp))
+                        .background(if (isDark) SlateBackground else LightBackground, RoundedCornerShape(8.dp))
                         .padding(12.dp)
                         .semantics { contentDescription = repo.getTestId("filter_panel_container") }
                 ) {
@@ -176,7 +178,7 @@ fun CatalogScreen(
                     ) {
                         Text(
                             text = "Max Price: ${repo.formatPrice(maxPriceFilter)}",
-                            color = TextPrimary,
+                            color = if (isDark) TextPrimary else LightTextPrimary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.semantics { contentDescription = repo.getTestId("filter_price_label") }
@@ -248,7 +250,7 @@ fun CatalogScreen(
                 // "All" chip
                 val isAllSelected = selectedCategoryId == "all"
                 Surface(
-                    color = if (isAllSelected) IndigoPrimary else SlateBackground,
+                    color = if (isAllSelected) IndigoPrimary else (if (isDark) SlateBackground else LightBackground),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
                         .padding(end = 6.dp)
@@ -257,7 +259,7 @@ fun CatalogScreen(
                 ) {
                     Text(
                         text = "All Categories (${repo.books.size})",
-                        color = if (isAllSelected) Color.White else TextSecondary,
+                        color = if (isAllSelected) Color.White else (if (isDark) TextSecondary else LightTextSecondary),
                         fontSize = 11.sp,
                         fontWeight = if (isAllSelected) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
@@ -268,7 +270,7 @@ fun CatalogScreen(
                 repo.categories.forEach { cat ->
                     val isCatSelected = selectedCategoryId == cat.id
                     Surface(
-                        color = if (isCatSelected) IndigoPrimary else SlateBackground,
+                        color = if (isCatSelected) IndigoPrimary else (if (isDark) SlateBackground else LightBackground),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .padding(end = 6.dp)
@@ -277,7 +279,7 @@ fun CatalogScreen(
                     ) {
                         Text(
                             text = cat.name,
-                            color = if (isCatSelected) Color.White else TextSecondary,
+                            color = if (isCatSelected) Color.White else (if (isDark) TextSecondary else LightTextSecondary),
                             fontSize = 11.sp,
                             fontWeight = if (isCatSelected) FontWeight.Bold else FontWeight.Normal,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
@@ -297,7 +299,7 @@ fun CatalogScreen(
         ) {
             Text(
                 text = "${filteredBooks.size} Books Available",
-                color = TextSecondary,
+                color = if (isDark) TextSecondary else LightTextSecondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.semantics { contentDescription = repo.getTestId("books_count_label") }
@@ -328,7 +330,7 @@ fun CatalogScreen(
                 DropdownMenu(
                     expanded = sortMenuExpanded,
                     onDismissRequest = { sortMenuExpanded = false },
-                    modifier = Modifier.background(SlateSurface)
+                    modifier = Modifier.background(if (isDark) SlateSurface else LightSurface)
                 ) {
                     SortOption.values().forEach { opt ->
                         DropdownMenuItem(
@@ -338,7 +340,7 @@ fun CatalogScreen(
                             },
                             modifier = Modifier.semantics { contentDescription = repo.getTestId("sort_option_${opt.name}") }
                         ) {
-                            Text(opt.label, color = TextPrimary)
+                            Text(opt.label, color = if (isDark) TextPrimary else LightTextPrimary)
                         }
                     }
                 }
@@ -358,7 +360,7 @@ fun CatalogScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "No books found matching criteria",
-                        color = TextPrimary,
+                        color = if (isDark) TextPrimary else LightTextPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.semantics { contentDescription = repo.getTestId("empty_catalog_label") }
@@ -366,7 +368,7 @@ fun CatalogScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Try clearing filters or search terms",
-                        color = TextSecondary,
+                        color = if (isDark) TextSecondary else LightTextSecondary,
                         fontSize = 13.sp
                     )
                 }

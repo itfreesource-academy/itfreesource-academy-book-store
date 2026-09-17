@@ -58,14 +58,16 @@ fun OrdersScreen() {
         repo.syncWithBackend()
     }
 
+    val isDark = ThemeState.isDark
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SlateBackground)
+            .background(if (isDark) SlateBackground else LightBackground)
     ) {
         // Header
         Surface(
-            color = SlateSurface,
+            color = if (isDark) SlateSurface else LightSurface,
             elevation = 4.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -165,7 +167,7 @@ fun OrdersScreen() {
             ) {
                 items(displayedOrders, key = { it.id }) { ord ->
                     Card(
-                        backgroundColor = SlateSurface,
+                        backgroundColor = if (isDark) SlateSurface else LightSurface,
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -219,7 +221,7 @@ fun OrdersScreen() {
                                 }
                             }
 
-                            Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 10.dp))
+                            Divider(color = if (isDark) SlateBorder else LightBorder, modifier = Modifier.padding(vertical = 10.dp))
 
                             // Order Items
                             ord.items.forEach { itm ->
@@ -331,7 +333,7 @@ fun OrdersScreen() {
                                                 .height(32.dp)
                                                 .semantics { contentDescription = repo.getTestId("btn_ship_order_${ord.id}") }
                                         ) {
-                                            Text("Ship Order", color = SlateBackground, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                            Text("Ship Order", color = if (isDark) SlateBackground else LightBackground, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                         }
                                     } else if (canFulfill && ord.status == OrderStatus.shipped) {
                                         Button(
@@ -373,7 +375,7 @@ fun OrdersScreen() {
     if (trackingDialogOrderId != null) {
         AlertDialog(
             onDismissRequest = { trackingDialogOrderId = null },
-            backgroundColor = SlateSurface,
+            backgroundColor = if (isDark) SlateSurface else LightSurface,
             title = { Text("Enter Shipping Tracking Number", color = TextPrimary) },
             text = {
                 OutlinedTextField(

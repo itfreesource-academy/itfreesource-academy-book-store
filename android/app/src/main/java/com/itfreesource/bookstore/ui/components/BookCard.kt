@@ -38,13 +38,15 @@ fun BookCard(
 ) {
     val repo = BookStoreRepository
 
+    val isDark = ThemeState.isDark
+
     Card(
-        backgroundColor = SlateSurface,
+        backgroundColor = if (isDark) SlateSurface else LightSurface,
         shape = RoundedCornerShape(12.dp),
-        elevation = 2.dp,
+        elevation = if (isDark) 2.dp else 1.dp,
         modifier = modifier
             .fillMaxWidth()
-            .border(0.5.dp, SlateBorder, RoundedCornerShape(12.dp))
+            .border(0.5.dp, if (isDark) SlateBorder else LightBorder, RoundedCornerShape(12.dp))
             .clickable { onBookClick(book) }
             .semantics { contentDescription = repo.getTestId("book_card_${book.id}") }
     ) {
@@ -55,8 +57,8 @@ fun BookCard(
                     .fillMaxWidth()
                     .height(130.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(SlateBackground)
-                    .border(1.dp, SlateBorder, RoundedCornerShape(8.dp)),
+                    .background(if (isDark) SlateBackground else LightBackground)
+                    .border(1.dp, if (isDark) SlateBorder else LightBorder, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 if (book.coverImage.isNotBlank()) {
@@ -82,7 +84,7 @@ fun BookCard(
                     else -> Pair("In Stock (${book.stock})", EmeraldAccent)
                 }
                 Surface(
-                    color = SlateSurface.copy(alpha = 0.92f),
+                    color = if (isDark) SlateSurface.copy(alpha = 0.92f) else LightSurface.copy(alpha = 0.95f),
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -127,7 +129,7 @@ fun BookCard(
             // Title (Fixed 2 lines for grid uniformity, never wrapped to single letters)
             Text(
                 text = book.title,
-                color = TextPrimary,
+                color = if (isDark) TextPrimary else LightTextPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
                 minLines = 2,
@@ -139,7 +141,7 @@ fun BookCard(
             // Author
             Text(
                 text = "by ${book.authorName}",
-                color = TextSecondary,
+                color = if (isDark) TextSecondary else LightTextSecondary,
                 fontSize = 11.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -162,7 +164,7 @@ fun BookCard(
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = "${book.rating} (${book.reviewCount})",
-                    color = TextSecondary,
+                    color = if (isDark) TextSecondary else LightTextSecondary,
                     fontSize = 11.sp,
                     maxLines = 1,
                     modifier = Modifier.semantics { contentDescription = repo.getTestId("book_rating_${book.id}") }
@@ -178,7 +180,7 @@ fun BookCard(
             ) {
                 Text(
                     text = repo.formatPrice(book.price),
-                    color = Color.White,
+                    color = if (isDark) Color.White else LightTextPrimary,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 15.sp,
                     maxLines = 1,
@@ -188,7 +190,7 @@ fun BookCard(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = repo.formatPrice(book.originalPrice),
-                        color = TextSecondary,
+                        color = if (isDark) TextSecondary else LightTextSecondary,
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.LineThrough,
                         maxLines = 1
@@ -214,7 +216,7 @@ fun BookCard(
                 OutlinedButton(
                     onClick = { onBorrow(book) },
                     enabled = book.stock > 0,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = SlateBackground),
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = if (isDark) SlateBackground else LightBackground),
                     shape = RoundedCornerShape(6.dp),
                     contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp),
                     modifier = Modifier
@@ -226,7 +228,7 @@ fun BookCard(
                         text = "Borrow • ${repo.formatPrice(book.rentalPrice)}",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextPrimary,
+                        color = if (isDark) TextPrimary else LightTextPrimary,
                         maxLines = 1
                     )
                 }

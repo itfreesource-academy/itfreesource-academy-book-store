@@ -40,17 +40,21 @@ fun BottomNavigationBar(
 ) {
     val repo = BookStoreRepository
     val role = repo.currentUser?.role
+    val isDark = ThemeState.isDark
+    val navBg = if (isDark) SlateSurface else LightSurface
+    val unselectedColor = if (isDark) TextSecondary else LightTextSecondary
 
-    // Show management tab if user has role permissions
+    // Enterprise navigation: consumer navigation is clean and uncluttered.
+    // Management tab is only visible to store managers / admins.
     val screens = if (role in listOf(UserRole.admin, UserRole.store_manager, UserRole.inventory_clerk, UserRole.book_reviewer, UserRole.auditor)) {
-        listOf(AppScreen.CATALOG, AppScreen.CART, AppScreen.ORDERS, AppScreen.RENTALS, AppScreen.SANDBOX, AppScreen.MANAGEMENT)
+        listOf(AppScreen.CATALOG, AppScreen.CART, AppScreen.ORDERS, AppScreen.RENTALS, AppScreen.MANAGEMENT)
     } else {
-        listOf(AppScreen.CATALOG, AppScreen.CART, AppScreen.ORDERS, AppScreen.RENTALS, AppScreen.SANDBOX)
+        listOf(AppScreen.CATALOG, AppScreen.CART, AppScreen.ORDERS, AppScreen.RENTALS)
     }
 
     BottomNavigation(
-        backgroundColor = SlateSurface,
-        elevation = 8.dp,
+        backgroundColor = navBg,
+        elevation = if (isDark) 8.dp else 4.dp,
         modifier = Modifier.semantics { contentDescription = repo.getTestId("bottom_navigation_bar") }
     ) {
         screens.forEach { screen ->
@@ -62,7 +66,7 @@ fun BottomNavigationBar(
                         Icon(
                             imageVector = screen.icon,
                             contentDescription = null,
-                            tint = if (isSelected) IndigoPrimary else TextSecondary,
+                            tint = if (isSelected) IndigoPrimary else unselectedColor,
                             modifier = Modifier.size(22.dp)
                         )
                         if (screen == AppScreen.CART && cartItemCount > 0) {
@@ -91,7 +95,7 @@ fun BottomNavigationBar(
                         text = screen.title,
                         fontSize = 9.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isSelected) IndigoPrimary else TextSecondary,
+                        color = if (isSelected) IndigoPrimary else unselectedColor,
                         maxLines = 1,
                         softWrap = false
                     )

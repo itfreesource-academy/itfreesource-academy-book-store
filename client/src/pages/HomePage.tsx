@@ -61,7 +61,7 @@ export const HomePage: React.FC = () => {
               <span className="block text-2xl font-black text-slate-900 dark:text-white" data-testid="stat-total-books">
                 {stats.totalBooks}
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Catalog Titles</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Curated Titles</span>
             </div>
           </div>
 
@@ -71,21 +71,21 @@ export const HomePage: React.FC = () => {
             </div>
             <div>
               <span className="block text-2xl font-black text-slate-900 dark:text-white" data-testid="stat-total-users">
-                11
+                12,500+
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">RBAC Test Personas</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Active Readers</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/40 flex items-center justify-center font-bold">
-              <FileCode2 className="w-6 h-6" />
+              <CheckCircle2 className="w-6 h-6" />
             </div>
             <div>
-              <span className="block text-2xl font-black text-slate-900 dark:text-white" data-testid="stat-swagger-apis">
-                25+
+              <span className="block text-2xl font-black text-slate-900 dark:text-white" data-testid="stat-verified-rating">
+                4.9 / 5.0
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Swagger CRUD APIs</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Reader Satisfaction</span>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ export const HomePage: React.FC = () => {
               <span className="block text-2xl font-black text-slate-900 dark:text-white" data-testid="stat-stock-units">
                 {stats.totalStockUnits}
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Units in Warehouse</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Available in Stock</span>
             </div>
           </div>
         </div>
@@ -170,57 +170,57 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* QA Automation & SDET Feature Callout */}
+      {/* Academic & Professional Reading Showcase */}
       <section
-        data-testid="qa-feature-callout"
+        data-testid="enterprise-feature-callout"
         className="rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-900 dark:via-brand-950 dark:to-slate-900 text-slate-900 dark:text-white p-8 md:p-12 border border-slate-200 dark:border-slate-800 relative overflow-hidden shadow-sm dark:shadow-2xl"
       >
         <div className="max-w-3xl space-y-4">
           <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/30 inline-block">
-            QA Engineering Showcase
+            Academic & Professional Reading
           </span>
           <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
-            Engineered for Modern Test Automation & LinkedIn Portfolios
+            Curated Literature for Engineers, Architects & Leaders
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-            Every element in this platform is intentionally outfitted with standard <code className="text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-brand-950/80 px-1 py-0.5 rounded font-mono">data-testid</code> attributes, semantic ARIA labels, and explicit roles. Test frameworks like Playwright, Cypress, Selenium, and Appium can easily target calendars, sliders, modals, breadcrumbs, and Shadow DOM components.
+            Expand your technical mastery with industry-standard texts spanning cloud infrastructure, cybersecurity, full-stack systems, and engineering leadership. Enjoy flexible 10-day digital loans, permanent volume purchases, and synchronized reading across web and mobile.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span>10 Distinct User Personas & RBAC</span>
+              <span>Instant Global Multi-Currency Checkout</span>
             </div>
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span>Full OpenAPI 3.0 Swagger at /api/swagger</span>
+              <span>Flexible 10-Day Academic Book Lending</span>
             </div>
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span>Network Latency & Error Code Simulators</span>
+              <span>Verified Reader Community Reviews & Ratings</span>
             </div>
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span>1-Click Instant Test Database Reset</span>
+              <span>Real-Time Warehouse Stock & Digital Delivery</span>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <Link
-              to="/playground"
-              data-testid="home-cta-playground"
+              to="/books"
+              data-testid="home-cta-books"
               className="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-brand-500/30 transition-all flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Explore QA Sandbox</span>
+              <BookOpen className="w-4 h-4" />
+              <span>Explore Complete Catalog</span>
             </Link>
             <Link
-              to="/swagger"
-              data-testid="home-cta-swagger"
+              to="/borrowed"
+              data-testid="home-cta-borrowed"
               className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/10 text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer"
             >
-              <FileCode2 className="w-4 h-4" />
-              <span>View Swagger UI</span>
+              <Sparkles className="w-4 h-4" />
+              <span>Academic Loan Hub</span>
             </Link>
           </div>
         </div>

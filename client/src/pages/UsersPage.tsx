@@ -466,8 +466,8 @@ export const UsersPage: React.FC = () => {
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-800 animate-in fade-in zoom-in duration-150 text-slate-100">
-            <div className="bg-gradient-to-r from-purple-950 to-indigo-950 p-6 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-150 text-slate-900 dark:text-slate-100">
+            <div className="bg-slate-50 dark:bg-slate-950 p-6 text-slate-900 dark:text-white flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
               <div>
                 <h3 className="text-lg font-bold">Edit User Persona</h3>
                 <p className="text-purple-300 text-xs mt-0.5">
@@ -476,7 +476,7 @@ export const UsersPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditingUser(null)}
-                className="text-white/70 hover:text-white hover:bg-white/10 rounded-full w-8 h-8 flex items-center justify-center"
+                className="text-slate-400 hover:text-slate-700 dark:text-white/70 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-full w-8 h-8 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -484,7 +484,7 @@ export const UsersPage: React.FC = () => {
 
             <form onSubmit={handleSaveUser} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
                 <input
                   type="text"
                   value={editFullName}
@@ -495,7 +495,7 @@ export const UsersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Email Address</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
                 <input
                   type="email"
                   value={editEmail}
@@ -507,7 +507,7 @@ export const UsersPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Assigned Role</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Assigned Role</label>
                   <select
                     value={editRole}
                     onChange={(e) => setEditRole(e.target.value as UserRole)}
@@ -522,7 +522,7 @@ export const UsersPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Status</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Status</label>
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value as 'active' | 'suspended')}
@@ -536,7 +536,7 @@ export const UsersPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Regional Timezone</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Regional Timezone</label>
                   <select
                     value={editTimezone}
                     onChange={(e) => setEditTimezone(e.target.value as Timezone)}
@@ -551,7 +551,7 @@ export const UsersPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Regional Currency</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Regional Currency</label>
                   <select
                     value={editCurrency}
                     onChange={(e) => setEditCurrency(e.target.value as Currency)}
@@ -590,8 +590,8 @@ export const UsersPage: React.FC = () => {
       {/* Add New User Modal */}
       {isAddUserOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-800 animate-in fade-in zoom-in duration-150 text-slate-100">
-            <div className="bg-gradient-to-r from-indigo-950 to-slate-900 p-6 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-150 text-slate-900 dark:text-slate-100">
+            <div className="bg-slate-50 dark:bg-slate-950 p-6 text-slate-900 dark:text-white flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
               <div>
                 <h3 className="text-lg font-bold">Add Custom QA User</h3>
                 <p className="text-indigo-300 text-xs mt-0.5">
@@ -600,7 +600,7 @@ export const UsersPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsAddUserOpen(false)}
-                className="text-white/70 hover:text-white hover:bg-white/10 rounded-full w-8 h-8 flex items-center justify-center"
+                className="text-slate-400 hover:text-slate-700 dark:text-white/70 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-full w-8 h-8 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -609,7 +609,7 @@ export const UsersPage: React.FC = () => {
             <form onSubmit={handleCreateUser} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Username</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Username</label>
                   <input
                     type="text"
                     value={newUsername}
@@ -621,7 +621,7 @@ export const UsersPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Password</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
                   <input
                     type="text"
                     value={newPassword}
@@ -634,7 +634,7 @@ export const UsersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
                 <input
                   type="text"
                   value={newFullName}
@@ -646,7 +646,7 @@ export const UsersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Email Address</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
                 <input
                   type="email"
                   value={newEmail}
@@ -658,7 +658,7 @@ export const UsersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">Assigned Role</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Assigned Role</label>
                 <select
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value as UserRole)}
@@ -674,7 +674,7 @@ export const UsersPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Timezone</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Timezone</label>
                   <select
                     value={newTimezone}
                     onChange={(e) => setNewTimezone(e.target.value as Timezone)}
@@ -689,7 +689,7 @@ export const UsersPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Currency</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Currency</label>
                   <select
                     value={newCurrency}
                     onChange={(e) => setNewCurrency(e.target.value as Currency)}

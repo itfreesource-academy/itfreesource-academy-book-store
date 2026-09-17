@@ -1,5 +1,7 @@
 package com.itfreesource.bookstore.ui.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -47,7 +49,7 @@ fun ProfileDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            color = SlateSurface,
+            color = if (ThemeState.isDark) SlateSurface else LightSurface,
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth(0.95f)
@@ -62,7 +64,7 @@ fun ProfileDialog(
                 ) {
                     Text(
                         text = if (showLoginForm) "🔑 Manual Sign In" else "👤 User Profile",
-                        color = TextPrimary,
+                        color = if (ThemeState.isDark) TextPrimary else LightTextPrimary,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -70,19 +72,19 @@ fun ProfileDialog(
                         onClick = onDismiss,
                         modifier = Modifier.semantics { contentDescription = repo.getTestId("btn_close_profile_dialog") }
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Close", tint = TextSecondary)
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = if (ThemeState.isDark) TextSecondary else LightTextSecondary)
                     }
                 }
 
-                Divider(color = SlateBorder, modifier = Modifier.padding(vertical = 10.dp))
+                Divider(color = if (ThemeState.isDark) SlateBorder else LightBorder, modifier = Modifier.padding(vertical = 10.dp))
 
                 if (showLoginForm) {
                     // Manual Login Form
                     OutlinedTextField(
                         value = loginUsername,
                         onValueChange = { loginUsername = it },
-                        label = { Text("Username", color = TextSecondary) },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateBackground),
+                        label = { Text("Username", color = if (ThemeState.isDark) TextSecondary else LightTextSecondary) },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (ThemeState.isDark) TextPrimary else LightTextPrimary, backgroundColor = if (ThemeState.isDark) SlateBackground else LightBackground),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { contentDescription = repo.getTestId("login_input_username") }
@@ -93,16 +95,16 @@ fun ProfileDialog(
                     OutlinedTextField(
                         value = loginPassword,
                         onValueChange = { loginPassword = it },
-                        label = { Text("Password", color = TextSecondary) },
+                        label = { Text("Password", color = if (ThemeState.isDark) TextSecondary else LightTextSecondary) },
                         trailingIcon = {
                             IconButton(
                                 onClick = { loginPasswordVisible = !loginPasswordVisible },
                                 modifier = Modifier.semantics { contentDescription = repo.getTestId("login_btn_toggle_password") }
                             ) {
-                                Icon(if (loginPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = null, tint = TextSecondary)
+                                Icon(if (loginPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = null, tint = if (ThemeState.isDark) TextSecondary else LightTextSecondary)
                             }
                         },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = TextPrimary, backgroundColor = SlateBackground),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = if (ThemeState.isDark) TextPrimary else LightTextPrimary, backgroundColor = if (ThemeState.isDark) SlateBackground else LightBackground),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { contentDescription = repo.getTestId("login_input_password") }
@@ -147,7 +149,7 @@ fun ProfileDialog(
                             onClick = { showLoginForm = false },
                             modifier = Modifier.semantics { contentDescription = repo.getTestId("login_btn_cancel") }
                         ) {
-                            Text("Cancel", color = TextSecondary)
+                            Text("Cancel", color = if (ThemeState.isDark) TextSecondary else LightTextSecondary)
                         }
                     }
                 } else {
@@ -186,7 +188,7 @@ fun ProfileDialog(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = user?.fullName ?: "Guest Explorer",
-                                    color = TextPrimary,
+                                    color = if (ThemeState.isDark) TextPrimary else LightTextPrimary,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -208,7 +210,7 @@ fun ProfileDialog(
                             }
                             Text(
                                 text = "@${user?.username} • ${user?.email}",
-                                color = TextSecondary,
+                                color = if (ThemeState.isDark) TextSecondary else LightTextSecondary,
                                 fontSize = 12.sp,
                                 modifier = Modifier.semantics { contentDescription = repo.getTestId("profile_username_label") }
                             )
@@ -218,7 +220,7 @@ fun ProfileDialog(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // Currency Selection
-                    Text("Selected Currency", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Text("Selected Currency", color = if (ThemeState.isDark) TextSecondary else LightTextSecondary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -228,7 +230,7 @@ fun ProfileDialog(
                         Currency.values().forEach { curr ->
                             val isSel = repo.activeCurrency == curr
                             Surface(
-                                color = if (isSel) IndigoPrimary else SlateBackground,
+                                color = if (isSel) IndigoPrimary else if (ThemeState.isDark) SlateBackground else LightBackground,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .padding(end = 6.dp)
@@ -237,7 +239,7 @@ fun ProfileDialog(
                             ) {
                                 Text(
                                     text = "${curr.flag} ${curr.code} (${curr.symbol})",
-                                    color = if (isSel) Color.White else TextSecondary,
+                                    color = if (isSel) Color.White else if (ThemeState.isDark) TextSecondary else LightTextSecondary,
                                     fontSize = 11.sp,
                                     fontWeight = if (isSel) FontWeight.Bold else FontWeight.Normal,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
@@ -249,9 +251,9 @@ fun ProfileDialog(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     // Timezone Selection
-                    Text("Active Regional Timezone", color = TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Text("Active Regional Timezone", color = if (ThemeState.isDark) TextSecondary else LightTextSecondary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                     Surface(
-                        color = SlateBackground,
+                        color = if (ThemeState.isDark) SlateBackground else LightBackground,
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -259,7 +261,7 @@ fun ProfileDialog(
                     ) {
                         Text(
                             text = repo.activeTimezone,
-                            color = TextPrimary,
+                            color = if (ThemeState.isDark) TextPrimary else LightTextPrimary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier
@@ -268,8 +270,43 @@ fun ProfileDialog(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    val context = LocalContext.current
+                    // Official Practical Quality Engineering Course card
+                    Surface(
+                        color = if (ThemeState.isDark) Color(0xFF1E1B4B) else Color(0xFFF3E8FF),
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://academy.itfreesource.com"))
+                                context.startActivity(intent)
+                            }
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("🎓", fontSize = 18.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Practical Quality Engineering Course",
+                                    color = if (ThemeState.isDark) Color(0xFFC7D2FE) else Color(0xFF6B21A8),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Explore 11 RBAC test personas, credentials & labs on academy.itfreesource.com",
+                                    color = if (ThemeState.isDark) Color(0xFFA5B4FC) else Color(0xFF7E22CE),
+                                    fontSize = 10.sp
+                                )
+                            }
+                        }
+                    }
 
+                    Spacer(modifier = Modifier.height(10.dp))
                     // Actions Row (Switch via Manual Sign In OR Logout)
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(
