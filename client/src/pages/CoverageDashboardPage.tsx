@@ -161,17 +161,17 @@ export const CoverageDashboardPage: React.FC = () => {
       <Breadcrumbs items={[{ label: 'QA Automation & Test Coverage Dashboard' }]} />
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:to-blue-950 rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-sm dark:shadow-xl border border-slate-200 dark:border-slate-800">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div>
-            <div className="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md mb-3 border border-white/15">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="inline-flex items-center space-x-2 bg-indigo-100 dark:bg-white/10 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md mb-3 border border-indigo-200 dark:border-white/15 text-indigo-800 dark:text-white">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Automated QA & Unit Test Coverage Suite</span>
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               Test Coverage & Quality Engineering Hub
             </h1>
-            <p className="text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
               Real-time calculation of statement, branch, function, and line coverage for the Book Store engine.
               Includes support for external automation repos (Playwright, Cypress, Postman) and free cloud dashboards.
             </p>

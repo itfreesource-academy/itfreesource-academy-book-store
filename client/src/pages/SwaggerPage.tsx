@@ -112,23 +112,23 @@ export const SwaggerPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-12" data-testid="swagger-page">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-slate-800">
+      <div className="bg-gradient-to-r from-emerald-50 via-white to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-sm dark:shadow-xl border border-slate-200 dark:border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-[11px] font-bold tracking-wide uppercase flex items-center gap-1.5">
+              <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 rounded-full text-[11px] font-bold tracking-wide uppercase flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 OpenAPI 3.0.3 Live Specification
               </span>
-              <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-[11px] font-bold">
+              <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 rounded-full text-[11px] font-bold">
                 JWT Auth Enabled
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3">
-              <FileCode2 className="w-8 h-8 text-emerald-400" />
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3 text-slate-900 dark:text-white">
+              <FileCode2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
               Interactive API Documentation
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
               Test and explore all ITFreeSource Academy RESTful endpoints directly from this interactive console. Authorize using your JWT token to run authenticated routes.
             </p>
           </div>
@@ -137,7 +137,7 @@ export const SwaggerPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={initSwagger}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-white/10"
+              className="px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
               title="Reload Swagger UI"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />

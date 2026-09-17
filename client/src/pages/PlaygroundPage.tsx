@@ -389,26 +389,26 @@ export const PlaygroundPage: React.FC = () => {
       <Breadcrumbs items={[{ label: 'QA Automation Sandbox' }]} />
 
       {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white border border-purple-800/50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-purple-50 via-white to-indigo-50 dark:from-purple-900 dark:via-indigo-900 dark:to-slate-900 rounded-3xl p-6 md:p-8 text-slate-900 dark:text-white border border-purple-200 dark:border-purple-800/50 shadow-sm dark:shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
               Automation Engineering & SDET Lab
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight" data-testid="playground-title">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white" data-testid="playground-title">
             QA Automation Testing Playground
           </h1>
-          <p className="text-xs text-purple-200 leading-relaxed">
+          <p className="text-xs text-purple-900/80 dark:text-purple-200 leading-relaxed">
             Enterprise QA sandbox with 7-microservice fault injection, Apache Kafka event streaming with consumer lag and poison-pill DLQ, Enterprise Webhook HMAC verification, and complex UI automation edge cases.
           </p>
         </div>
 
         {/* Dynamic ID Toggle Switch */}
-        <div className="bg-slate-950/60 border border-white/10 p-4 rounded-2xl flex items-center gap-4 flex-shrink-0">
+        <div className="bg-white/80 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 p-4 rounded-2xl flex items-center gap-4 flex-shrink-0 shadow-sm">
           <div>
-            <h5 className="font-bold text-xs text-white">Dynamic Test IDs</h5>
-            <p className="text-[10px] text-slate-400">Append random hash to data-testid</p>
+            <h5 className="font-bold text-xs text-slate-900 dark:text-white">Dynamic Test IDs</h5>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Append random hash to data-testid</p>
           </div>
           <button
             onClick={() => setUseDynamicIds(!useDynamicIds)}

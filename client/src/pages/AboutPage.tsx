@@ -30,24 +30,24 @@ export const AboutPage: React.FC = () => {
       <Breadcrumbs items={[{ label: 'About Project & QE Academy' }]} />
 
       {/* Hero Showcase */}
-      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden border border-slate-800">
+      <div className="bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 rounded-3xl p-8 sm:p-12 text-slate-900 dark:text-white shadow-sm dark:shadow-xl relative overflow-hidden border border-slate-200 dark:border-slate-800">
         <div className="max-w-3xl relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-400/30">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-bold border border-indigo-200 dark:border-indigo-400/30">
             <Award className="w-3.5 h-3.5" />
             <span>Open Source QE & Automation Playground</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight" data-testid="about-hero-title">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight text-slate-900 dark:text-white" data-testid="about-hero-title">
             ITFreeSource Academy Book Store
           </h1>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
             An enterprise-grade, fullstack TypeScript learning platform and playground created as an open-source contribution by{' '}
             <a
               href="https://www.linkedin.com/in/vishalprajapati2k25/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-amber-400 font-extrabold hover:underline inline-flex items-center gap-1"
+              className="text-amber-600 dark:text-amber-400 font-extrabold hover:underline inline-flex items-center gap-1"
               data-testid="creator-linkedin-link"
             >
               <span>Vishal Prajapati</span>
@@ -71,7 +71,7 @@ export const AboutPage: React.FC = () => {
               href="https://github.com/itfreesource-academy/itfreesource-academy-book-store"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/20 font-bold text-xs shadow-sm transition-all"
             >
               <Github className="w-4 h-4" />
               <span>GitHub Repository</span>
@@ -86,71 +86,71 @@ export const AboutPage: React.FC = () => {
       {/* Course & Quality Engineering Pillars */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-extrabold text-white">
+          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
             What You Can Learn & Test Here
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Everything required to become an elite SDET and Quality Engineering Lead.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-blue-950 text-blue-400 border border-blue-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center font-bold">
               <Code2 className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">E2E UI & API Test Automation</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">E2E UI & API Test Automation</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Automate full user journeys using <strong>Playwright, Cypress, Selenium</strong>, and <strong>REST Assured</strong>. Features robust deterministic selectors (`data-testid`), shadow DOM elements, and interactive Swagger OpenAPI 3.0 documentation.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/60 flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">RBAC Security & 11 Personas</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">RBAC Security & 11 Personas</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Test role-based access control across 11 distinct personas—ranging from Super Admins and Store Managers to Lead Reviewers, Marketplace Sellers, and Regular Customers with permanent protection for baseline test personas.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-amber-950 text-amber-400 border border-amber-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center font-bold">
               <Zap className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">Microservices Chaos & Latency</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Microservices Chaos & Latency</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Practice real-world resilience engineering. Inject artificial 100ms–3000ms latency, simulate 500/503 service outages in the QA Sandbox, and verify graceful UI degradation without crashing the application.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center font-bold">
               <Layers className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">Multi-Tier Pricing & Marketplaces</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Multi-Tier Pricing & Marketplaces</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Validate e-commerce pricing engines: struck-through List Price (MSRP), active Selling Prices, markdown discount percentages, and Marketplace Seller commission fees (10% sales, 15% rentals) with live QA calculation tooltips.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-indigo-950 text-indigo-400 border border-indigo-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 flex items-center justify-center font-bold">
               <BookOpen className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">Dual-Mode Buy vs. Rent Engine</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Dual-Mode Buy vs. Rent Engine</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Practice state machine testing: permanent shopping cart checkout versus 10-day academic book loans with return countdown timers, overdue calculations, and verified purchaser reviews.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-xl">
-            <div className="w-10 h-10 rounded-xl bg-rose-950 text-rose-400 border border-rose-800/60 flex items-center justify-center font-bold">
+          <div className="bg-white dark:bg-slate-900/90 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl space-y-3 backdrop-blur-xl">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center font-bold">
               <GitBranch className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">CI/CD & Live Edge Previews</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">CI/CD & Live Edge Previews</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Automated GitHub Actions running unit test suites with code coverage summaries. Cloudflare edge deployment providing instant preview environments for every Git branch.
             </p>
           </div>
@@ -158,16 +158,16 @@ export const AboutPage: React.FC = () => {
       </div>
 
       {/* Practical Branching Simulation Guide */}
-      <div className="bg-slate-900/90 rounded-3xl border border-slate-800 p-8 shadow-2xl space-y-4 backdrop-blur-xl">
+      <div className="bg-white dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm dark:shadow-2xl space-y-4 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-950 text-indigo-400 border border-indigo-800/60 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 flex items-center justify-center font-bold">
             <GitBranch className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-white">
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
               How Feature Branching Works at ITFreeSource Academy
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Develop, test, and automate in your own personal isolated cloud environment.
             </p>
           </div>

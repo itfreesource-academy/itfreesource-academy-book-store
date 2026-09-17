@@ -45,7 +45,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
   return (
     <div
       data-testid="featured-carousel"
-      className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-2xl border border-slate-800"
+      className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-indigo-50/90 via-slate-50 to-blue-50/90 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 text-slate-900 dark:text-white shadow-sm dark:shadow-2xl border border-slate-200 dark:border-slate-800"
     >
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8 min-h-[380px]">
         {/* Left: Book Highlight Info */}
@@ -53,42 +53,42 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
           <div className="flex items-center gap-2">
             <span
               data-testid="carousel-badge-type"
-              className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-500/20 text-brand-300 border border-brand-500/30"
+              className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/30"
             >
               {currentBook.isVipExclusive ? 'VIP Exclusive Spotlight' : 'Featured Bestseller'}
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-slate-400">
               Slide {currentIndex + 1} of {featured.length}
             </span>
           </div>
 
           <h2
             data-testid="carousel-book-title"
-            className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight"
+            className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight"
           >
             {currentBook.title}
           </h2>
 
-          <p data-testid="carousel-book-author" className="text-sm text-slate-300">
-            by <span className="font-semibold text-brand-300">{currentBook.authorName}</span> • {currentBook.categoryName}
+          <p data-testid="carousel-book-author" className="text-sm text-slate-600 dark:text-slate-300">
+            by <span className="font-semibold text-brand-600 dark:text-brand-300">{currentBook.authorName}</span> • {currentBook.categoryName}
           </p>
 
           <p
             data-testid="carousel-book-desc"
-            className="text-xs sm:text-sm text-slate-400 line-clamp-3 leading-relaxed"
+            className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed"
           >
             {currentBook.description}
           </p>
 
           {/* Rating & Price */}
           <div className="flex items-center gap-6 pt-2">
-            <div className="flex items-center gap-1.5 text-amber-400 font-bold text-sm">
-              <Star className="w-4 h-4 fill-amber-400" />
+            <div className="flex items-center gap-1.5 text-amber-500 dark:text-amber-400 font-bold text-sm">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
               <span>{currentBook.rating}</span>
-              <span className="text-slate-400 font-normal text-xs">({currentBook.reviewCount} reviews)</span>
+              <span className="text-slate-500 dark:text-slate-400 font-normal text-xs">({currentBook.reviewCount} reviews)</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span data-testid="carousel-book-price" className="text-2xl font-black text-white">
+              <span data-testid="carousel-book-price" className="text-2xl font-black text-slate-900 dark:text-white">
                 {formatPrice(currentBook.price)}
               </span>
               {currentBook.originalPrice && (
@@ -109,7 +109,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
             <Link
               to={`/books/${currentBook.id}`}
               data-testid="carousel-view-details-btn"
-              className="px-5 py-3 rounded-xl text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors"
+              className="px-5 py-3 rounded-xl text-xs sm:text-sm font-bold bg-white hover:bg-slate-100 text-slate-800 border border-slate-200 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/10 shadow-sm transition-colors"
             >
               View Full Details
             </Link>
@@ -118,7 +118,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
 
         {/* Right: Book Cover Showcase */}
         <div className="relative flex-shrink-0">
-          <div className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/10 bg-slate-900">
+          <div className="relative w-48 sm:w-60 aspect-[2/3] rounded-2xl overflow-hidden shadow-xl border-2 border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900">
             <img
               src={currentBook.coverImage}
               alt={currentBook.title}
@@ -134,12 +134,12 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
       </div>
 
       {/* Carousel Controls: Arrows, Dots, Play/Pause */}
-      <div className="px-6 py-4 bg-slate-950/60 border-t border-white/5 flex items-center justify-between">
+      <div className="px-6 py-4 bg-white/70 dark:bg-slate-950/60 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
         {/* Play/Pause Autoplay Toggle */}
         <button
           onClick={() => setIsAutoplay(!isAutoplay)}
           data-testid="carousel-autoplay-toggle"
-          className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
           title={isAutoplay ? 'Pause Autoplay' : 'Start Autoplay'}
         >
           {isAutoplay ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -154,7 +154,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
               onClick={() => setCurrentIndex(idx)}
               data-testid={`carousel-dot-${idx}`}
               className={`h-2 rounded-full transition-all ${
-                idx === currentIndex ? 'w-6 bg-brand-500' : 'w-2 bg-slate-600 hover:bg-slate-500'
+                idx === currentIndex ? 'w-6 bg-brand-500' : 'w-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -166,7 +166,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
           <button
             onClick={handlePrev}
             data-testid="carousel-prev-btn"
-            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white transition-colors border border-slate-200 dark:border-transparent"
             aria-label="Previous Slide"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -174,7 +174,7 @@ export const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
           <button
             onClick={handleNext}
             data-testid="carousel-next-btn"
-            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white transition-colors border border-slate-200 dark:border-transparent"
             aria-label="Next Slide"
           >
             <ChevronRight className="w-4 h-4" />

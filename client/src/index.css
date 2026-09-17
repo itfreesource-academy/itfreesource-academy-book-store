@@ -80,6 +80,21 @@ html.light .bg-slate-950\/60 {
   color: #0f172a;
 }
 
+/* Transform all dark gradients to clean, elegant light cards in light mode */
+html.light [class*="bg-gradient-"][class*="from-slate-"],
+html.light [class*="bg-gradient-"][class*="from-brand-9"],
+html.light [class*="bg-gradient-"][class*="from-purple-9"],
+html.light [class*="bg-gradient-"][class*="from-indigo-9"],
+html.light [class*="from-slate-900"],
+html.light [class*="from-slate-950"],
+html.light [class*="from-indigo-950"],
+html.light [class*="from-purple-950"] {
+  background-image: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%) !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
 html.light .bg-slate-950\/30,
 html.light .bg-slate-900\/40,
 html.light .bg-slate-900\/50 {
@@ -123,6 +138,27 @@ html.light .text-slate-300 {
 
 html.light .text-slate-200 {
   color: #1e293b !important;
+}
+
+/* Translucent Action Buttons (e.g. bg-white/10) in Light Mode */
+html.light .bg-white\/10,
+html.light .bg-white\/20 {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light .bg-white\/10:hover,
+html.light .bg-white\/20:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Inline code tags in light mode */
+html.light code.text-brand-300,
+html.light code {
+  color: #1d4ed8 !important;
+  background-color: #dbeafe !important;
 }
 
 /* Solid Colored Action Buttons Maintain White Text */

@@ -166,14 +166,14 @@ export const BorrowedBooksPage: React.FC = () => {
       </nav>
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl mb-8 border border-slate-800">
+      <div className="bg-gradient-to-r from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-sm dark:shadow-2xl mb-8 border border-slate-200 dark:border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-2 bg-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md mb-3 border border-indigo-400/30 text-indigo-300">
+            <div className="inline-flex items-center space-x-2 bg-indigo-100 dark:bg-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md mb-3 border border-indigo-200 dark:border-indigo-400/30 text-indigo-800 dark:text-indigo-300">
               <span>⏱️ Regional Timezones & Automated Rates</span>
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Book Borrowing & Return Hub</h1>
-            <p className="text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Book Borrowing & Return Hub</h1>
+            <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
               Standard <strong>10-day loan</strong> for <strong>{formatPrice(2.00)}</strong>. Overdue books incur 
               a <strong>{formatPrice(0.10)} / day</strong> late penalty fee. Lost books incur 
               a <strong>2x Book Price</strong> replacement penalty. Dates and fees dynamically recalculate across 
@@ -182,16 +182,16 @@ export const BorrowedBooksPage: React.FC = () => {
           </div>
 
           {/* Controls: Active Currency & Timezone Selectors */}
-          <div className="bg-slate-950/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800 flex flex-col space-y-3 min-w-[260px]">
-            <div className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+          <div className="bg-white dark:bg-slate-950/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col space-y-3 min-w-[260px] shadow-sm">
+            <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
               Live Regional Settings
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-medium">Active Currency</label>
+              <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1 font-medium">Active Currency</label>
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as Currency)}
-                className="w-full bg-slate-900 text-white border border-slate-700 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               >
                 {Object.values(SUPPORTED_CURRENCIES).map((c) => (
                   <option key={c.code} value={c.code}>
@@ -202,11 +202,11 @@ export const BorrowedBooksPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-medium">User Timezone</label>
+              <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1 font-medium">User Timezone</label>
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value as any)}
-                className="w-full bg-slate-900 text-white border border-slate-700 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               >
                 {Object.values(SUPPORTED_TIMEZONES).map((tz) => (
                   <option key={tz.id} value={tz.id}>
@@ -221,34 +221,34 @@ export const BorrowedBooksPage: React.FC = () => {
 
       {/* Terms & QA Rule Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl">
           <div className="text-2xl mb-1">📅</div>
-          <h3 className="font-bold text-indigo-400 text-sm">10-Day Loan Period</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">10-Day Loan Period</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Flat fee of <strong>{formatPrice(2.00)}</strong> covers full 10 calendar days based on regional timezone.
           </p>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl">
           <div className="text-2xl mb-1">⏳</div>
-          <h3 className="font-bold text-amber-400 text-sm">Overdue Penalty</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="font-bold text-amber-600 dark:text-amber-400 text-sm">Overdue Penalty</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             <strong>{formatPrice(0.10)} / day</strong> accrued daily for every day returned beyond due date.
           </p>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl">
           <div className="text-2xl mb-1">⚠️</div>
-          <h3 className="font-bold text-rose-400 text-sm">Lost Book Penalty</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="font-bold text-rose-600 dark:text-rose-400 text-sm">Lost Book Penalty</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             <strong>2x Book Retail Price</strong> charged automatically if book is declared lost or damaged.
           </p>
         </div>
 
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl">
           <div className="text-2xl mb-1">🌍</div>
-          <h3 className="font-bold text-emerald-400 text-sm">5 Global Currencies</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">5 Global Currencies</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Seamless conversions: USD ($), AED (AED), INR (₹), JPY (¥), and AUD (A$).
           </p>
         </div>
